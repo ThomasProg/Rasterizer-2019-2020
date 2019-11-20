@@ -7,7 +7,7 @@ Texture::Texture(unsigned int width, unsigned int height)
       height(height),
       pixels(new Color[width * height]) //default constructor init pixels to black
 {
-
+    
 }
 
 void Texture::SetPixelColor(unsigned int x, unsigned int y, Color c)

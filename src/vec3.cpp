@@ -12,7 +12,7 @@ Vec3::Vec3(float x, float y, float z)
 
 float Vec3::GetMagnitude() const
 {
-    return pow(x, 2) + pow(y, 2) + pow(z, 2);
+    return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
 }
 
 void  Vec3::Normalize()

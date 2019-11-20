@@ -35,22 +35,28 @@ int main(int argc, char** argv)
 
     Entity triangle;
     //triangle.mesh = Mesh::CreateSphere(100, 100);
+    //triangle.mesh = Mesh::CreateCube();
     //triangle.mesh = Mesh::CreateTriangle(Vec3(0,0,0), Vec3(0.2,0,0), Vec3(0,0.2,0));
     triangle.mesh = new Mesh;
-    triangle.mesh->vertices.push_back(Vec3(0,0,0));
-    triangle.mesh->vertices.push_back(Vec3(0.5,0,0));
-    triangle.mesh->indices.push_back(1);
+    triangle.mesh->vertices.push_back(Vec3(0.2,0,0));
+    triangle.mesh->vertices.push_back(Vec3(0.5,0.5,0));
+    triangle.mesh->vertices.push_back(Vec3(0.0,0.5,0));
     triangle.mesh->indices.push_back(0);
+    triangle.mesh->indices.push_back(1);
+    triangle.mesh->indices.push_back(2);
 
     scene.entities.push_back(triangle);
 
     Texture target(windowWidth, windowHeight);
 
+    //float loc = 0;
+
     bool bRun = true;
     while (bRun)
     {
-        //triangle.transformation = triangle.transformation * Mat4::CreateTranslationMatrix(Vec3(10, 0, 0));
-        //std::cout << triangle.transformation << std::endl;
+        //loc += 1;
+        //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01 , 0.01));
+        //std::cout << scene.entities[0].transformation << std::endl;
         //inputs
         SDL_Event event;
         while (SDL_PollEvent(&event))
