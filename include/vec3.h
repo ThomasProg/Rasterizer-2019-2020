@@ -3,12 +3,15 @@
 
 #include <iostream>
 
+struct Vec4;
+
 struct Vec3
 {
 public:
     float x, y, z;
 
     Vec3(float x, float y, float z);
+    Vec3(const Vec4&);
 
     float GetMagnitude() const;
     void  Normalize();

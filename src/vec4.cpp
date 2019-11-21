@@ -46,6 +46,16 @@ void Vec4::Homogenize()
     }
 }
 
+Vec3 Vec4::getHomogenizedVec() const
+{
+    return Vec3(x / w, y / w, z / w);
+}
+
+bool Vec4::isInsideWSizedCube()
+{
+    return !((x > w || z > w || y > w) || (x < -w || z < -w || y < -w));
+}
+
 float& Vec4::operator[](unsigned int index)
 {
     assert(index < 4);
@@ -110,3 +120,4 @@ std::ostream& operator<<(std::ostream& stream, const Vec4& vector)
     stream << "x : " << vector.x << " | y : " << vector.y << " | z : " << vector.z << " | w : " << vector.w << std::endl;
     return stream;
 }
+

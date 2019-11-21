@@ -34,18 +34,19 @@ int main(int argc, char** argv)
     // scene.entities.push_back(sphere);
 
     Entity triangle;
-    //triangle.mesh = Mesh::CreateSphere(100, 100);
+    triangle.mesh = Mesh::CreateSphere(100, 100);
     //triangle.mesh = Mesh::CreateCube();
     //triangle.mesh = Mesh::CreateTriangle(Vec3(0,0,0), Vec3(0.2,0,0), Vec3(0,0.2,0));
-    triangle.mesh = new Mesh;
-    triangle.mesh->vertices.push_back(Vec3(0.2,0,0));
-    triangle.mesh->vertices.push_back(Vec3(0.5,0.5,0));
-    triangle.mesh->vertices.push_back(Vec3(0.0,0.5,0));
-    triangle.mesh->indices.push_back(0);
-    triangle.mesh->indices.push_back(1);
-    triangle.mesh->indices.push_back(2);
+    // triangle.mesh = new Mesh;
+    // triangle.mesh->vertices.push_back(Vec3(0.2,0,0));
+    // triangle.mesh->vertices.push_back(Vec3(0.8,0.5,0));
+    // //triangle.mesh->vertices.push_back(Vec3(0.0,0.5,0));
+    // triangle.mesh->indices.push_back(0);
+    // triangle.mesh->indices.push_back(1);
+    // //triangle.mesh->indices.push_back(2);
 
     scene.entities.push_back(triangle);
+    //scene.entities[0].transformation *= Mat4::CreateScaleMatrix(Vec3(0.5, 2, 2));
 
     Texture target(windowWidth, windowHeight);
 
@@ -55,7 +56,7 @@ int main(int argc, char** argv)
     while (bRun)
     {
         //loc += 1;
-        //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01 , 0.01));
+        scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.1, 0.0, 0.0));
         //std::cout << scene.entities[0].transformation << std::endl;
         //inputs
         SDL_Event event;

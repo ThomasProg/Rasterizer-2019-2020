@@ -1,11 +1,20 @@
 #include <cmath>
 
 #include "vec3.h"
+#include "vec4.h"
 
 Vec3::Vec3(float x, float y, float z)
     : x(x), 
       y(y),
       z(z)
+{
+
+}
+
+Vec3::Vec3(const Vec4& copiedV4)
+    : x(copiedV4.x),
+      y(copiedV4.y),
+      z(copiedV4.z)
 {
 
 }

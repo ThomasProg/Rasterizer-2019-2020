@@ -18,9 +18,11 @@ public:
     float& operator[](unsigned int index);
     float operator[](unsigned int index) const;
 
+    bool  isInsideWSizedCube();
     float GetMagnitude() const;
     void  Normalize();
     void  Homogenize();
+    Vec3  getHomogenizedVec() const;
 };
 
 Vec4 operator+(const Vec4&, const Vec4&);
