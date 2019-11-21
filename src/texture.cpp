@@ -12,7 +12,8 @@ Texture::Texture(unsigned int width, unsigned int height)
 
 void Texture::SetPixelColor(unsigned int x, unsigned int y, Color c)
 {
-    pixels[x + y * width] = c;
+    if (x > 0 && x < width && y > 0 && y < height)
+        pixels[x + y * width] = c;
 }
 
 Color Texture::GetPixelColor(unsigned int x, unsigned int y) const

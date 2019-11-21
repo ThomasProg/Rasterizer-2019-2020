@@ -6,11 +6,13 @@
 
 struct Vertex
 {
+    Vec3 position = Vec3(0, 0, 0);
+    Color color;
+
     Vertex();
     Vertex(const Vertex&);
     Vertex(const Vec3&);
-    Vec3 position = Vec3(0, 0, 0);
-    Color color;
+    Vertex(const Vec3&, Color);
 };
 
 #endif
