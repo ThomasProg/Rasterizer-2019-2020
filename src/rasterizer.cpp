@@ -118,9 +118,7 @@ Color getColorInTriangle(Vec2 p, const std::array<const Vertex*, 3>& triangleVer
         c.b += weight[2] * triangleVertices[i]->color.b;
     }
 
-    c.r /= 2;
-    c.g /= 2;
-    c.b /= 2;
+        //std::cout << (int)triangleVertices[0]->color.g << '\n';
 
     return c;
 }
