@@ -29,50 +29,47 @@ void Mesh::addQuad(int indice1, int indice2, int indice3, int indice4)
 
 Mesh* Mesh::CreateCube()
 {
-    //    7______ 6
+    //    6______ 5
     //   /      /|          y+
-    // 1_____2/  |          |
+    // 0_____1/  |          |
     // |     |   |          |
-    // |     |   | 5        |
+    // |     |   |4         |
     // |     |  /           |
-    // 3_____4/             z+------> x+
+    // 2_____3/             z+------> x+
 
     Mesh* mesh = new Mesh;
     mesh->vertices.reserve(8);
+    //mesh->normals.reserve(8);
     mesh->indices.reserve(36);
 
     constexpr float min = -0.5;
     constexpr float max = 0.5;
 
-    mesh->vertices.push_back(Vec3(min, max, max));
-    mesh->vertices.push_back(Vec3(max, max, max));
-    mesh->vertices.push_back(Vec3(min, min, max));
-    mesh->vertices.push_back(Vec3(max, min, max));
+#define ADDING_VERTEX_AND_NORMAL(vec) \
+    mesh->vertices.emplace_back(vec);
+    //mesh->normals.emplace_back(vec);
 
-    mesh->vertices.push_back(Vec3(max, min, min));
-    mesh->vertices.push_back(Vec3(max, max, min));
-    mesh->vertices.push_back(Vec3(min, max, min));
-    mesh->vertices.push_back(Vec3(min, min, min));
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max));
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max));
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, max));
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, min, max));
+
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, min, min));
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, min));
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, min));
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, min));
+
+#undef ADDING_VERTEX_AND_NORMAL
 
     //visible faces (see schema)
-    mesh->addQuad(5, 1, 3, 4); //x+
+    mesh->addQuad(1, 3, 4, 5); //x+
     mesh->addQuad(0, 1, 5, 6); //y+
-    mesh->addQuad(1, 0, 2, 3); //z+
+    mesh->addQuad(0, 1, 3, 2); //z+
 
     //hidden faces (see schema)
-    mesh->addQuad(0, 1, 5, 6); //x-
-    mesh->addQuad(3, 2, 7, 4); //y-
-    mesh->addQuad(6, 0, 2, 7); //z- 
-
-    // //visible faces (see schema)
-    // mesh->addQuad(6, 2, 4, 5); //x+
-    // mesh->addQuad(1, 2, 6, 7); //y+
-    // mesh->addQuad(2, 1, 3, 4); //z+
-
-    // //hidden faces (see schema)
-    // mesh->addQuad(1, 2, 6, 7); //x-
-    // mesh->addQuad(4, 3, 8, 5); //y-
-    // mesh->addQuad(7, 1, 3, 8); //z- 
+    mesh->addQuad(0, 2, 7, 6); //x-
+    mesh->addQuad(2, 3, 4, 7); //y-
+    mesh->addQuad(4, 5, 6, 7); //z- 
 
     return mesh;
 }
@@ -93,7 +90,7 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
         }
     }
 
-    mesh->vertices.emplace_back(Vec3(0.0f, 1.f, 0.0f));
+    mesh->vertices.emplace_back(Vec3(0.0f, 1.f/2, 0.0f));
 
     for (unsigned int j = 0; j < longitudeCount - 1; ++j)
     {
@@ -115,7 +112,9 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
             double const y = cosVertical;
             double const z = sinVertical * sinHorizontal;
             //add vertice location
-            mesh->vertices.emplace_back(Vec3(x, y, z));
+            //divide by 2 to put the sphere coordinates between -0.5 and 1
+            mesh->vertices.emplace_back(Vec3(x/2, y/2, z/2)); 
+            //mesh->normals.emplace_back(Vec3(x/2, y/2, z/2));
 
             if (j < longitudeCount - 2)
             {
@@ -129,7 +128,7 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
         }
     }
 
-    mesh->vertices.emplace_back(Vec3(0.0f, -1.f, 0.0f));
+    mesh->vertices.emplace_back(Vec3(0.0f, -1.f/2, 0.0f));
 
     //sphere poles triangle indices
     for (unsigned int i = 0; i < latitudeCount; ++i)

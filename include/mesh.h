@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "vertex.h"
+#include "vec3.h"
 
 struct Mesh
 {
@@ -18,6 +19,9 @@ public:
 
     std::vector<unsigned int> indices; //index buffer
     //goes by triplets to draw triangles
+
+    // std::vector<Vec3> normals; //index buffer
+    // //goes by triplets to draw triangles
 
 public:
     static Mesh* CreateCube(); //cube of size 1*1*1

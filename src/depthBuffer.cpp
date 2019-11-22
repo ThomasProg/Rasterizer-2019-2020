@@ -1,6 +1,7 @@
 #include <cassert>
 #include "depthBuffer.h"
 
+#include "macros.h"
 
 DepthBuffer::DepthBuffer(unsigned int width, unsigned int height) 
     : width(width),
@@ -15,11 +16,44 @@ DepthBuffer::~DepthBuffer()
     if (depth != nullptr)
         delete depth;
 }
-
+// #include <cstring>
 void DepthBuffer::resetDepth()
 {
-    for (unsigned int i = 0; i < width * height; i++)
-        depth[i] = 100;
+    //TODO : clean
+    unsigned int size = width * height;
+    for (unsigned int i = size-1; i--;)//i < size; i++)
+    {
+        depth[i] = depthMax;
+    }
+
+    // for (unsigned int i = 0; i < size; i++)//i < size; i++)
+    // {
+    //     depth[i] = depthMax;
+    // }
+    return;
+
+    //loop unrolling
+    if (size % 2 != 0)
+    {
+        depth[0] = depthMax;
+        for (unsigned int i = 1; i < size; i+=2)
+        {
+            depth[i] = depthMax;
+            depth[i+1] = depthMax;
+        }
+    }
+    else 
+        for (unsigned int i = 0; i < size; i+=2)
+        {
+            depth[i] = depthMax;
+            depth[i+1] = depthMax;
+        }
+    //this code is equivalent to this :
+    //
+    // for (unsigned int i = 0; i < size; i++)
+    // {
+    //     depth[i] = depthMax;
+    // }
 }
 
 float DepthBuffer::getDepth(unsigned int x, unsigned int y) const

@@ -22,11 +22,13 @@
 #include "vec4.h"
 #include "color.h"
 
+#include "renderTriangle.h"
+
 typedef std::vector<unsigned int>::iterator indiceIt;
 
 Vec3 projection(Vec3 vec)
 {
-    return Vec3(((vec.x/5) + 1) * 0.5 * windowWidth, windowHeight - ((vec.y/5) + 1) * 0.5 * windowHeight, 0);
+    return Vec3(((vec.x/5) + 1) * 0.5 * windowWidth, windowHeight - ((vec.y/5) + 1) * 0.5 * windowHeight, vec.z);
 
     // return Vec3((vec.x/2.f + 0.5f) * windowWidth,
     //             (vec.y/2.f + 0.5f) * windowHeight, vec.z);
@@ -76,7 +78,7 @@ void Rasterizer::RenderLines(FrameBuffer* pTarget,
             Vec3 point(x1 + i * vec2.x, y1 + i * vec2.y, 0);
             float weight1 = Vec2(point.x - x1, point.y - y1).GetMagnitude() / magnitude;
             float weight2 = Vec2(point.x - x1, point.y - y1).GetMagnitude() / magnitude;
-            Color c(255,255,0);
+            Color c(vertex1.color.r, vertex1.color.g, vertex1.color.b);
             pTarget->SetPixel(point.x, point.y, point.z, c);
         }
     }
@@ -103,112 +105,112 @@ bool getWeight(const Vec2& p, const Vec2& p1, const Vec2& p2, const Vec2& p3, fl
     return weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0;
 }
 
-// /////////////////////////////////////////////////
-// ///////////////////TRIANGLES///////////////////////
-// /////////////////////////////////////////////////
+// // /////////////////////////////////////////////////
+// // ///////////////////TRIANGLES///////////////////////
+// // /////////////////////////////////////////////////
 
-Color getColorInTriangle(Vec2 p, const std::array<const Vertex*, 3>& triangleVertices)
-{
-    Color c(0,0,0);
-    float weight[3];
-    getWeight(p, triangleVertices[0]->position, triangleVertices[1]->position, triangleVertices[2]->position, weight);
+// Color getColorInTriangle(Vec2 p, const std::array<const Vertex*, 3>& triangleVertices)
+// {
+//     Color c(0,0,0);
+//     float weight[3];
+//     getWeight(p, triangleVertices[0]->position, triangleVertices[1]->position, triangleVertices[2]->position, weight);
 
-    for (unsigned int i = 0; i < 3; i++)
-    {
-        c.r += weight[i] * triangleVertices[i]->color.r;
-        c.g += weight[i] * triangleVertices[i]->color.g;
-        c.b += weight[i] * triangleVertices[i]->color.b;
-    }
+//     for (unsigned int i = 0; i < 3; i++)
+//     {
+//         c.r += weight[i] * triangleVertices[i]->color.r;
+//         c.g += weight[i] * triangleVertices[i]->color.g;
+//         c.b += weight[i] * triangleVertices[i]->color.b;
+//     }
 
-    return c;
-}
+//     return c;
+// }
 
-///////draw an horizontal line//////// O(n)
-void drawHorizontalLine(Vec2 p1, Vec2 p2, int height, FrameBuffer* pTarget, const std::array<const Vertex*, 3>& triangleVertices)
-{
-    Color c;
+// ///////draw an horizontal line//////// O(n)
+// void drawHorizontalLine(Vec2 p1, Vec2 p2, int height, FrameBuffer* pTarget, const std::array<const Vertex*, 3>& triangleVertices)
+// {
+//     Color c;
 
-    if (p1.x > p2.x)
-        for (int x = p2.x+1; x < p1.x; x++)
-        {
-            c = getColorInTriangle(Vec2(x, height), triangleVertices);
+//     if (p1.x > p2.x)
+//         for (int x = p2.x+1; x < p1.x; x++)
+//         {
+//             c = getColorInTriangle(Vec2(x, height), triangleVertices);
             
-            float depth;
-            pTarget->SetPixel(x, height, p1.y, c);
-        }
-    else 
-        for (int x = p1.x+1; x < p2.x; x++)
-        {
-            c = getColorInTriangle(Vec2(x, height), triangleVertices);
+//             float depth;
+//             pTarget->SetPixel(x, height, p1.y, c);
+//         }
+//     else 
+//         for (int x = p1.x+1; x < p2.x; x++)
+//         {
+//             c = getColorInTriangle(Vec2(x, height), triangleVertices);
 
-            float depth;
-            pTarget->SetPixel(x, height, p1.y, c);
-        }
-}
+//             float depth;
+//             pTarget->SetPixel(x, height, p1.y, c);
+//         }
+// }
+
+// // //TODO : replace Vec2 by Vertex
+// // /* 
+// //  * if used, draw vertices as BottomFlatTriangle
+// //  * Complexity : O(n^2)
+// //  */
+// void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, FrameBuffer* pTarget)
+// {
+//     const Vec3& v1 = triangleVertices[0]->position;
+//     const Vec3& v2 = triangleVertices[1]->position;
+//     const Vec3& v3 = triangleVertices[2]->position;
+
+//     float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
+//     float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
+
+//     float invslopeZ1 = (v2.z - v1.z) / (v2.y - v1.y);
+//     float invslopeZ2 = (v3.z - v1.z) / (v3.y - v1.y);
+
+//     //Vec2 xMinMax (v1.x, v1.x);
+
+//     Vec2 p1(v1.x, v1.z), p2(v1.x, v1.z);
+
+//     for (float verticalLoc = v1.y; verticalLoc <= v2.y; verticalLoc++)
+//     {
+//         drawHorizontalLine(p1, p2, verticalLoc, pTarget, triangleVertices);
+//         p1.x += invslope1;
+//         p2.x += invslope2;
+
+//         p1.y += invslopeZ1;
+//         p2.y += invslopeZ2;
+//     }
+// }
 
 // //TODO : replace Vec2 by Vertex
 // /* 
-//  * if used, draw vertices as BottomFlatTriangle
+//  * if used, draw vertices as BottomFlatTr    // A = v1;
+//     // B = v2;
+//     // C = v3;iangle
 //  * Complexity : O(n^2)
 //  */
-void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, FrameBuffer* pTarget)
-{
-    const Vec3& v1 = triangleVertices[0]->position;
-    const Vec3& v2 = triangleVertices[1]->position;
-    const Vec3& v3 = triangleVertices[2]->position;
+// void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, FrameBuffer* pTarget)
+// {
+//     const Vec3& v1 = triangleVertices[0]->position;
+//     const Vec3& v2 = triangleVertices[1]->position;
+//     const Vec3& v3 = triangleVertices[2]->position;
 
-    float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
-    float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
+//     float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
+//     float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
 
-    float invslopeZ1 = (v2.z - v1.z) / (v2.y - v1.y);
-    float invslopeZ2 = (v3.z - v1.z) / (v3.y - v1.y);
+//     float invslopeZ1 = (v2.z - v1.z) / (v3.y - v1.y);
+//     float invslopeZ2 = (v3.z - v2.z) / (v3.y - v2.y);
 
-    //Vec2 xMinMax (v1.x, v1.x);
+//     Vec2 p1(v3.x, v3.z), p2(v3.x, v3.z);
 
-    Vec2 p1(v1.x, v1.z), p2(v1.x, v1.z);
+//     for (float verticalLoc = v3.y; verticalLoc > v1.y; verticalLoc--)
+//     {
+//         drawHorizontalLine(p1, p2, verticalLoc, pTarget, triangleVertices);
+//         p1.x -= invslope1;
+//         p2.x -= invslope2;
 
-    for (float verticalLoc = v1.y; verticalLoc <= v2.y; verticalLoc++)
-    {
-        drawHorizontalLine(p1, p2, verticalLoc, pTarget, triangleVertices);
-        p1.x += invslope1;
-        p2.x += invslope2;
-
-        p1.y += invslopeZ1;
-        p2.y += invslopeZ2;
-    }
-}
-
-//TODO : replace Vec2 by Vertex
-/* 
- * if used, draw vertices as BottomFlatTr    // A = v1;
-    // B = v2;
-    // C = v3;iangle
- * Complexity : O(n^2)
- */
-void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, FrameBuffer* pTarget)
-{
-    const Vec3& v1 = triangleVertices[0]->position;
-    const Vec3& v2 = triangleVertices[1]->position;
-    const Vec3& v3 = triangleVertices[2]->position;
-
-    float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
-    float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
-
-    float invslopeZ1 = (v2.z - v1.z) / (v3.y - v1.y);
-    float invslopeZ2 = (v3.z - v2.z) / (v3.y - v2.y);
-
-    Vec2 p1(v3.x, v3.z), p2(v3.x, v3.z);
-
-    for (float verticalLoc = v3.y; verticalLoc > v1.y; verticalLoc--)
-    {
-        drawHorizontalLine(p1, p2, verticalLoc, pTarget, triangleVertices);
-        p1.x -= invslope1;
-        p2.x -= invslope2;
-
-        p1.y -= invslopeZ1;
-        p2.y -= invslopeZ2;
-    }
-}
+//         p1.y -= invslopeZ1;
+//         p2.y -= invslopeZ2;
+//     }
+// }
 
 void Rasterizer::RenderTriangles(FrameBuffer* pTarget, 
                             const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it)
@@ -228,45 +230,49 @@ void Rasterizer::RenderTriangles(FrameBuffer* pTarget,
     if (triangleVertices[0]->position.y > triangleVertices[1]->position.y)
         std::swap(triangleVertices[0], triangleVertices[1]);
 
-    const Vec3& v1 = triangleVertices[0]->position;
-    const Vec3& v2 = triangleVertices[1]->position;
-    const Vec3& v3 = triangleVertices[2]->position;
+    RenderTriangle tri(triangleVertices, pTarget);
+    tri.draw();
+    return;
 
-    /* at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice */
-    //sortVerticesAscendingByY();
-    //if (v1.y > v2.y && v1.y > )
+    // const Vec3& v1 = triangleVertices[0]->position;
+    // const Vec3& v2 = triangleVertices[1]->position;
+    // const Vec3& v3 = triangleVertices[2]->position;
 
-    /* here we know that v1.y <= v2.y <= v3.y */
-    /* check for trivial case of bottom-flat triangle */
-    if (v2.y == v3.y)
-    {
-        fillBottomFlatTriangle(triangleVertices, pTarget);
-    }
-    /* check for trivial case of top-flat triangle */
-    else if (v1.y == v2.y)
-    {
-        fillTopFlatTriangle(triangleVertices, pTarget);
-    }
-    else
-    {
-        /* general case - split the triangle in a topflat and bottom-flat one */
-        Vertex vertex4 (Vec3(
-            (int)(v1.x + ((float)(v2.y - v1.y) / (float)(v3.y - v1.y)) * (v3.x - v1.x)), v2.y, 1));
+    // /* at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice */
+    // //sortVerticesAscendingByY();
+    // //if (v1.y > v2.y && v1.y > )
 
-        //vertex4.color = getColorInTriangle(vertex4.position, triangleVertices);
+    // /* here we know that v1.y <= v2.y <= v3.y */
+    // /* check for trivial case of bottom-flat triangle */
+    // if (v2.y == v3.y)
+    // {
+    //     fillBottomFlatTriangle(triangleVertices, pTarget);
+    // }
+    // /* check for trivial case of top-flat triangle */
+    // else if (v1.y == v2.y)
+    // {
+    //     fillTopFlatTriangle(triangleVertices, pTarget);
+    // }
+    // else
+    // {
+    //     /* general case - split the triangle in a topflat and bottom-flat one */
+    //     Vertex vertex4 (Vec3(
+    //         (int)(v1.x + ((float)(v2.y - v1.y) / (float)(v3.y - v1.y)) * (v3.x - v1.x)), v2.y, v2.z)); //TODO : check if z = v2.z is correct
 
-        std::array<const Vertex*, 3> bottomTriangleVertices;
-        bottomTriangleVertices[0] = triangleVertices[0];
-        bottomTriangleVertices[1] = triangleVertices[1];
-        bottomTriangleVertices[2] = &vertex4;
+    //     vertex4.color = getColorInTriangle(vertex4.position, triangleVertices);
 
-        std::array<const Vertex*, 3> topTriangleVertices;
-        topTriangleVertices[0] = triangleVertices[1];
-        topTriangleVertices[1] = &vertex4;
-        topTriangleVertices[2] = triangleVertices[2];
-        fillBottomFlatTriangle(bottomTriangleVertices, pTarget);
-        fillTopFlatTriangle(topTriangleVertices, pTarget);
-    }
+    //     std::array<const Vertex*, 3> bottomTriangleVertices;
+    //     bottomTriangleVertices[0] = triangleVertices[0];
+    //     bottomTriangleVertices[1] = triangleVertices[1];
+    //     bottomTriangleVertices[2] = &vertex4;
+
+    //     std::array<const Vertex*, 3> topTriangleVertices;
+    //     topTriangleVertices[0] = triangleVertices[1];
+    //     topTriangleVertices[1] = &vertex4;
+    //     topTriangleVertices[2] = triangleVertices[2];
+    //     fillBottomFlatTriangle(bottomTriangleVertices, pTarget);
+    //     fillTopFlatTriangle(topTriangleVertices, pTarget);
+    // }
 }
 
 // /////////////////////////////////////////////////
@@ -279,8 +285,8 @@ void addClippedVertex(const Vec4& vert,
                       std::vector<unsigned int>& transformedIndices)
 {
     //homogenizing
-    transformedVertices.push_back(Vertex(projection(vert.getHomogenizedVec()), color));
-    transformedIndices.push_back(transformedVertices.size() - 1);
+    transformedVertices.emplace_back(Vertex(projection(vert.getHomogenizedVec()), color));
+    transformedIndices.emplace_back(transformedVertices.size() - 1);
 }
 
 //vertices size should be 4
@@ -406,23 +412,23 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget)
 
     //init render texture
     pTarget->ResetPixels();
-
+    
     std::vector<Vertex> transformedVertices;
+    transformedVertices.reserve(100);
     std::vector<unsigned int> indices; 
-    std::vector<char> depthBuffer;
-    depthBuffer.reserve(pTarget->width * pTarget->height);
+    indices.reserve(100);
 
     std::function<void(FrameBuffer*, 
                        const std::vector<Vertex>&, 
-                       std::vector<unsigned int>::iterator&)> RenderByShape = RenderLines;
+                       std::vector<unsigned int>::iterator&)> RenderByShape = RenderTriangles;
 
     std::function<void(const Entity&, 
                        FrameBuffer*, 
                        const std::vector<Vertex>&, 
                        std::vector<unsigned int>::iterator&,
                        std::vector<Vertex>& transformedVertices,
-                       std::vector<unsigned int>&)> ClipShape = ClipLines;
-
+                       std::vector<unsigned int>&)> ClipShape = ClipTriangles;
+ 
     //render vertices of each entity
     for (const Entity& entity : pScene->entities)
     {

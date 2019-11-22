@@ -41,6 +41,7 @@ SDL_Utilities::~SDL_Utilities()
 void SDL_Utilities::textureToSDL(const Texture& tex, SDL_Renderer* renderer)
 {
     Color color;
+    SDL_Texture* texture;
     for (unsigned int y = 0; y < tex.height; y++)
     {
         for (unsigned int x = 0; x < tex.width; x++)

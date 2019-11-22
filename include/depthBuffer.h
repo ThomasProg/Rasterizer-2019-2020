@@ -5,7 +5,7 @@ class DepthBuffer
 {
 public:
     const unsigned int width, height;
-private:
+public:
     float* depth = nullptr;
 
 public:

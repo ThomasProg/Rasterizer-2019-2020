@@ -3,11 +3,13 @@
 
 #include <vector>
 #include "entity.h"
+#include "light.h"
 
 class Scene
 {
 public:
     std::vector<Entity> entities;
+    std::vector<Light> lights;
 
 public:
     Scene();

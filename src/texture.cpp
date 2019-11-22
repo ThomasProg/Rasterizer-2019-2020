@@ -1,4 +1,5 @@
 #include <cassert>
+#include <SDL2/SDL.h>
 
 #include "texture.h"
 
@@ -32,11 +33,18 @@ Color Texture::GetPixelColor(unsigned int x, unsigned int y) const
 
 void Texture::FillBlack()
 {
-    for (unsigned int i = 0; i < width * height; i++)
-    {
-        pixels[i].r = 0.f;
-        pixels[i].g = 0.f;
-        pixels[i].b = 0.f;
-        pixels[i].a = 1.f;
-    }
+    // 4 * sizeof(unsigned char)
+    memset(pixels, 0, 4 * sizeof(unsigned char) * width * height);
+    // for (unsigned int i = 0; i < width * height; i++)
+    // {
+    //     pixels[i].r = 0.f;
+    //     pixels[i].g = 0.f;
+    //     pixels[i].b = 0.f;
+    //     pixels[i].a = 1.f;
+    // }
+}
+
+void Texture::ToTexture(SDL_Texture* sdlTexture) const
+{
+    SDL_UpdateTexture(sdlTexture, nullptr, pixels, sizeof(Color) * width); 
 }

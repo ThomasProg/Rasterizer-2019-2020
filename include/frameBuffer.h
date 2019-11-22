@@ -10,7 +10,6 @@ struct FrameBuffer
 {
 public:
     const unsigned int width, height;
-public:
     Texture texture;
     DepthBuffer depthBuffer;
 

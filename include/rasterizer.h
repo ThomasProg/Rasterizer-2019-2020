@@ -16,6 +16,7 @@ class Rasterizer
 private:
 
 public:
+
     static void RenderPoints(FrameBuffer* pTarget, 
                              const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
 
