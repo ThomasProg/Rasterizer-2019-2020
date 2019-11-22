@@ -36,4 +36,6 @@ Color& Color::operator=(Color setColor)
     g = setColor.g;
     b = setColor.b;
     a = setColor.a;
+
+    return *this;
 }

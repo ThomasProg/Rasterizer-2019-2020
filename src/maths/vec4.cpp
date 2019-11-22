@@ -72,7 +72,7 @@ float& Vec4::operator[](unsigned int index)
         return z;
         break;
 
-    case 3:
+    default: //the only left index is 3
         return w;
         break;
     }
@@ -94,7 +94,7 @@ float Vec4::operator[](unsigned int index) const
         return z;
         break;
 
-    case 3:
+    default: //the only left index is 3
         return w;
         break;
     }

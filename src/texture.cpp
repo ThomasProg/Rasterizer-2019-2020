@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "texture.h"
 
 #include "color.h"
@@ -10,6 +12,12 @@ Texture::Texture(unsigned int width, unsigned int height)
     
 }
 
+Texture::~Texture()
+{
+    if (pixels != nullptr)
+        delete pixels;
+}
+
 void Texture::SetPixelColor(unsigned int x, unsigned int y, Color c)
 {
     if (x > 0 && x < width && y > 0 && y < height)
@@ -18,6 +26,7 @@ void Texture::SetPixelColor(unsigned int x, unsigned int y, Color c)
 
 Color Texture::GetPixelColor(unsigned int x, unsigned int y) const
 {
+    assert(0 <= x && x < width && 0 <= y && y < height);
     return pixels[x + y * width];   
 }
 
@@ -30,10 +39,4 @@ void Texture::FillBlack()
         pixels[i].b = 0.f;
         pixels[i].a = 1.f;
     }
-}
-
-void Texture::getSize(unsigned int& width, unsigned int& height) const
-{
-    width  = this->width;
-    height = this->height;
 }

@@ -11,6 +11,8 @@
 
 #include "scene.h"
 #include "texture.h"
+#include "frameBuffer.h"
+
 #include "entity.h"
 #include "vertex.h"
 #include "vertex2.h"
@@ -34,21 +36,21 @@ Vec3 projection(Vec3 vec)
  * if used, draw vertices as points
  * Complexity : O(1)
  */
-void Rasterizer::RenderPoints(Texture* pTarget, 
+void Rasterizer::RenderPoints(FrameBuffer* pTarget, 
                               const std::vector<Vertex>& vertices, indiceIt& it)
 {
-    const Vertex2& vertex = vertices[*it++];
+    const Vertex& vertex = vertices[*it++];
 
     //Vertex2 screenVertex = convertVertexToWindow(entity.transformation, vertex);
 
-    pTarget->SetPixelColor(vertex.position.x, vertex.position.y, vertex.color);
+    pTarget->SetPixel(vertex.position.x, vertex.position.y, vertex.position.z, vertex.color);
 }
 
 /* 
  * if used, draw vertices as lines
  * Complexity : O(n), n being the distance on screen between the 2 points
  */
-void Rasterizer::RenderLines(Texture* pTarget, 
+void Rasterizer::RenderLines(FrameBuffer* pTarget, 
                             const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it)
 {
     //get first point on screen
@@ -74,12 +76,12 @@ void Rasterizer::RenderLines(Texture* pTarget,
             Vec3 point(x1 + i * vec2.x, y1 + i * vec2.y, 0);
             float weight1 = Vec2(point.x - x1, point.y - y1).GetMagnitude() / magnitude;
             float weight2 = Vec2(point.x - x1, point.y - y1).GetMagnitude() / magnitude;
-            Color c(weight1,weight2,0);
-            pTarget->SetPixelColor(point.x, point.y, c);
+            Color c(255,255,0);
+            pTarget->SetPixel(point.x, point.y, point.z, c);
         }
     }
     else 
-        pTarget->SetPixelColor(x2, y2, vertex1.color);
+        pTarget->SetPixel(x2, y2, vertex2.position.z, vertex1.color);
 }
 
 ////////Get weight of a point in a triangle//////////
@@ -122,23 +124,25 @@ Color getColorInTriangle(Vec2 p, const std::array<const Vertex*, 3>& triangleVer
 }
 
 ///////draw an horizontal line//////// O(n)
-void drawHorizontalLine(Vec2 xMinMax, int height, Texture* pTarget, const std::array<const Vertex*, 3>& triangleVertices)
+void drawHorizontalLine(Vec2 p1, Vec2 p2, int height, FrameBuffer* pTarget, const std::array<const Vertex*, 3>& triangleVertices)
 {
-    Color c(0, 0, 0, 255);
+    Color c;
 
-    if (xMinMax.x > xMinMax.y)
-        for (int x = xMinMax.y+1; x < xMinMax.x; x++)
+    if (p1.x > p2.x)
+        for (int x = p2.x+1; x < p1.x; x++)
         {
             c = getColorInTriangle(Vec2(x, height), triangleVertices);
             
-            pTarget->SetPixelColor(x, height, c);
+            float depth;
+            pTarget->SetPixel(x, height, p1.y, c);
         }
     else 
-        for (int x = xMinMax.x+1; x < xMinMax.y; x++)
+        for (int x = p1.x+1; x < p2.x; x++)
         {
             c = getColorInTriangle(Vec2(x, height), triangleVertices);
 
-            pTarget->SetPixelColor(x, height, c);
+            float depth;
+            pTarget->SetPixel(x, height, p1.y, c);
         }
 }
 
@@ -147,7 +151,7 @@ void drawHorizontalLine(Vec2 xMinMax, int height, Texture* pTarget, const std::a
 //  * if used, draw vertices as BottomFlatTriangle
 //  * Complexity : O(n^2)
 //  */
-void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, Texture* pTarget)
+void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, FrameBuffer* pTarget)
 {
     const Vec3& v1 = triangleVertices[0]->position;
     const Vec3& v2 = triangleVertices[1]->position;
@@ -156,13 +160,21 @@ void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices
     float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
     float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
 
-    Vec2 xMinMax (v1.x, v1.x);
+    float invslopeZ1 = (v2.z - v1.z) / (v2.y - v1.y);
+    float invslopeZ2 = (v3.z - v1.z) / (v3.y - v1.y);
 
-    for (int verticalLoc = v1.y; verticalLoc <= v2.y; verticalLoc++)
+    //Vec2 xMinMax (v1.x, v1.x);
+
+    Vec2 p1(v1.x, v1.z), p2(v1.x, v1.z);
+
+    for (float verticalLoc = v1.y; verticalLoc <= v2.y; verticalLoc++)
     {
-        drawHorizontalLine(xMinMax, verticalLoc, pTarget, triangleVertices);
-        xMinMax.x += invslope1;
-        xMinMax.y += invslope2;
+        drawHorizontalLine(p1, p2, verticalLoc, pTarget, triangleVertices);
+        p1.x += invslope1;
+        p2.x += invslope2;
+
+        p1.y += invslopeZ1;
+        p2.y += invslopeZ2;
     }
 }
 
@@ -173,7 +185,7 @@ void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices
     // C = v3;iangle
  * Complexity : O(n^2)
  */
-void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, Texture* pTarget)
+void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, FrameBuffer* pTarget)
 {
     const Vec3& v1 = triangleVertices[0]->position;
     const Vec3& v2 = triangleVertices[1]->position;
@@ -182,17 +194,23 @@ void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, T
     float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
     float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
 
-    Vec2 xMinMax(v3.x, v3.x);
+    float invslopeZ1 = (v2.z - v1.z) / (v3.y - v1.y);
+    float invslopeZ2 = (v3.z - v2.z) / (v3.y - v2.y);
 
-    for (int verticalLoc = v3.y; verticalLoc > v1.y; verticalLoc--)
+    Vec2 p1(v3.x, v3.z), p2(v3.x, v3.z);
+
+    for (float verticalLoc = v3.y; verticalLoc > v1.y; verticalLoc--)
     {
-        drawHorizontalLine(xMinMax, verticalLoc, pTarget, triangleVertices);
-        xMinMax.x -= invslope1;
-        xMinMax.y -= invslope2;
+        drawHorizontalLine(p1, p2, verticalLoc, pTarget, triangleVertices);
+        p1.x -= invslope1;
+        p2.x -= invslope2;
+
+        p1.y -= invslopeZ1;
+        p2.y -= invslopeZ2;
     }
 }
 
-void Rasterizer::RenderTriangles(Texture* pTarget, 
+void Rasterizer::RenderTriangles(FrameBuffer* pTarget, 
                             const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it)
 {
     std::array<const Vertex*, 3> triangleVertices;
@@ -286,26 +304,40 @@ void add4ClippedVertex(const Vec4* vertices,
     transformedIndices.push_back(transformedVertices.size() - 1);
 }
 
-void Rasterizer::ClipLines(const Entity& entity, Texture* pTarget, 
+float resolve_equation(int index,float coord,float coordVect)
+{
+    float constante1 = 0, constante2 = 0;
+    if (index == 0 || index > 3)
+        constante1 = -4;
+    else 
+        constante1 = 4;
+    if (index == 2 || index == 4)
+        constante2 = 4;
+    else 
+        constante2 = -4;
+    
+    return (-(constante1*coordVect)+constante2)/constante1*coord;
+}
+
+void Rasterizer::ClipLines(const Entity& entity, FrameBuffer* pTarget, 
                            const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it, //iterator of indices
                            //outputs :
                            std::vector<Vertex>& transformedVertices, 
                            std::vector<unsigned int>& transformedIndices)
 {
-    //indices.size() % 2 must be 0
-
+//    //indices.size() % 2 must be 0
+//
     Vertex vertex1 = vertices[*it++];
     Vertex vertex2 = vertices[*it++];
     Vec4 vert1 = entity.transformation * Vec4(vertex1.position, 1);
     Vec4 vert2 = entity.transformation * Vec4(vertex2.position, 1);
-
-    //float coeff_dir = (vert2.y-vert1.x)/(vert2.y-vert1.x);
-    //float OrdonneOrigin = vert1.y+coeff_dir*vert1.x;
-    //float norme = sqrtf(pow((vert2.x-vert1.x),2) + pow((vert2.y-vert1.y),2));
     
+    if (!vert1.isInsideWSizedCube() && !vert2.isInsideWSizedCube())
+    {
+
+    }
     if (!vert1.isInsideWSizedCube() && vert2.isInsideWSizedCube())
     {
-        float x = vert1.y;
         if (vert1.x > vert1.w || vert1.x < -vert1.w)
         {
             if (vert1.x > vert1.w)
@@ -320,32 +352,30 @@ void Rasterizer::ClipLines(const Entity& entity, Texture* pTarget,
             else 
                 vert1.y = vert1.w;
         }
-
+        else if (vert1.z > vert1.w || vert1.z < -vert1.w)
+        {
+            if (vert1.x > vert1.w)
+                vert1.y = vert1.w;
+            else 
+                vert1.y = vert1.w;
+        }
     }
     else if (vert1.isInsideWSizedCube() && !vert2.isInsideWSizedCube())
     {
-        if (vert2.x > vert2.w || vert2.x < -vert2.w)
+        Vec3 dir = {(vert2.x-vert1.x),(vert2.y-vert1.y),(vert2.z-vert1.z)};
+        for (unsigned i = 0; i < 6; i++)
         {
-            if (vert2.x > vert2.w)
-                vert2.x = vert2.w;
-            else 
-                vert2.x = -vert2.w;
+            float t = resolve_equation(i,vert1[i/2],dir[i/2]);
+            vert2.x = vert1.x+dir.x*t;
+            vert2.y = vert1.y+dir.y*t;
+            vert2.z = vert1.z+dir.z*t;
         }
-        else if (vert2.y > vert2.w || vert2.y < -vert2.w)
-        {
-            if (vert2.x > vert2.w)
-                vert2.y = vert2.w;
-            else 
-                vert2.y = -vert2.w;
-        }
-    }
+    }   
     addClippedVertex(vert1, vertex1.color, transformedVertices, transformedIndices);
     addClippedVertex(vert2, vertex2.color, transformedVertices, transformedIndices);
-    
-
 }
 
-void Rasterizer::ClipTriangles(const Entity& entity, Texture* pTarget, 
+void Rasterizer::ClipTriangles(const Entity& entity, FrameBuffer* pTarget, 
                                const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it, //iterator of indices
                                //outputs :
                                std::vector<Vertex>& transformedVertices, 
@@ -370,26 +400,28 @@ void Rasterizer::ClipTriangles(const Entity& entity, Texture* pTarget,
     }
 }
 
-void Rasterizer::RenderScene(Scene* pScene, Texture* pTarget)
+void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget)
 {
     assert(pScene != nullptr && pTarget != nullptr);
 
     //init render texture
-    pTarget->FillBlack();
+    pTarget->ResetPixels();
 
     std::vector<Vertex> transformedVertices;
     std::vector<unsigned int> indices; 
+    std::vector<char> depthBuffer;
+    depthBuffer.reserve(pTarget->width * pTarget->height);
 
-    std::function<void(Texture*, 
+    std::function<void(FrameBuffer*, 
                        const std::vector<Vertex>&, 
-                       std::vector<unsigned int>::iterator&)> RenderByShape = RenderTriangles;
+                       std::vector<unsigned int>::iterator&)> RenderByShape = RenderLines;
 
     std::function<void(const Entity&, 
-                       Texture*, 
+                       FrameBuffer*, 
                        const std::vector<Vertex>&, 
                        std::vector<unsigned int>::iterator&,
                        std::vector<Vertex>& transformedVertices,
-                       std::vector<unsigned int>&)> ClipShape = ClipTriangles;
+                       std::vector<unsigned int>&)> ClipShape = ClipLines;
 
     //render vertices of each entity
     for (const Entity& entity : pScene->entities)

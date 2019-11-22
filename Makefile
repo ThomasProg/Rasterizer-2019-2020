@@ -1,13 +1,13 @@
 MAKEFLAGS+=--no-builtin-rules --no-builtin-variables
 
 CXXFLAGS=-O0 -g -Wall -MMD -Wno-unused-function
-CXXFLAGS+=-Iinclude -ItestMains
+CXXFLAGS+=-Iinclude -ItestMains -Iinclude/maths
 CFLAGS=$(CXXFLAGS)
 CC=gcc
 CXX=g++
 
 LDLIBS=-Llib -lglfw -lSDL2 -lSDL2main -lGL -lGLU -ldl
-SRC=$(wildcard src/*.cpp) testMains/mainTestMatrix.cpp
+SRC=$(wildcard src/*.cpp) $(wildcard src/maths/*.cpp)
 OBJS=$(patsubst %.cpp, %.o, $(SRC))
 DEPS=$(OBJS:.o=.d)
 

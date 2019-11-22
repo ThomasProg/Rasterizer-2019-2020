@@ -55,14 +55,24 @@ Mesh* Mesh::CreateCube()
     mesh->vertices.push_back(Vec3(min, min, min));
 
     //visible faces (see schema)
-    mesh->addQuad(6, 2, 4, 5); //x+
-    mesh->addQuad(1, 2, 6, 7); //y+
-    mesh->addQuad(2, 1, 3, 4); //z+
+    mesh->addQuad(5, 1, 3, 4); //x+
+    mesh->addQuad(0, 1, 5, 6); //y+
+    mesh->addQuad(1, 0, 2, 3); //z+
 
     //hidden faces (see schema)
-    mesh->addQuad(1, 2, 6, 7); //x-
-    mesh->addQuad(4, 3, 8, 5); //y-
-    mesh->addQuad(7, 1, 3, 8); //z- 
+    mesh->addQuad(0, 1, 5, 6); //x-
+    mesh->addQuad(3, 2, 7, 4); //y-
+    mesh->addQuad(6, 0, 2, 7); //z- 
+
+    // //visible faces (see schema)
+    // mesh->addQuad(6, 2, 4, 5); //x+
+    // mesh->addQuad(1, 2, 6, 7); //y+
+    // mesh->addQuad(2, 1, 3, 4); //z+
+
+    // //hidden faces (see schema)
+    // mesh->addQuad(1, 2, 6, 7); //x-
+    // mesh->addQuad(4, 3, 8, 5); //y-
+    // mesh->addQuad(7, 1, 3, 8); //z- 
 
     return mesh;
 }

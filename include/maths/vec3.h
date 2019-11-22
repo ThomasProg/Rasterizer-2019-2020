@@ -15,7 +15,7 @@ public:
 
     float GetMagnitude() const;
     void  Normalize();
-   
+    float& operator[](unsigned int index);
 };
 
 Vec3 operator+(const Vec3&, const Vec3&);

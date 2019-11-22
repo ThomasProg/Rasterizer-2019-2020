@@ -5,21 +5,20 @@ struct Color;
 
 class Texture
 {
+public:
+    const unsigned int width, height;
 private:
-    unsigned int width, height;
     Color* pixels = nullptr;
 
 public:
     Texture() = delete;
     Texture(unsigned int width, unsigned int height);
+    ~Texture();
 
     void SetPixelColor(unsigned int x, unsigned int y, Color c);
     Color GetPixelColor(unsigned int x, unsigned int y) const;
 
     void FillBlack();
-
-    //
-    void getSize(unsigned int& width, unsigned int& height) const;
 };
 
 #endif

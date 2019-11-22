@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cassert>
 
 #include "vec3.h"
 #include "vec4.h"
@@ -30,6 +31,26 @@ void  Vec3::Normalize()
     x /= magnitude;
     y /= magnitude;
     z /= magnitude;
+}
+
+float& Vec3::operator[](unsigned int index)
+{
+    assert(index < 3);
+
+    switch (index)
+    {
+    case 0:
+        return x;
+        break;
+
+    case 1:
+        return y;
+        break;
+
+    default: //default is last
+        return z; 
+        break;
+    }
 }
 
 Vec3 operator+(const Vec3& a, const Vec3& b)

@@ -33,21 +33,17 @@ SDL_Utilities::SDL_Utilities(bool& isValid)
 SDL_Utilities::~SDL_Utilities()
 {
     std::cout << "SDL Error : " << SDL_GetError() << std::endl;
-    SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
     SDL_Quit();
 }
 
 void SDL_Utilities::textureToSDL(const Texture& tex, SDL_Renderer* renderer)
 {
-    unsigned int width, height;
-    tex.getSize(width, height);
-
-
     Color color;
-    for (unsigned int y = 0; y < height; y++)
+    for (unsigned int y = 0; y < tex.height; y++)
     {
-        for (unsigned int x = 0; x < width; x++)
+        for (unsigned int x = 0; x < tex.width; x++)
         {
             color = tex.GetPixelColor(x, y);
             // if (x % 15 == 0 && y % 15 == 0)
