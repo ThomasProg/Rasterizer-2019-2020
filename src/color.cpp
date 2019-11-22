@@ -10,7 +10,7 @@ Color::Color()
 }
 
 Color::Color(unsigned char r, unsigned char g, unsigned char b)
-  : r(r), g(g), b(g), a(255) //255 = char max
+  : r(r), g(g), b(b), a(255) //255 = char max
 {
 
 }

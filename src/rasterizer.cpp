@@ -24,8 +24,10 @@ typedef std::vector<unsigned int>::iterator indiceIt;
 
 Vec3 projection(Vec3 vec)
 {
-    return Vec3((vec.x/2.f + 0.5f) * windowWidth,
-                (vec.y/2.f + 0.5f) * windowHeight, vec.z);
+    return Vec3(((vec.x/5) + 1) * 0.5 * windowWidth, windowHeight - ((vec.y/5) + 1) * 0.5 * windowHeight, 0);
+
+    // return Vec3((vec.x/2.f + 0.5f) * windowWidth,
+    //             (vec.y/2.f + 0.5f) * windowHeight, vec.z);
 }
 
 /* 
@@ -72,7 +74,7 @@ void Rasterizer::RenderLines(Texture* pTarget,
             Vec3 point(x1 + i * vec2.x, y1 + i * vec2.y, 0);
             float weight1 = Vec2(point.x - x1, point.y - y1).GetMagnitude() / magnitude;
             float weight2 = Vec2(point.x - x1, point.y - y1).GetMagnitude() / magnitude;
-            Color c(255,0,0);
+            Color c(weight1,weight2,0);
             pTarget->SetPixelColor(point.x, point.y, c);
         }
     }
@@ -100,10 +102,8 @@ bool getWeight(const Vec2& p, const Vec2& p1, const Vec2& p2, const Vec2& p3, fl
 }
 
 // /////////////////////////////////////////////////
-// ///////////////////START///////////////////////
+// ///////////////////TRIANGLES///////////////////////
 // /////////////////////////////////////////////////
-
-Vertex M_VERTICES[3]; //TODO : TODELETE : DELETE
 
 Color getColorInTriangle(Vec2 p, const std::array<const Vertex*, 3>& triangleVertices)
 {
@@ -113,111 +113,33 @@ Color getColorInTriangle(Vec2 p, const std::array<const Vertex*, 3>& triangleVer
 
     for (unsigned int i = 0; i < 3; i++)
     {
-        c.r += weight[0] * triangleVertices[i]->color.r;
-        c.g += weight[1] * triangleVertices[i]->color.g;
-        c.b += weight[2] * triangleVertices[i]->color.b;
+        c.r += weight[i] * triangleVertices[i]->color.r;
+        c.g += weight[i] * triangleVertices[i]->color.g;
+        c.b += weight[i] * triangleVertices[i]->color.b;
     }
-
-        //std::cout << (int)triangleVertices[0]->color.g << '\n';
 
     return c;
 }
 
-// ///////draw an horizontal line//////// O(n)
-// //TODO : add Vertex
-//
-void drawHorizontalLine(Vec2 xMinMax, int height, Texture* pTarget, const std::array<const Vertex*, 3>& triangleVertices2)
+///////draw an horizontal line//////// O(n)
+void drawHorizontalLine(Vec2 xMinMax, int height, Texture* pTarget, const std::array<const Vertex*, 3>& triangleVertices)
 {
     Color c(0, 0, 0, 255);
-    float weight[3];
-std::array<const Vertex*, 3> triangleVertices;
-triangleVertices[0] = &M_VERTICES[0];
-triangleVertices[1] = &M_VERTICES[1];
-triangleVertices[2] = &M_VERTICES[2];
 
     if (xMinMax.x > xMinMax.y)
-        for (int x = xMinMax.y; x < xMinMax.x; x++)
+        for (int x = xMinMax.y+1; x < xMinMax.x; x++)
         {
-            // c = Color(0,0,0);
-            // getWeight(Vec2(x, height), 
-            //             triangleVertices[0]->position, 
-            //             triangleVertices[1]->position, 
-            //             triangleVertices[2]->position, 
-            //             weight);
-
-            // for (unsigned int i = 0; i < 3; i++)
-            // {
-            //     c.r += weight[0] * triangleVertices[i]->color.r;
-            //     c.g += weight[1] * triangleVertices[i]->color.g;
-            //     c.b += weight[2] * triangleVertices[i]->color.b;
-            // }
-
             c = getColorInTriangle(Vec2(x, height), triangleVertices);
-
-            // getWeight(Vec2(x, height), 
-            //             triangleVertices[0]->position, 
-            //             triangleVertices[1]->position, 
-            //             triangleVertices[2]->position, 
-            //             weight);
-
-            // for (unsigned int i = 0; i < 3; i++)
-            // {
-            //     c.r += weight[0] * M_VERTICES[i].color.r;
-            //     c.g += weight[1] * M_VERTICES[i].color.g;
-            //     c.b += weight[2] * M_VERTICES[i].color.b;
-            // }
-
-            // c.r = weight[0] * M_VERTICES[0].color.r;
-            // c.g = weight[1] * M_VERTICES[1].color.g;
-            // c.b = weight[2] * M_VERTICES[2].color.b;
-
-            // c.r = weight[0] * 255;
-            // c.g = weight[1] * 255;
-            // c.b = weight[2] * 255;
             
             pTarget->SetPixelColor(x, height, c);
         }
     else 
-        for (int x = xMinMax.x; x < xMinMax.y; x++)
+        for (int x = xMinMax.x+1; x < xMinMax.y; x++)
         {
-            // c = Color(0,0,0);
-            // getWeight(Vec2(x, height), 
-            //             triangleVertices[0]->position, 
-            //             triangleVertices[1]->position, 
-            //             triangleVertices[2]->position, 
-            //             weight);
-
-            // for (unsigned int i = 0; i < 3; i++)
-            // {
-            //     c.r += weight[0] * triangleVertices[i]->color.r;
-            //     c.g += weight[1] * triangleVertices[i]->color.g;
-            //     c.b += weight[2] * triangleVertices[i]->color.b;
-            // }
             c = getColorInTriangle(Vec2(x, height), triangleVertices);
-
-            // getWeight(Vec2(x, height), 
-            //             triangleVertices[0]->position, 
-            //             triangleVertices[1]->position, 
-            //             triangleVertices[2]->position, 
-            //             weight);
-
-            // for (unsigned int i = 0; i < 3; i++)
-            // {
-            //     c.r += weight[0] * M_VERTICES[i].color.r;
-            //     c.g += weight[1] * M_VERTICES[i].color.g;
-            //     c.b += weight[2] * M_VERTICES[i].color.b;
-            // }
-            // c.r = weight[0] * M_VERTICES[0].color.r;
-            // c.g = weight[1] * M_VERTICES[1].color.g;
-            // c.b = weight[2] * M_VERTICES[2].color.b;
-
-            // c.r = weight[0] * 255;
-            // c.g = weight[1] * 255;
-            // c.b = weight[2] * 255;
 
             pTarget->SetPixelColor(x, height, c);
         }
-    //std::cout << (int)triangleVertices[0]->color.r << "\n";
 }
 
 // //TODO : replace Vec2 by Vertex
@@ -227,9 +149,6 @@ triangleVertices[2] = &M_VERTICES[2];
 //  */
 void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, Texture* pTarget)
 {
-    // A = v1;
-    // B = v2;
-    // C = v3;
     const Vec3& v1 = triangleVertices[0]->position;
     const Vec3& v2 = triangleVertices[1]->position;
     const Vec3& v3 = triangleVertices[2]->position;
@@ -249,14 +168,13 @@ void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices
 
 //TODO : replace Vec2 by Vertex
 /* 
- * if used, draw vertices as BottomFlatTriangle
+ * if used, draw vertices as BottomFlatTr    // A = v1;
+    // B = v2;
+    // C = v3;iangle
  * Complexity : O(n^2)
  */
 void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, Texture* pTarget)
 {
-    // A = v1;
-    // B = v2;
-    // C = v3;
     const Vec3& v1 = triangleVertices[0]->position;
     const Vec3& v2 = triangleVertices[1]->position;
     const Vec3& v3 = triangleVertices[2]->position;
@@ -274,38 +192,6 @@ void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices, T
     }
 }
 
-// // /* 
-// //  * if used, draw vertices as BottomFlatTriangle
-// //  * Complexity : Best case  : O(n^2)
-// //  *              Worst case : O(2 * n^2)
-// //  */
-// // void drawTriangle(Vec2 v1, Vec2 v2, Vec2 v3, Texture* pTarget)
-// // {
-// //    /* at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice */
-// //   //sortVerticesAscendingByY();
-// //   //if (v1.y > v2.y && v1.y > )
-
-// //   /* here we know that v1.y <= v2.y <= v3.y */
-// //   /* check for trivial case of bottom-flat triangle */
-// //   if (v2.y == v3.y)
-// //   {
-// //     fillBottomFlatTriangle(v1, v2, v3, pTarget);
-// //   }
-// //   /* check for trivial case of top-flat triangle */
-// //   else if (v1.y == v2.y)
-// //   {
-// //     fillTopFlatTriangle(v1, v2, v3, pTarget);
-// //   }
-// //   else
-// //   {
-// //     /* general case - split the triangle in a topflat and bottom-flat one */
-// //     Vec2 v4 = Vec2(
-// //       (int)(v1.x + ((float)(v2.y - v1.y) / (float)(v3.y - v1.y)) * (v3.x - v1.x)), v2.y);
-// //     fillBottomFlatTriangle(v1, v2, v4, pTarget);
-// //     fillTopFlatTriangle(v2, v4, v3, pTarget);
-// //   }
-// // }
-
 void Rasterizer::RenderTriangles(Texture* pTarget, 
                             const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it)
 {
@@ -315,10 +201,6 @@ void Rasterizer::RenderTriangles(Texture* pTarget,
     triangleVertices[0] = &vertices[*it++];
     triangleVertices[1] = &vertices[*it++];
     triangleVertices[2] = &vertices[*it++];
-
-    M_VERTICES[0] = *triangleVertices[0];
-    M_VERTICES[1] = *triangleVertices[1];
-    M_VERTICES[2] = *triangleVertices[2];
 
     //sort
     if (triangleVertices[0]->position.y > triangleVertices[1]->position.y)
@@ -390,8 +272,6 @@ void add4ClippedVertex(const Vec4* vertices,
                       std::vector<unsigned int>& transformedIndices)
 {
     //homogenizing
-    Vec3 homogenizedVec3 = vertices[0].getHomogenizedVec();
-
     for (unsigned int i = 0; i < 4; i++)
     {
         transformedVertices.push_back(Vertex(projection(vertices[i].getHomogenizedVec()), color[i]));
@@ -419,15 +299,11 @@ void Rasterizer::ClipLines(const Entity& entity, Texture* pTarget,
     Vec4 vert1 = entity.transformation * Vec4(vertex1.position, 1);
     Vec4 vert2 = entity.transformation * Vec4(vertex2.position, 1);
 
-    float coeff_dir = (vert2.y-vert1.x)/(vert2.y-vert1.x);
-    float OrdonneOrigin = vert1.y+coeff_dir*vert1.x;
-    float norme = sqrtf(pow((vert2.x-vert1.x),2) + pow((vert2.y-vert1.y),2));
+    //float coeff_dir = (vert2.y-vert1.x)/(vert2.y-vert1.x);
+    //float OrdonneOrigin = vert1.y+coeff_dir*vert1.x;
+    //float norme = sqrtf(pow((vert2.x-vert1.x),2) + pow((vert2.y-vert1.y),2));
     
-    if (!vert1.isInsideWSizedCube() && !vert2.isInsideWSizedCube())
-    {
-        
-    }
-    else if (!vert1.isInsideWSizedCube() && vert2.isInsideWSizedCube())
+    if (!vert1.isInsideWSizedCube() && vert2.isInsideWSizedCube())
     {
         float x = vert1.y;
         if (vert1.x > vert1.w || vert1.x < -vert1.w)
