@@ -452,6 +452,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget)
     std::vector<unsigned int>::iterator it = indices.begin();
     while (it != indices.end())
     {
+        //it++;
         //RenderPoints(entity, pTarget, entity.mesh->vertices, it);
         RenderByShape(pTarget, transformedVertices, it);
         //RenderByShape(pTarget, transformedVertices, it);

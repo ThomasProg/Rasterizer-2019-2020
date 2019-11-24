@@ -21,20 +21,24 @@ int main(int argc, char** argv)
 
 
     Scene scene;
-
-    Entity cube;
-    cube.mesh = Mesh::CreateCube();
     unsigned int i = 0;
-    for (Vertex& vertex : cube.mesh->vertices)
+
+    //for (unsigned int j = 0; j < 20; j++)
     {
-        if (i % 2 == 0)
-            vertex.color = Color(i*(255/6), 0, 0);
-        else
-            vertex.color = Color(0, i*(255/6), 0);
-        i++;
+        Entity cube;
+        cube.mesh = Mesh::CreateCube();
+        i = 0;
+        for (Vertex& vertex : cube.mesh->vertices)
+        {
+            if (i % 2 == 0)
+                vertex.color = Color(i*(255/6), 0, 0);
+            else
+                vertex.color = Color(0, i*(255/6), 0);
+            i++;
+        }
+        cube.transformation *= Mat4::CreateScaleMatrix(Vec3(0.9, 0.9, 0.9));
+        scene.entities.push_back(cube);
     }
-    cube.transformation *= Mat4::CreateScaleMatrix(Vec3(0.9, 0.9, 0.9));
-    scene.entities.push_back(cube);
 
     //triangle.mesh = Mesh::CreateSphere(100, 100);
     //triangle.mesh = Mesh::CreateCube();
@@ -64,7 +68,7 @@ int main(int argc, char** argv)
     // scene.entities.push_back(triangle);
     // }
     Entity sphere;
-    sphere.mesh = Mesh::CreateSphere(20, 20);
+    sphere.mesh = Mesh::CreateSphere(10, 10);
     float ii = 0;
     for (Vertex& vertex : sphere.mesh->vertices)
     {

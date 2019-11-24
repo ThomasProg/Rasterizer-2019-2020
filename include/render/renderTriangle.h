@@ -17,6 +17,11 @@ private:
     //array of const pointers to const Vertex
     std::array<Vertex const *, 3> triangleVertices;
     FrameBuffer * const pTarget;
+
+private: 
+    float det;
+    float cst[4];
+
 public:
 
     RenderTriangle() = delete;
@@ -25,7 +30,7 @@ public:
     RenderTriangle(const std::array<const Vertex*, 3>& triangleVertices, FrameBuffer* pTarget);
     //RenderTriangle(Vertex const * const v1, Vertex const * const v2, Vertex const * const v3);
     
-    void draw() const;
+    void draw();
     void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
     void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
     void drawHorizontalLine(Vec2 p1, Vec2 p2, int height, const std::array<const Vertex*, 3>& triangleVertices) const;
