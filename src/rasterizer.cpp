@@ -7,6 +7,8 @@
 
 #include "rasterizer.h"
 
+#include "light.h"
+
 #include "macros.h"
 
 #include "scene.h"
@@ -29,17 +31,17 @@ typedef std::vector<unsigned int>::iterator indiceIt;
 
 Vec3 Rasterizer::projection(const Vec3& vec)
 {
-    return Vec3(((vec.x/5) + 1) * 0.5 * windowWidth, windowHeight - ((vec.y/5) + 1) * 0.5 * windowHeight, vec.z);
+    //return Vec3(((vec.x/5) + 1) * 0.5 * windowWidth, windowHeight - ((vec.y/5) + 1) * 0.5 * windowHeight, vec.z);
 
-    // return Vec3((vec.x/2.f + 0.5f) * windowWidth,
-    //             (vec.y/2.f + 0.5f) * windowHeight, vec.z);
+    return Vec3((vec.x/2.f + 0.5f) * windowWidth,
+                (vec.y/2.f + 0.5f) * windowHeight, vec.z);
 }
 
 /* 
  * if used, draw vertices as points
  * Complexity : O(1)
  */
-void Rasterizer::RenderPoints(FrameBuffer* pTarget, 
+void Rasterizer::RenderPoints(FrameBuffer* pTarget, std::vector<Light>& lights, 
                               std::vector<Vertex>& vertices, indiceIt& it)
 {
     const Vertex& vertex = vertices[*it++];
@@ -90,7 +92,7 @@ void drawLine(FrameBuffer* pTarget, const Vertex& vertex1, const Vertex& vertex2
  * if used, draw vertices as lines
  * Complexity : O(n), n being the distance on screen between the 2 points
  */
-void Rasterizer::RenderLines(FrameBuffer* pTarget, 
+void Rasterizer::RenderLines(FrameBuffer* pTarget, std::vector<Light>& lights,
                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it)
 {
     //get first point on screen
@@ -100,7 +102,7 @@ void Rasterizer::RenderLines(FrameBuffer* pTarget,
     drawLine(pTarget, vertex1, vertex2);
 }
 
-void Rasterizer::RenderTriangles(FrameBuffer* pTarget, 
+void Rasterizer::RenderTriangles(FrameBuffer* pTarget, std::vector<Light>& lights,
                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it)
 {
     // std::array<Vertex*, 3> triangleVertices3D;
@@ -118,17 +120,17 @@ void Rasterizer::RenderTriangles(FrameBuffer* pTarget,
     triangleVertices[2].setFromVertex(vertices[*it++], Rasterizer::projection);
 
 
-    //draw normals
-    Vec3 n1 = Rasterizer::projection(triangleVertices[0].normal*(1) + triangleVertices[0].position3D);
-    Vec3 n2 = Rasterizer::projection(triangleVertices[1].normal*(1) + triangleVertices[1].position3D);
-    Vec3 n3 = Rasterizer::projection(triangleVertices[2].normal*(1) + triangleVertices[2].position3D);
+    // //draw normals
+    // Vec3 n1 = Rasterizer::projection(triangleVertices[0].normal*(1) + triangleVertices[0].position3D);
+    // Vec3 n2 = Rasterizer::projection(triangleVertices[1].normal*(1) + triangleVertices[1].position3D);
+    // Vec3 n3 = Rasterizer::projection(triangleVertices[2].normal*(1) + triangleVertices[2].position3D);
     
-    drawLine(pTarget, triangleVertices[0].position2D, n1);
-    drawLine(pTarget, triangleVertices[1].position2D, n2);
-    drawLine(pTarget, triangleVertices[2].position2D, n3);
+    // drawLine(pTarget, triangleVertices[0].position2D, n1);
+    // drawLine(pTarget, triangleVertices[1].position2D, n2);
+    // drawLine(pTarget, triangleVertices[2].position2D, n3);
 
 
-    // //wireframe mode
+    //wireframe mode
     drawLine(pTarget, triangleVertices[0].position2D, triangleVertices[1].position2D);
     drawLine(pTarget, triangleVertices[1].position2D, triangleVertices[2].position2D);
     drawLine(pTarget, triangleVertices[2].position2D, triangleVertices[0].position2D);
@@ -141,8 +143,8 @@ void Rasterizer::RenderTriangles(FrameBuffer* pTarget,
     // if (triangleVertices[0]->position.y > triangleVertices[1]->position.y)
     //     std::swap(triangleVertices[0], triangleVertices[1]);
 
-    RenderTriangle tri(triangleVertices, pTarget);
-    tri.draw();
+    //RenderTriangle tri(triangleVertices, pTarget, lights);
+    //tri.draw();
 }
 
 // /////////////////////////////////////////////////
@@ -321,6 +323,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget)
     indices.reserve(100);
 
     std::function<void(FrameBuffer*, 
+                       std::vector<Light>& lights,
                        std::vector<Vertex>&, 
                        std::vector<unsigned int>::iterator&)> RenderByShape = RenderTriangles;
 
@@ -356,7 +359,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget)
     while (it != indices.end())
     {
         //RenderPoints(entity, pTarget, entity.mesh->vertices, it);
-        RenderByShape(pTarget, transformedVertices, it);
+        RenderByShape(pTarget, pScene->lights, transformedVertices, it);
         //RenderByShape(pTarget, transformedVertices, it);
     }
 }

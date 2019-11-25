@@ -62,14 +62,14 @@ Mesh* Mesh::CreateCube()
 #undef ADDING_VERTEX_AND_NORMAL
 
     //visible faces (see schema)
-    mesh->addQuad(1, 3, 4, 5); //x+
-    mesh->addQuad(0, 1, 5, 6); //y+
+    mesh->addQuad(1, 5, 4, 3); //x+
+    mesh->addQuad(0, 6, 5, 1); //y+
     mesh->addQuad(0, 1, 3, 2); //z+
 
     //hidden faces (see schema)
     mesh->addQuad(0, 2, 7, 6); //x-
     mesh->addQuad(2, 3, 4, 7); //y-
-    mesh->addQuad(4, 5, 6, 7); //z- 
+    mesh->addQuad(6, 7, 4, 5); //z- 
 
     return mesh;
 }
@@ -90,7 +90,7 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
         }
     }
 
-    mesh->vertices.emplace_back(Vec3(0.0f, 1.f/2, 0.0f));
+    mesh->vertices.emplace_back(Vec3(0.0f, 1.f/2, 0.0f), Vec3(0.0f, 1.f/2, 0.0f));
 
     for (unsigned int j = 0; j < longitudeCount - 1; ++j)
     {
@@ -128,7 +128,7 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
         }
     }
 
-    mesh->vertices.emplace_back(Vec3(0.0f, -1.f/2, 0.0f));
+    mesh->vertices.emplace_back(Vec3(0.0f, -1.f/2, 0.0f), Vec3(0.0f, -1.f/2, 0.0f));
 
     //sphere poles triangle indices
     for (unsigned int i = 0; i < latitudeCount; ++i)

@@ -73,3 +73,22 @@ std::ostream& operator<<(std::ostream& stream, const Vec3& vector)
     stream << "x : " << vector.x << " | y : " << vector.y << " | z : " << vector.z << std::endl;
     return stream;
 }
+
+float dotProduct(Vec3 vect1, Vec3 vect2)
+{
+    return (vect1.x*vect2.x)+(vect1.y*vect2.y)+(vect1.z*vect2.z);
+}
+Vec3 Vec3::operator-(const Vec3& vect) const
+{
+    return Vec3(x - vect.x, y - vect.y, z - vect.z);
+}
+
+Vec3 crossProduct(Vec3 v1, Vec3 v2)
+{
+    return Vec3
+    (
+        v1.y * v2.z - v1.z * v2.y,
+        v1.z * v2.x - v1.x * v2.z,
+        v1.x * v2.y - v1.y * v2.x
+    );
+}

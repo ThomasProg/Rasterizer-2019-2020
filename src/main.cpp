@@ -21,24 +21,30 @@ int main(int argc, char** argv)
 
 
     Scene scene;
+    Light l;
+    l.ambientComponent = 0.5;
+    scene.lights.push_back(Light());
+
+
     unsigned int i = 0;
 
     //for (unsigned int j = 0; j < 20; j++)
-    {
-        Entity cube;
-        cube.mesh = Mesh::CreateCube();
-        i = 0;
-        for (Vertex& vertex : cube.mesh->vertices)
-        {
-            if (i % 2 == 0)
-                vertex.color = Color(i*(255/6), 0, 0);
-            else
-                vertex.color = Color(0, i*(255/6), 0);
-            i++;
-        }
-        cube.transformation *= Mat4::CreateScaleMatrix(Vec3(0.9, 0.9, 0.9));
-        scene.entities.push_back(cube);
-    }
+    // {
+    //     Entity cube;
+    //     cube.mesh = Mesh::CreateCube();
+    //     i = 0;
+    //     for (Vertex& vertex : cube.mesh->vertices)
+    //     {
+    //         if (i % 2 == 0)
+    //             vertex.color = Color(i*(255/6), 0, 0);
+    //         else
+    //             vertex.color = Color(0, i*(255/6), 0);
+    //         i++;
+    //     }
+    //     cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0, 0));
+    //     cube.transformation *= Mat4::CreateScaleMatrix(Vec3(0.9, 0.9, 0.9));
+    //     scene.entities.push_back(cube);
+    // }
 
     //triangle.mesh = Mesh::CreateSphere(100, 100);
     //triangle.mesh = Mesh::CreateCube();
@@ -67,16 +73,17 @@ int main(int argc, char** argv)
     // triangle.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.5, 0, -1));
     // scene.entities.push_back(triangle);
     // }
+
     Entity sphere;
-    sphere.mesh = Mesh::CreateSphere(10, 10);
+    sphere.mesh = Mesh::CreateSphere(15, 15);
     float ii = 0;
     for (Vertex& vertex : sphere.mesh->vertices)
     {
         vertex.color = Color(i, 0, 255);
         ii += 255 / 20*20;
     }
-    sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-0.5, 0, 0));
-    sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(0.8, 0.8, 0.8));
+    sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
+    sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(0.9, 0.9, 0.9));
     scene.entities.push_back(sphere);
 
     //scene.entities[0].transformation *= Mat4::CreateScaleMatrix(Vec3(0.5, 2, 2));
@@ -111,6 +118,7 @@ int main(int argc, char** argv)
         totalFps += fps;
         lastTime = time;
         std::cout << totalFps / nbFps << std::endl;
+        //std::cout << fps << std::endl;
         //triangle.mesh->vertices[1].color.b = 255;
         //std::cout << (int)triangle.mesh->vertices[0].color.r << std::endl;
         frame += 1;

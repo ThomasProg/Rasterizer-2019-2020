@@ -2,6 +2,7 @@
 #define _RENDER_TRIANGLE_H_
 
 #include <array>
+#include <vector>
 
 #include "vec2.h"
 
@@ -10,6 +11,7 @@ class FrameBuffer;
 class Vertex;
 class RasterizingVertex;
 class Color;
+class Light;
 
 class RenderTriangle
 {
@@ -18,6 +20,7 @@ private:
     //array of const pointers to const Vertex
     std::array<RasterizingVertex const *, 3> triangleVertices;
     FrameBuffer * const pTarget;
+    std::vector<Light>& lights;
 
 private: 
     float det;
@@ -28,7 +31,7 @@ public:
     RenderTriangle() = delete;
 
     // RenderTriangle(std::array<Vertex const * const, 3> triangleVertices);
-    RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget);
+    RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget, std::vector<Light>& lights);
     //RenderTriangle(Vertex const * const v1, Vertex const * const v2, Vertex const * const v3);
     
     void draw();

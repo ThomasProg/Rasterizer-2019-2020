@@ -3,12 +3,14 @@
 
 #include "vec3.h"
 
-class Light
+struct Light
 {
-    Vec3 position;
-    float ambientComponent;
-    float diffuseComponent;
-    float specularComponent;
+    Vec3 position = Vec3(-1.0, 0, 0.0); //y is opposite of window
+    float ambientComponent = 0.5f;
+    float diffuseComponent = 1.0f;
+    float specularComponent = 0.5f;
+
+    //Light(Vec3 loc, float ambient = 0.5f, float diffuse = 0.5f, float specular = 0.5f);
 };
 
 #endif
