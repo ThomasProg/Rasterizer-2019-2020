@@ -145,7 +145,7 @@ int main(int argc, char** argv)
         }
 
         //rasterizer
-        Rasterizer::RenderScene(&scene, &target);
+        Rasterizer::RenderScene(&scene, &target, E_RasterizerMode::E_POINTS);
 
         target.texture.ToTexture(sdl_texturePtr);
         SDL_RenderClear(render.renderer);

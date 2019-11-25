@@ -44,11 +44,11 @@ Vec3 Rasterizer::projection(const Vec3& vec)
 void Rasterizer::RenderPoints(FrameBuffer* pTarget, std::vector<Light>& lights, 
                               std::vector<Vertex>& vertices, indiceIt& it)
 {
-    const Vertex& vertex = vertices[*it++];
-
+    RasterizingVertex vertex;
+    vertex.setFromVertex(vertices[*it++], Rasterizer::projection);
     //Vertex2 screenVertex = convertVertexToWindow(entity.transformation, vertex);
 
-    pTarget->SetPixel(vertex.position.x, vertex.position.y, vertex.position.z, vertex.color);
+    pTarget->SetPixel(vertex.position2D.x, vertex.position2D.y, vertex.position2D.z, vertex.color);
 }
 
 void drawLine(FrameBuffer* pTarget, const Vertex& vertex1, const Vertex& vertex2)
@@ -102,6 +102,22 @@ void Rasterizer::RenderLines(FrameBuffer* pTarget, std::vector<Light>& lights,
     drawLine(pTarget, vertex1, vertex2);
 }
 
+void Rasterizer::RenderWireframe(FrameBuffer* pTarget, std::vector<Light>& lights,
+                            std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it)
+{
+    std::array<RasterizingVertex, 3> triangleVertices;
+
+    //get first point on screen
+    triangleVertices[0].setFromVertex(vertices[*it++], Rasterizer::projection);
+    triangleVertices[1].setFromVertex(vertices[*it++], Rasterizer::projection);
+    triangleVertices[2].setFromVertex(vertices[*it++], Rasterizer::projection);
+
+    //wireframe mode
+    drawLine(pTarget, triangleVertices[0].position2D, triangleVertices[1].position2D);
+    drawLine(pTarget, triangleVertices[1].position2D, triangleVertices[2].position2D);
+    drawLine(pTarget, triangleVertices[2].position2D, triangleVertices[0].position2D);
+}
+
 void Rasterizer::RenderTriangles(FrameBuffer* pTarget, std::vector<Light>& lights,
                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it)
 {
@@ -114,9 +130,7 @@ void Rasterizer::RenderTriangles(FrameBuffer* pTarget, std::vector<Light>& light
 
     //get first point on screen
     triangleVertices[0].setFromVertex(vertices[*it++], Rasterizer::projection);
-
     triangleVertices[1].setFromVertex(vertices[*it++], Rasterizer::projection);
-
     triangleVertices[2].setFromVertex(vertices[*it++], Rasterizer::projection);
 
 
@@ -128,7 +142,6 @@ void Rasterizer::RenderTriangles(FrameBuffer* pTarget, std::vector<Light>& light
     // drawLine(pTarget, triangleVertices[0].position2D, n1);
     // drawLine(pTarget, triangleVertices[1].position2D, n2);
     // drawLine(pTarget, triangleVertices[2].position2D, n3);
-
 
     // //wireframe mode
     // drawLine(pTarget, triangleVertices[0].position2D, triangleVertices[1].position2D);
@@ -186,6 +199,26 @@ void add4ClippedVertex(const Vec4* vertices,
     transformedIndices.push_back(transformedVertices.size() - 4);
     transformedIndices.push_back(transformedVertices.size() - 2);
     transformedIndices.push_back(transformedVertices.size() - 1);
+}
+
+void Rasterizer::ClipPoints(const Entity& entity, FrameBuffer* pTarget, 
+                           const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it, //iterator of indices
+                           //outputs :
+                           std::vector<Vertex>& transformedVertices, 
+                           std::vector<unsigned int>& transformedIndices)
+{
+    Vertex vertex = vertices[*it++];
+    
+    vertex.position = entity.transformation * Vec4(vertex.position, 1);
+
+    RasterizingVertex vert;
+    vert.setFromVertex(vertex, Rasterizer::projection);
+
+    if (vert.position2D.x >= 0 && vert.position2D.x < windowWidth 
+    && vert.position2D.y >= 0 && vert.position2D.y < windowHeight)
+    {
+        addClippedVertex(vertex.position, vertex.color, vert.normal, transformedVertices, transformedIndices);
+    }
 }
 
 float resolve_equation(int index,float coord,float coordVect)
@@ -310,7 +343,7 @@ void Rasterizer::ClipTriangles(const Entity& entity, FrameBuffer* pTarget,
     }
 }
 
-void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget)
+void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, E_RasterizerMode mode)
 {
     assert(pScene != nullptr && pTarget != nullptr);
 
@@ -333,6 +366,26 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget)
                        std::vector<unsigned int>::iterator&,
                        std::vector<Vertex>& transformedVertices,
                        std::vector<unsigned int>&)> ClipShape = ClipTriangles;
+
+    switch(mode)
+    {
+        case E_RasterizerMode::E_POINTS :
+            RenderByShape = RenderPoints;
+            ClipShape     = ClipPoints;
+            break;
+
+        case E_RasterizerMode::E_TRIANGLES :
+            RenderByShape = RenderTriangles;
+            ClipShape     = ClipTriangles;
+            break;
+        
+        case E_RasterizerMode::E_TRIANGLES_AS_LINES :
+        case E_RasterizerMode::E_WIREFRAME :
+            RenderByShape = RenderWireframe;
+            ClipShape     = ClipTriangles;
+            break;
+            
+    }
  
     //render vertices of each entity
     for (const Entity& entity : pScene->entities)
