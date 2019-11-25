@@ -31,10 +31,10 @@ typedef std::vector<unsigned int>::iterator indiceIt;
 
 Vec3 Rasterizer::projection(const Vec3& vec)
 {
-    //return Vec3(((vec.x/5) + 1) * 0.5 * windowWidth, windowHeight - ((vec.y/5) + 1) * 0.5 * windowHeight, vec.z);
+    return Vec3(((vec.x/5) + 1) * 0.5 * windowWidth, windowHeight - ((vec.y/5) + 1) * 0.5 * windowHeight, vec.z);
 
-    return Vec3((vec.x/2.f + 0.5f) * windowWidth,
-                (vec.y/2.f + 0.5f) * windowHeight, vec.z);
+    // return Vec3((vec.x/2.f + 0.5f) * windowWidth,
+    //             (vec.y/2.f + 0.5f) * windowHeight, vec.z);
 }
 
 /* 
@@ -130,10 +130,10 @@ void Rasterizer::RenderTriangles(FrameBuffer* pTarget, std::vector<Light>& light
     // drawLine(pTarget, triangleVertices[2].position2D, n3);
 
 
-    //wireframe mode
-    drawLine(pTarget, triangleVertices[0].position2D, triangleVertices[1].position2D);
-    drawLine(pTarget, triangleVertices[1].position2D, triangleVertices[2].position2D);
-    drawLine(pTarget, triangleVertices[2].position2D, triangleVertices[0].position2D);
+    // //wireframe mode
+    // drawLine(pTarget, triangleVertices[0].position2D, triangleVertices[1].position2D);
+    // drawLine(pTarget, triangleVertices[1].position2D, triangleVertices[2].position2D);
+    // drawLine(pTarget, triangleVertices[2].position2D, triangleVertices[0].position2D);
 
     //sort
     // if (triangleVertices[0]->position.y > triangleVertices[1]->position.y)
@@ -143,8 +143,8 @@ void Rasterizer::RenderTriangles(FrameBuffer* pTarget, std::vector<Light>& light
     // if (triangleVertices[0]->position.y > triangleVertices[1]->position.y)
     //     std::swap(triangleVertices[0], triangleVertices[1]);
 
-    //RenderTriangle tri(triangleVertices, pTarget, lights);
-    //tri.draw();
+    RenderTriangle tri(triangleVertices, pTarget, lights);
+    tri.draw();
 }
 
 // /////////////////////////////////////////////////

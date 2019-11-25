@@ -13,6 +13,7 @@ struct Color
     //sizeof(Color) == 4, 
     //so we use less memory copying by copy instead of reference (using 4 more bytes)
     Color& operator=(Color setColor);
+    Color& operator*=(float scalar);
 };
 
 #endif

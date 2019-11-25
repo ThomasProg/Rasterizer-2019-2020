@@ -39,3 +39,11 @@ Color& Color::operator=(Color setColor)
 
     return *this;
 }
+
+Color& Color::operator*=(float scalar)
+{
+  r *= scalar;
+  g *= scalar;
+  b *= scalar;
+  return *this;
+}

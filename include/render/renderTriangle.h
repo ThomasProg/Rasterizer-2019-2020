@@ -41,6 +41,8 @@ public:
 
     bool getWeight(const Vec2& p, float* weight) const;
     Color getColorAtPixel(Vec2 p, bool& isValid, float* weight) const;
+
+    float getPixelLight(const RasterizingVertex& vertex) const;
 };
 
 #endif

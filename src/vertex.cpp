@@ -22,7 +22,7 @@ Vertex::Vertex(const Vec3& copiedLocation)
 
 Vertex::Vertex(const Vec3& position, const Vec3& normal)
     : position(position),
-      normal(normal),
+      normal(normal.getNormalized()),
       color(0,0,0)
 {
 

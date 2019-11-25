@@ -17,6 +17,8 @@ public:
     void  Normalize();
     float& operator[](unsigned int index);
     Vec3 operator-(const Vec3&) const;
+
+    Vec3 getNormalized() const;
 };
 
 Vec3 operator+(const Vec3&, const Vec3&);

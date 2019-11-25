@@ -29,22 +29,22 @@ int main(int argc, char** argv)
     unsigned int i = 0;
 
     //for (unsigned int j = 0; j < 20; j++)
-    // {
-    //     Entity cube;
-    //     cube.mesh = Mesh::CreateCube();
-    //     i = 0;
-    //     for (Vertex& vertex : cube.mesh->vertices)
-    //     {
-    //         if (i % 2 == 0)
-    //             vertex.color = Color(i*(255/6), 0, 0);
-    //         else
-    //             vertex.color = Color(0, i*(255/6), 0);
-    //         i++;
-    //     }
-    //     cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0, 0));
-    //     cube.transformation *= Mat4::CreateScaleMatrix(Vec3(0.9, 0.9, 0.9));
-    //     scene.entities.push_back(cube);
-    // }
+    {
+        Entity cube;
+        cube.mesh = Mesh::CreateCube();
+        i = 0;
+        for (Vertex& vertex : cube.mesh->vertices)
+        {
+            if (i % 2 == 0)
+                vertex.color = Color(i*(255/6), 2, 2);
+            else
+                vertex.color = Color(2, i*(255/6), 2);
+            i++;
+        }
+        cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(-1.0, 0, 0));
+        cube.transformation *= Mat4::CreateScaleMatrix(Vec3(0.9, 0.9, 0.9));
+        scene.entities.push_back(cube);
+    }
 
     //triangle.mesh = Mesh::CreateSphere(100, 100);
     //triangle.mesh = Mesh::CreateCube();
@@ -75,14 +75,14 @@ int main(int argc, char** argv)
     // }
 
     Entity sphere;
-    sphere.mesh = Mesh::CreateSphere(15, 15);
+    sphere.mesh = Mesh::CreateSphere(40, 40);
     float ii = 0;
     for (Vertex& vertex : sphere.mesh->vertices)
     {
-        vertex.color = Color(i, 0, 255);
-        ii += 255 / 20*20;
+        vertex.color = Color(i, 10, 255);
+        ii += 255.f / 20*20;
     }
-    sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
+    sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.5, 0.0, 0.0));
     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(0.9, 0.9, 0.9));
     scene.entities.push_back(sphere);
 
@@ -104,7 +104,7 @@ int main(int argc, char** argv)
     float frame = 0;
     float fps;
     float lastTime = 0.f;
-        //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.00, 0.00, PI/5));
+    //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.00, 0.00, PI/5));
     bool bRun = true;
     SDL_Event event;
 
