@@ -4,6 +4,8 @@
 #include "vec3.h"
 #include "color.h"
 
+class Mat4;
+
 struct Vertex
 {
     Vec3 position = Vec3(0, 0, 0);
@@ -13,7 +15,9 @@ struct Vertex
     Vertex();
     Vertex(const Vertex&);
     Vertex(const Vec3&);
-    Vertex(const Vec3&, Color/*, const Vec3& copiedNormal*/);
+    Vertex(const Vec3& position, const Vec3& normal);
+    //Vertex(const Vec3&, Color/*, const Vec3& copiedNormal*/);
+    Vertex(const Vec3&, const Vec3& copiedNormal, Color);
 };
 
 #endif

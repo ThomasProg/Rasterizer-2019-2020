@@ -46,7 +46,7 @@ Mesh* Mesh::CreateCube()
     constexpr float max = 0.5;
 
 #define ADDING_VERTEX_AND_NORMAL(vec) \
-    mesh->vertices.emplace_back(vec);
+    mesh->vertices.emplace_back(Vertex(vec, vec));
     //mesh->normals.emplace_back(vec);
 
     ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max));
@@ -113,7 +113,7 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
             double const z = sinVertical * sinHorizontal;
             //add vertice location
             //divide by 2 to put the sphere coordinates between -0.5 and 1
-            mesh->vertices.emplace_back(Vec3(x/2, y/2, z/2)); 
+            mesh->vertices.emplace_back(Vertex(Vec3(x/2, y/2, z/2), Vec3(x/2, y/2, z/2))); 
             //mesh->normals.emplace_back(Vec3(x/2, y/2, z/2));
 
             if (j < longitudeCount - 2)

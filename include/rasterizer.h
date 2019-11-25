@@ -10,6 +10,7 @@ class FrameBuffer;
 class Entity;
 class Vertex;
 class Vertex2;
+class Vec3;
 
 class Rasterizer
 {
@@ -17,14 +18,16 @@ private:
 
 public:
 
+    static Vec3 projection(const Vec3& vec);
+
     static void RenderPoints(FrameBuffer* pTarget, 
-                             const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
+                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
 
     static void RenderLines(FrameBuffer* pTarget, 
-                             const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
+                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
 
     static void RenderTriangles(FrameBuffer* pTarget, 
-                                const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
+                                std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
 
     static void ClipTriangles(const Entity& entity, FrameBuffer* pTarget, 
                                 const std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it,

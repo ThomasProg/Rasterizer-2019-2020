@@ -8,6 +8,7 @@
 class FrameBuffer;
 
 class Vertex;
+class RasterizingVertex;
 class Color;
 
 class RenderTriangle
@@ -15,7 +16,7 @@ class RenderTriangle
 private:
     //array of const Vertex& is not possible
     //array of const pointers to const Vertex
-    std::array<Vertex const *, 3> triangleVertices;
+    std::array<RasterizingVertex const *, 3> triangleVertices;
     FrameBuffer * const pTarget;
 
 private: 
@@ -27,7 +28,7 @@ public:
     RenderTriangle() = delete;
 
     // RenderTriangle(std::array<Vertex const * const, 3> triangleVertices);
-    RenderTriangle(const std::array<const Vertex*, 3>& triangleVertices, FrameBuffer* pTarget);
+    RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget);
     //RenderTriangle(Vertex const * const v1, Vertex const * const v2, Vertex const * const v3);
     
     void draw();
