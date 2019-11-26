@@ -125,6 +125,8 @@ int main(int argc, char** argv)
         //std::cout << (int)scene.entities[0].mesh->vertices[0].color.r << std::endl;
 
         scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
+        scene.entities[1].transformation *= Mat4::CreateTranslationMatrix(Vec3(0.00, 0.00, 10 * sin(frame/10)));
+
         //scene.entities[0].transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 0, -frame));
         //std::cout << scene.entities[0].transformation << std::endl;
         //inputs
@@ -145,7 +147,7 @@ int main(int argc, char** argv)
         }
 
         //rasterizer
-        Rasterizer::RenderScene(&scene, &target, E_RasterizerMode::E_POINTS);
+        Rasterizer::RenderScene(&scene, &target, E_RasterizerMode::E_TRIANGLES);
 
         target.texture.ToTexture(sdl_texturePtr);
         SDL_RenderClear(render.renderer);

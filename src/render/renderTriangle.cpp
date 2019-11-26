@@ -121,13 +121,6 @@ void RenderTriangle::draw()
             {
                 Color c(0,0,0);
 
-                Vec3 p(0, 0, 0); //3D point
-                //Vec3 n(1, 0, 0); //normal
-
-                    // p.x = triangleVertices[2]->position3D.x;
-                    // p.y = triangleVertices[2]->position3D.y;
-                    // p.z = triangleVertices[2]->position3D.z;
-
                 float intensity = 0.f;
 
                 //get color
@@ -138,14 +131,7 @@ void RenderTriangle::draw()
                     c.b += weight[i] * triangleVertices[i]->color.b;
 
 
-                     intensity += weight[i] * intensityVertex[i];
-                    p.x += weight[i] * triangleVertices[i]->position3D.x;
-                    p.y += weight[i] * triangleVertices[i]->position3D.y;
-                    p.z += weight[i] * triangleVertices[i]->position3D.z;
-
-                    // n.x += weight[i] * triangleVertices[i]->normal.x;
-                    // n.y += weight[i] * triangleVertices[i]->normal.y;
-                    // n.z += weight[i] * triangleVertices[i]->normal.z;
+                    intensity += weight[i] * intensityVertex[i];
                 }
                 // RasterizingVertex vert;
                 // vert.position3D = p;
@@ -169,28 +155,6 @@ void RenderTriangle::draw()
                     c.b = 255;       
                 else 
                     c.b *= intensity;    
-                //std::cout << n << '\n';
-                // Vec3 face1 = triangleVertices[1]->position3D - triangleVertices[2]->position3D;
-                // Vec3 face2 = triangleVertices[2]->position3D - triangleVertices[3]->position3D;
-                // n = crossProduct(face1, face2);
-                // if (n.GetMagnitude() <= 0)
-                // {
-                //     continue;
-                // }
-                //n = triangleVertices[0]->normal + triangleVertices[1]->normal + triangleVertices[2]->normal;
-                //std::cout << n << '\n';
-                // n = triangleVertices[0]->normal;
-                //n.Normalize();
-
-                //n = triangleVertices[0]->normal;
-
-                // n.x = 0;
-                // n.y = 0;
-                // n.z = 0;
-                // n.x = triangleVertices[1]->normal.y * triangleVertices[2]->normal.z - triangleVertices[1]->normal.y * triangleVertices[2]->normal.z;
-                // n.y = triangleVertices[1]->normal.y * triangleVertices[2]->normal.z - triangleVertices[1]->normal.y * triangleVertices[2]->normal.z;
-                // n.z = triangleVertices[1]->normal.y * triangleVertices[2]->normal.z - triangleVertices[1]->normal.y * triangleVertices[2]->normal.z;
-                // n.Normalize();
                 
                 //calcul z
                 float z = (v1.z) * weight[0] + (v2.z) * weight[1] + (v3.z) * weight[2];
