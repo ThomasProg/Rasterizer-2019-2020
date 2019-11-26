@@ -58,6 +58,7 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex) const
     float ambient  = 0.f;
     float diffuse  = 0.f;
     float specular = 0.f;
+    float total    = 0.f;
 
     for (const Light& light : lights)
     {
@@ -70,10 +71,13 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex) const
         Vec3 eyeToPixelVec = vertex.position3D; //TODO
         eyeToPixelVec.z -= 1;
         Vec3 lightReflection = 2 * dotProduct(vertex.normal, pixelLightDist) * vertex.normal - pixelLightDist;
-        specular = light.specularComponent * mat.specular * std::pow(dotProduct(lightReflection, eyeToPixelVec), mat.brillance);
+        if (dotProduct(lightReflection, eyeToPixelVec) > 0)
+        {
+            specular = light.specularComponent * mat.specular * std::pow(dotProduct(lightReflection, eyeToPixelVec), mat.brillance);
+        }
+
+        total += ambient + diffuse + specular;
     }
-    
-    float total = ambient + diffuse + specular;
 
     return total;
 }

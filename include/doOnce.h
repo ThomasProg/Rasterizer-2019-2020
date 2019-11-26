@@ -3,7 +3,7 @@
 
 #include <functional>
 
-struct S_DoOnce
+struct DoOnce
 {
 private:
     bool lastState = false;
@@ -12,15 +12,7 @@ public:
     bool isOn = false;
     std::function<void()> onSwitch = [](){};
     
-    void input(bool b)
-    {
-        if (b && lastState != b)
-        {
-            isOn = !isOn;
-            onSwitch();
-        }
-        lastState = b;
-    }
+    void input(bool b);
 };
 
 #endif
