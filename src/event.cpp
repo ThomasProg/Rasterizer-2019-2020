@@ -15,7 +15,7 @@ void entitiesInit(std::vector<Entity>& entities)
     //cube
     {
         unsigned int i = 0;
-        //for (unsigned int j = 0; j < 20; j++)
+        for (unsigned int j = 0; j < 20; j++)
         {
             Entity cube;
             cube.mesh = Mesh::CreateCube();
@@ -28,8 +28,8 @@ void entitiesInit(std::vector<Entity>& entities)
                     vertex.color = Color(2, i*(255/6), 2);
                 i++;
             }
-            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(-1.0, 0, 0));
-            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(0.9, 0.9, 0.9));
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(-0.5, 0, 0));
+            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
             entities.push_back(std::move(cube));
         }
     }
@@ -45,7 +45,7 @@ void entitiesInit(std::vector<Entity>& entities)
             ii += 255.f / 20*20;
         }
         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.5, 0.0, 0.0));
-        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(0.9, 0.9, 0.9));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
         entities.push_back(std::move(sphere));
     }
 }

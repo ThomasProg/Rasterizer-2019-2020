@@ -18,6 +18,8 @@ struct Vertex
     Vertex(const Vec3& position, const Vec3& normal);
     //Vertex(const Vec3&, Color/*, const Vec3& copiedNormal*/);
     Vertex(const Vec3&, const Vec3& copiedNormal, Color);
+
+    Vertex& operator=(const Vertex& vertex);
 };
 
 #endif

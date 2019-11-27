@@ -28,7 +28,7 @@ SDL_Utilities::SDL_Utilities(bool& isValid)
 
 SDL_Utilities::~SDL_Utilities()
 {
-    std::cout << "SDL Error : " << SDL_GetError() << std::endl;
+    std::cout << "SDL Success : " << SDL_GetError() << std::endl;
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

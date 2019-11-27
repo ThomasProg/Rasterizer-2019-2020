@@ -44,3 +44,10 @@ Vertex::Vertex(const Vec3& copiedLocation, const Vec3& copiedNormal, Color copie
 
 }
 
+Vertex& Vertex::operator=(const Vertex& vertex)
+{
+  position = vertex.position;
+  normal = vertex.normal;
+  color = vertex.color;
+  return *this;
+}

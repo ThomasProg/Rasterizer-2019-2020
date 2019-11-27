@@ -14,7 +14,7 @@
 constexpr int deltaPixelsX = 5; 
 constexpr int deltaPixelsY = 1; 
 
-RenderTriangle::RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget, std::vector<Light>& lights)
+RenderTriangle::RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget, const std::vector<Light>& lights)
     : triangleVertices({&triangleVertices[0], &triangleVertices[1], &triangleVertices[2]}),
       pTarget(pTarget),
       lights(lights)

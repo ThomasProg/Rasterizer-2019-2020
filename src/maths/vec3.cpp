@@ -4,6 +4,11 @@
 #include "vec3.h"
 #include "vec4.h"
 
+Vec3::Vec3()
+{
+    
+}
+
 Vec3::Vec3(float x, float y, float z)
     : x(x), 
       y(y),

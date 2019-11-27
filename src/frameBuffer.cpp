@@ -43,6 +43,7 @@ void FrameBuffer::ResetPixels()
 {
     texture.FillBlack();
     depthBuffer.resetDepth();
+    
     return;
     for (unsigned int i = width*height-1; i--;)
     {

@@ -10,11 +10,6 @@ class Entity
 public:
     Mesh* mesh = nullptr;
     Mat4 transformation;
-    Mat4 normalTransformation;
-
-public:
-    //Mesh getTransformedTriangles() const;
-
 };
 
 #endif
