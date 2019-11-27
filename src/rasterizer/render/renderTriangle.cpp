@@ -57,7 +57,7 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex) const
 
     float ambient  = 0.f;
     float diffuse  = 0.f;
-    float specular = 0.f;
+    float specular = 0.f;  
     float total    = 0.f;
 
     for (const Light& light : lights)
@@ -66,15 +66,25 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex) const
 
         Vec3 pixelLightDist = (light.position-vertex.position3D);
         pixelLightDist.Normalize();
-        diffuse = light.diffuseComponent * mat.diffuse * ((dotProduct(pixelLightDist,(vertex.normal))));
+        
+        float cosTeta  = dotProduct(pixelLightDist,(vertex.normal));
+        
+        if (cosTeta < 0)
+            cosTeta = 0;
+
+        diffuse = light.diffuseComponent * mat.diffuse * cosTeta;
 
         Vec3 eyeToPixelVec = vertex.position3D; //TODO
         eyeToPixelVec.z -= 1;
-        Vec3 lightReflection = 2 * dotProduct(vertex.normal, pixelLightDist) * vertex.normal - pixelLightDist;
-        if (dotProduct(lightReflection, eyeToPixelVec) > 0)
-        {
-            specular = light.specularComponent * mat.specular * std::pow(dotProduct(lightReflection, eyeToPixelVec), mat.brillance);
-        }
+        eyeToPixelVec.Normalize();
+        Vec3 h = pixelLightDist+eyeToPixelVec;
+        h.Normalize();
+        float cosAlpha = dotProduct(vertex.normal,h/h.GetMagnitude());
+
+        if (cosAlpha < 0)
+            cosAlpha = 0;
+
+        specular = light.specularComponent * mat.specular*std::pow(cosAlpha,mat.brillance);
 
         total += ambient + diffuse + specular;
     }
@@ -84,7 +94,7 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex) const
 
 void RenderTriangle::draw() 
 {
-    const Vec3& v1 = triangleVertices[0]->position2D;//Rasterizer::projection(triangleVertices[0]->position);
+    const Vec3& v1 = triangleVertices[0]->position2D;
     const Vec3& v2 = triangleVertices[1]->position2D;
     const Vec3& v3 = triangleVertices[2]->position2D;
 
@@ -107,10 +117,10 @@ void RenderTriangle::draw()
     bool isValid = false;
     float weight[3];
 
-    float intensityVertex[3];
-    intensityVertex[0] = getPixelLight(*triangleVertices[0]);
-    intensityVertex[1] = getPixelLight(*triangleVertices[1]);
-    intensityVertex[2] = getPixelLight(*triangleVertices[2]);
+    // float intensityVertex[3];
+    // intensityVertex[0] = getPixelLight(*triangleVertices[0]);
+    // intensityVertex[1] = getPixelLight(*triangleVertices[1]);
+    // intensityVertex[2] = getPixelLight(*triangleVertices[2]);
 
 
     //TODO : set WeightVar outside of the loops
@@ -127,6 +137,11 @@ void RenderTriangle::draw()
 
                 float intensity = 0.f;
 
+                 Vec3 p(0,0,0);
+
+                RasterizingVertex vert;
+                vert.position3D = p;
+
                 //get color
                 for (unsigned int i = 0; i < 3; i++)
                 {
@@ -134,34 +149,44 @@ void RenderTriangle::draw()
                     c.g += weight[i] * triangleVertices[i]->color.g;
                     c.b += weight[i] * triangleVertices[i]->color.b;
 
+                    p.x += weight[i] * triangleVertices[i]->position3D.x;
+                    p.y += weight[i] * triangleVertices[i]->position3D.y;
+                    p.z += weight[i] * triangleVertices[i]->position3D.z;
 
-                    intensity += weight[i] * intensityVertex[i];
+                    vert.normal += weight[i] * triangleVertices[i]->normal;
+
+                    //intensity += weight[i] * intensityVertex[i];
                 }
-                // RasterizingVertex vert;
-                // vert.position3D = p;
-                // intensity = getPixelLight(vert);
+                vert.normal.Normalize();
+                //vert.normal = crossProduct(v3-v1,v2-v1);
+                //intensity = getPixelLight(vert);
+                intensity = 1;
+                
+                c *= intensity;
 
-                if (intensity < 0)
-                    intensity = 0;
+                // if (intensity < 0)
+                //     intensity = 0;
 
-                //since -1 < intensity < 1, we need to lerp the intensity for the color
-                if (c.r > 255.f / intensity)
-                    c.r = 255;
-                else 
-                    c.r *= intensity;
+                // //since -1 < intensity < 1, we need to lerp the intensity for the color
+                // if (c.r > 255.f / intensity)
+                //     c.r = 255;
+                // else 
+                //     c.r *= intensity;
                     
-                if (c.g > 255.f / intensity)
-                    c.g = 255;
-                else 
-                    c.g *= intensity;
+                // if (c.g > 255.f / intensity)
+                //     c.g = 255;
+                // else 
+                //     c.g *= intensity;
 
-                if (c.b > 255.f / intensity)
-                    c.b = 255;       
-                else 
-                    c.b *= intensity;    
+                // if (c.b > 255.f / intensity)
+                //     c.b = 255;       
+                // else 
+                //     c.b *= intensity;    
                 
                 //calcul z
                 float z = (v1.z) * weight[0] + (v2.z) * weight[1] + (v3.z) * weight[2];
+                
+                //c *= z;
 
                 pTarget->SetPixel(x, y, z, c);
 

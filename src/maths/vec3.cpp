@@ -78,6 +78,19 @@ Vec3 operator*(float f, const Vec3& vec)
     return Vec3(vec.x * f, vec.y * f, vec.z * f);
 }
 
+Vec3 operator/(const Vec3& vec, float f)
+{
+    return Vec3(vec.x / f, vec.y / f, vec.z / f);
+}
+
+Vec3& Vec3::operator+=(const Vec3& vec)
+{
+    x += vec.x;
+    y += vec.y;
+    z += vec.z;
+    return *this;
+}
+
 std::ostream& operator<<(std::ostream& stream, const Vec3& vector)
 {
     stream << "x : " << vector.x << " | y : " << vector.y << " | z : " << vector.z << std::endl;

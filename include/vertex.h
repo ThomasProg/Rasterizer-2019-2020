@@ -12,6 +12,8 @@ struct Vertex
     Vec3 normal = Vec3(0, 0, 0);
     Color color;
 
+    float u, v;
+
     Vertex();
     Vertex(const Vertex&);
     Vertex(const Vec3&);

@@ -42,8 +42,31 @@ Color& Color::operator=(Color setColor)
 
 Color& Color::operator*=(float scalar)
 {
-  r *= scalar;
-  g *= scalar;
-  b *= scalar;
+  if (scalar < 0)
+      return *this;
+
+  else if (scalar == 0)
+  {
+    r = 0;
+    g = 0;
+    b = 0;
+  }
+
+  //since -1 < intensity < 1, we need to lerp the intensity for the color
+  if (r > 255.f / scalar)
+      r = 255;
+  else 
+      r *= scalar;
+      
+  if (g > 255.f / scalar)
+      g = 255;
+  else
+      g *= scalar;
+
+  if (b > 255.f / scalar)
+      b = 255;       
+  else 
+      b *= scalar;  
+
   return *this;
 }

@@ -39,6 +39,7 @@ public:
     void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
     void drawHorizontalLine(Vec2 p1, Vec2 p2, int height, const std::array<const Vertex*, 3>& triangleVertices) const;
 
+    bool getWeight2D(const Vec2& p, float* weight) const;
     bool getWeight(const Vec2& p, float* weight) const;
     Color getColorAtPixel(Vec2 p, bool& isValid, float* weight) const;
 

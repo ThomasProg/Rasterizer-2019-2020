@@ -8,10 +8,10 @@ private:
 public:
     Material(){};
     ~Material(){};
-    float ambient = 0.5; // [0, 1]
+    float ambient = 0.1; // [0, 1]
     float diffuse = 1.0; // [0, 1]
-    float specular = 0.0; //[0, 1]
-    float brillance = 1; // >> 1
+    float specular = 1.0; //[0, 1]
+    float brillance = 100; // >> 1
 };
 
 #endif

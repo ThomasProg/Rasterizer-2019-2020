@@ -12,10 +12,10 @@ void lightsInit(std::vector<Light>& lights)
 
 void entitiesInit(std::vector<Entity>& entities)
 {
-    //cube
+    // //cube
     {
         unsigned int i = 0;
-        for (unsigned int j = 0; j < 20; j++)
+        for (unsigned int j = 0; j < 1; j++)
         {
             Entity cube;
             cube.mesh = Mesh::CreateCube();
@@ -28,26 +28,40 @@ void entitiesInit(std::vector<Entity>& entities)
                     vertex.color = Color(2, i*(255/6), 2);
                 i++;
             }
-            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(-0.5, 0, 0));
-            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(-2.9, 0, 0.5));
+            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
             entities.push_back(std::move(cube));
         }
     }
 
-    //sphere
+    // sphere
+    for (unsigned int j = 0; j < 1; j++)
     {
         Entity sphere;
-        sphere.mesh = Mesh::CreateSphere(40, 40);
-        float ii = 0;
+        sphere.mesh = Mesh::CreateSphere(20, 20);
+        // float ii = 0;
         for (Vertex& vertex : sphere.mesh->vertices)
         {
             vertex.color = Color(0, 10, 255);
-            ii += 255.f / 20*20;
+            //ii += 255.f / 20*20;
         }
-        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.5, 0.0, 0.0));
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.25, 0.0, 0.0));
         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
         entities.push_back(std::move(sphere));
     }
+
+    // {
+    //     Entity triangle;
+    //     triangle.mesh = Mesh::CreateTriangle(Vec3(-0.5,0.5,0.5), Vec3(0.5,0.5,0.0), Vec3(0.5,-0.5,0.5));
+    //     //triangle.mesh = Mesh::CreateCube();
+    //     for (Vertex& vertex : triangle.mesh->vertices)
+    //         vertex.color = Color(255, 0, 0);
+    //     // triangle.mesh->vertices[0].color = Color(255, 0, 0);
+    //     // triangle.mesh->vertices[1].color = Color(0, 255, 0);
+    //     // triangle.mesh->vertices[2].color = Color(0, 0, 255);
+
+    //     entities.push_back(std::move(triangle));
+    // }
 }
 
 void sceneInit(Scene& scene)

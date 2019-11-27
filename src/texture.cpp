@@ -1,9 +1,20 @@
 #include <cassert>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "texture.h"
 
 #include "color.h"
+
+Texture::Texture(const char* filename)
+    : width(width),
+      height(height),
+      pixels(new Color[width * height]) //default constructor init pixels to black
+{
+    // SDL_Surface* surface = IMG_Load(filename);
+    // pixels = surface->pixels;
+    // SDL_FreeSurface(surface);
+}
 
 Texture::Texture(unsigned int width, unsigned int height) 
     : width(width),

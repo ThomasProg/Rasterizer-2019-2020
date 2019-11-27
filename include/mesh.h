@@ -5,6 +5,8 @@
 #include "vertex.h"
 #include "vec3.h"
 
+class Texture;
+
 struct Mesh
 {
 private:
@@ -20,8 +22,7 @@ public:
     std::vector<unsigned int> indices; //index buffer
     //goes by triplets to draw triangles
 
-    // std::vector<Vec3> normals; //index buffer
-    // //goes by triplets to draw triangles
+    Texture* pTexture;
 
 public:
     static Mesh* CreateCube(); //cube of size 1*1*1

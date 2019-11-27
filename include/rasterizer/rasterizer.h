@@ -11,6 +11,7 @@ class Entity;
 class Vertex;
 class Vertex2;
 class Vec3;
+class Mat4;
 class Light;
 
 enum class E_RasterizerMode
@@ -48,8 +49,12 @@ public:
                                 const std::vector<Vec3>&  screenVertices, 
                                 const std::vector<Vertex>& worldVertices);
 
-    static void RenderWireframe(FrameBuffer* pTarget, std::vector<Light>& lights,
-                                std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
+    // static void RenderWireframe(FrameBuffer* pTarget, std::vector<Light>& lights,
+    //                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
+    static void RenderWireframe(FrameBuffer* pTarget, 
+                                const std::vector<Light>& lights,
+                                const std::vector<Vec3>&  screenVertices, 
+                                const std::vector<Vertex>& worldVertices);
 
 
     // static void ClipTriangles(const Entity& entity, FrameBuffer* pTarget, 
@@ -69,7 +74,8 @@ public:
     //                        std::vector<Vertex>& transformedVertices, 
     //                        std::vector<unsigned int>& transformedIndices);
 
-    static void RenderScene(Scene* pScene, FrameBuffer* pTarget, E_RasterizerMode mode = E_RasterizerMode::E_POINTS);
+    static void RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, 
+                            E_RasterizerMode mode = E_RasterizerMode::E_POINTS);
 };
 
 #endif

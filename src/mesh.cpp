@@ -147,14 +147,36 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
 Mesh* Mesh::CreateTriangle(Vec3 point1, Vec3 point2, Vec3 point3)
 {
     Mesh* mesh = new Mesh;
+    mesh->vertices.reserve(3);
+    //mesh->normals.reserve(8);
+    mesh->indices.reserve(3);
 
-    mesh->vertices.push_back(Vec3(0,0,0));
-    mesh->vertices.push_back(Vec3(0.5,0,0));
-    mesh->vertices.push_back(Vec3(0,0.2,0));
+    constexpr float min = -0.5;
+    constexpr float max = 0.5;
 
-    mesh->indices.push_back(0);
-    mesh->indices.push_back(1);
-    mesh->indices.push_back(2);
+#define ADDING_VERTEX_AND_NORMAL(vec) \
+    mesh->vertices.emplace_back(Vertex(vec, vec));
+
+    // ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max));
+    // ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max));
+    // ADDING_VERTEX_AND_NORMAL(Vec3(max, min, max));
+
+    ADDING_VERTEX_AND_NORMAL(point1);
+    ADDING_VERTEX_AND_NORMAL(point2);
+    ADDING_VERTEX_AND_NORMAL(point3);
+
+    // ADDING_VERTEX_AND_NORMAL(Vec3(max, min, min));
+    // ADDING_VERTEX_AND_NORMAL(Vec3(max, max, min));
+    // ADDING_VERTEX_AND_NORMAL(Vec3(min, max, min));
+    // ADDING_VERTEX_AND_NORMAL(Vec3(min, min, min));
+
+#undef ADDING_VERTEX_AND_NORMAL
+
+    //visible faces (see schema)
+    mesh->addTriangle(0, 1, 2); //z+
+
+    //hidden faces (see schema)
+    //mesh->addQuad(6, 7, 4, 5); //z- 
 
     return mesh;
 }

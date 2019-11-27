@@ -47,8 +47,10 @@ int main(int argc, char** argv)
 
         frame += 1;
 
-        scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
+        //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
         //scene.entities[1].transformation *= Mat4::CreateTranslationMatrix(Vec3(0.00, 0.00, 10 * sin(frame/10)));
+        // scene.lights[0].position.x = 10 * sin(frame/10);
+        // scene.lights[0].position.y = 10 * cos(frame/10);
 
         //inputs
         while (SDL_PollEvent(&event))
@@ -63,12 +65,16 @@ int main(int argc, char** argv)
                             break;
                     }
 
-                default:break;
+                default: break;
             }
         }
 
-        //rasterizer
-        Rasterizer::RenderScene(&scene, &target, E_RasterizerMode::E_TRIANGLES);
+        // // rasterizer
+        // Rasterizer::RenderScene(&scene, &target, 
+        //     Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0, 2, 1.4), 
+        //     E_RasterizerMode::E_TRIANGLES);
+        Rasterizer::RenderScene(&scene, &target, Mat4::CreateOrthogonalProjectionMatrix(), E_RasterizerMode::E_TRIANGLES);
+
 
         render.SDL_RenderTexture(target.texture);
     }

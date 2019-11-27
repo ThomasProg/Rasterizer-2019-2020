@@ -7,12 +7,13 @@ struct Color;
 class Texture
 {
 public:
-    const unsigned int width, height;
+    unsigned int width, height; //TODO : since can't const, make accessor
 public:
     Color* pixels = nullptr;
 
 public:
     Texture() = delete;
+    Texture(const char* filename);
     Texture(unsigned int width, unsigned int height);
     ~Texture();
 

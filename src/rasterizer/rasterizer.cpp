@@ -117,20 +117,31 @@ void Rasterizer::RenderLines(FrameBuffer* pTarget, std::vector<Light>& lights,
     drawLine(pTarget, vertex1, vertex2);
 }
 
-void Rasterizer::RenderWireframe(FrameBuffer* pTarget, std::vector<Light>& lights,
-                            std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it)
+// void Rasterizer::RenderWireframe(FrameBuffer* pTarget, std::vector<Light>& lights,
+//                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it)
+// {
+//     std::array<RasterizingVertex, 3> triangleVertices;
+
+//     //get first point on screen
+//     triangleVertices[0].setFromVertex(vertices[*it++], Rasterizer::projection);
+//     triangleVertices[1].setFromVertex(vertices[*it++], Rasterizer::projection);
+//     triangleVertices[2].setFromVertex(vertices[*it++], Rasterizer::projection);
+
+//     //wireframe mode
+//     drawLine(pTarget, triangleVertices[0].position2D, triangleVertices[1].position2D);
+//     drawLine(pTarget, triangleVertices[1].position2D, triangleVertices[2].position2D);
+//     drawLine(pTarget, triangleVertices[2].position2D, triangleVertices[0].position2D);
+// }
+
+void Rasterizer::RenderWireframe(FrameBuffer* pTarget, 
+                                const std::vector<Light>& lights,
+                                const std::vector<Vec3>&  screenVertices, 
+                                const std::vector<Vertex>& worldVertices)
 {
-    std::array<RasterizingVertex, 3> triangleVertices;
-
-    //get first point on screen
-    triangleVertices[0].setFromVertex(vertices[*it++], Rasterizer::projection);
-    triangleVertices[1].setFromVertex(vertices[*it++], Rasterizer::projection);
-    triangleVertices[2].setFromVertex(vertices[*it++], Rasterizer::projection);
-
     //wireframe mode
-    drawLine(pTarget, triangleVertices[0].position2D, triangleVertices[1].position2D);
-    drawLine(pTarget, triangleVertices[1].position2D, triangleVertices[2].position2D);
-    drawLine(pTarget, triangleVertices[2].position2D, triangleVertices[0].position2D);
+    drawLine(pTarget, screenVertices[0], screenVertices[1]);
+    drawLine(pTarget, screenVertices[1], screenVertices[2]);
+    drawLine(pTarget, screenVertices[2], screenVertices[0]);
 }
 
 void Rasterizer::RenderTriangles(FrameBuffer* pTarget, 
@@ -213,55 +224,27 @@ void Rasterizer::RenderTriangles(FrameBuffer* pTarget,
 
 
 
-void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, E_RasterizerMode mode)
+void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, E_RasterizerMode mode)
 {
     assert(pScene != nullptr && pTarget != nullptr);
 
     //init render texture
     pTarget->ResetPixels();
-    
-    // std::vector<Vertex> transformedVertices;
-    // transformedVertices.reserve(100);
-    // std::vector<unsigned int> indices; 
-    // indices.reserve(100);
-
-    // std::function<void(FrameBuffer*, 
-    //                    std::vector<Light>& lights,
-    //                    std::vector<Vertex>&, 
-    //                    std::vector<unsigned int>::iterator&)> RenderByShape;
-
-    // std::function<void(const Entity&, 
-    //                    FrameBuffer*, 
-    //                    const std::vector<Vertex>&, 
-    //                    std::vector<unsigned int>::iterator&,
-    //                    std::vector<Vertex>& transformedVertices,
-    //                    std::vector<unsigned int>&)> ClipShape;
-
 
     std::function<bool(const DynamicAsStaticArray<Vec3>& screenVertices, const DynamicAsStaticArray<Vertex>& worldVertices, 
                        std::vector<Vec3>& screenVerticesClipped, std::vector<Vertex>& worldVerticesClipped)> ClipShape;
 
     std::function<void(FrameBuffer*, 
-                       std::vector<Light>& lights,
+                       const std::vector<Light>& lights,
                        std::vector<Vec3>&  screenVertices, 
                        std::vector<Vertex> worldVertices)> RenderByShape;
 
     //3 for a triangle, 2 for a line, 1 for a point
     unsigned int nbVerticesPerRasterization;
 
-    // DynamicAsStaticArray<Vertex> worldVerticesClipped(50);
-    // DynamicAsStaticArray<Vec3> screenVerticesClipped(50);
-
-    // std::vector<Vertex> worldVertices; // Contains points color, world location, and world normals.
-    // std::vector<Vec3>   screenVertices; // Contains projected points location 2D. //TODO : Vec3 to Vec2
-    // std::vector<bool>   isCalculated;
-
     std::vector<Vertex> worldVerticesClipped; // Contains points color, world location, and world normals.
     std::vector<Vec3>   screenVerticesClipped; // Contains projected points location 2D. //TODO : Vec3 to Vec2
 
-    // worldVertices.reserve(50); // Contains points color, world location, and world normals.
-    // screenVertices.reserve(50); // Contains projected points location 2D. //TODO : Vec3 to Vec2
-    // isCalculated.reserve(50);
     worldVerticesClipped.reserve(6); // Contains points color, world location, and world normals.
     screenVerticesClipped.reserve(6); // Contains projected points location 2D. //TODO : Vec3 to Vec2
 
@@ -278,35 +261,15 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, E_RasterizerMo
             ClipShape     = Clipping::ClipTriangles;
             nbVerticesPerRasterization = 3;
             break;
-        
-        // case E_RasterizerMode::E_TRIANGLES_AS_LINES :
-        // case E_RasterizerMode::E_WIREFRAME :
-        //     RenderByShape = RenderWireframe;
-        //     ClipShape     = Clipping::ClipTriangles;
-        //     nbVerticesPerRasterization = 3;
-        //     break;
-            
+
+        case E_RasterizerMode::E_WIREFRAME :
+        case E_RasterizerMode::E_TRIANGLES_AS_LINES :
+            RenderByShape = RenderWireframe;
+            ClipShape     = Clipping::ClipTriangles;
+            nbVerticesPerRasterization = 3;
+            break;
     }
- 
-    // worldVertices.reserve(nbVerticesPerRasterization);
-    // screenVertices.reserve(nbVerticesPerRasterization);
 
-    // //render vertices of each entity
-    // for (const Entity& entity : pScene->entities)
-    // {
-    //     std::vector<unsigned int>::iterator it = entity.mesh->indices.begin();
-    //     while (it != entity.mesh->indices.end())
-    //     {
-    //         ClipShape(entity, pTarget, entity.mesh->vertices, it, transformedVertices, indices);
-    //     }
-    // }
-
-    // //render vertices of each entity
-    // std::vector<unsigned int>::iterator it = indices.begin();
-    // while (it != indices.end())
-    // {
-    //     RenderByShape(pTarget, pScene->lights, transformedVertices, it);
-    // }
     unsigned int maxVertices = 0;
     for (const Entity& entity : pScene->entities)
     {
@@ -322,36 +285,12 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, E_RasterizerMo
     {
         for (unsigned int i = 0; i < entity.mesh->vertices.size(); i++)
             isCalculated[i] = false;
-        // for (unsigned int i = 0; i < entity.mesh->vertices.size(); ++i)
-        // {
-        //     int indice = entity.mesh->indices[i];
 
-        //     //transform localToWorld;
-        //     Vertex worldVertex;
-        //     worldVertex.position = (entity.transformation * 
-        //                             Vec4(entity.mesh->vertices[indice].position, 1)).getHomogenizedVec();
-
-        //     worldVertex.normal = (entity.transformation * 
-        //                             Vec4(entity.mesh->vertices[indice].normal, 0));
-
-        //     worldVertex.color = entity.mesh->vertices[indice].color;
-
-        //     worldVertices.emplace_back(std::move(worldVertex));
-
-        //     //project 3D world to 2D screen
-        //     Vec3 screenVec = projection(entity.mesh->vertices[indice].position);
-        //     screenVertices.emplace_back(std::move(screenVec));
-        // }
         DynamicAsStaticArray<Vertex> worldVerticesLocal(nbVerticesPerRasterization);
         DynamicAsStaticArray<Vec3> screenVerticesLocal(nbVerticesPerRasterization);
 
         for (unsigned int indice = 0; indice < entity.mesh->indices.size(); indice += nbVerticesPerRasterization)
         {
-            // std::vector<Vertex> worldVerticesLocal; // Contains points color, world location, and world normals.
-            // worldVerticesLocal.reserve(nbVerticesPerRasterization);
-            // std::vector<Vec3>   screenVerticesLocal; // Contains projected points location 2D. //TODO : Vec3 to Vec2
-            // screenVerticesLocal.reserve(nbVerticesPerRasterization);
-
             for (unsigned int localIndice = 0; localIndice < nbVerticesPerRasterization; ++localIndice)
             {
                 int verticesIndice = entity.mesh->indices[indice + localIndice];
@@ -371,7 +310,15 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, E_RasterizerMo
                     worldVertices[verticesIndice] = std::move(worldVertex);
 
                     //project 3D world to 2D screen
-                    Vec3 screenVec = projection(worldVertices[verticesIndice].position);
+                    //Vec3 screenVec = projection(worldVertices[verticesIndice].position);
+                    Vec3 vTemp3 = worldVertices[verticesIndice].position;
+                    //vTemp3.z = 10;
+                    Vec4 screenVec = projectionMatrix * Vec4(vTemp3, 1);
+                    //std::cout << "A : " << screenVec.x << std::endl;
+                    screenVec.Homogenize();
+                    //std::cout << "B : " << screenVec.x << std::endl;
+                    screenVec = (Mat4::CreateScreenConversionMatrix() * Vec4(screenVec, 1)).getHomogenizedVec();
+
                     screenVertices[verticesIndice] = std::move(screenVec);
 
                     isCalculated[verticesIndice] = true;
