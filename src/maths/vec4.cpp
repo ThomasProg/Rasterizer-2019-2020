@@ -43,11 +43,13 @@ void Vec4::Homogenize()
         x /= w;
         y /= w;
         z /= w;
+        w /= w;
     }
 }
 
 Vec3 Vec4::getHomogenizedVec() const
 {
+    assert(w != 0);
     return Vec3(x / w, y / w, z / w);
 }
 

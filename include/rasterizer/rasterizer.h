@@ -36,7 +36,8 @@ public:
     static void RenderPoints(FrameBuffer* pTarget, 
                                 const std::vector<Light>& lights,
                                 const std::vector<Vec3>&  screenVertices, 
-                                const std::vector<Vertex>& worldVertices);
+                                const std::vector<Vertex>& worldVertices, 
+                                Texture* texture);
 
     static void RenderLines(FrameBuffer* pTarget, std::vector<Light>& lights,
                              std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
@@ -47,14 +48,16 @@ public:
     static void RenderTriangles(FrameBuffer* pTarget, 
                                 const std::vector<Light>& lights,
                                 const std::vector<Vec3>&  screenVertices, 
-                                const std::vector<Vertex>& worldVertices);
+                                const std::vector<Vertex>& worldVertices,
+                                Texture* texture);
 
     // static void RenderWireframe(FrameBuffer* pTarget, std::vector<Light>& lights,
     //                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
     static void RenderWireframe(FrameBuffer* pTarget, 
                                 const std::vector<Light>& lights,
                                 const std::vector<Vec3>&  screenVertices, 
-                                const std::vector<Vertex>& worldVertices);
+                                const std::vector<Vertex>& worldVertices,
+                                Texture* texture);
 
 
     // static void ClipTriangles(const Entity& entity, FrameBuffer* pTarget, 
@@ -74,7 +77,7 @@ public:
     //                        std::vector<Vertex>& transformedVertices, 
     //                        std::vector<unsigned int>& transformedIndices);
 
-    static void RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, 
+    static void RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix,
                             E_RasterizerMode mode = E_RasterizerMode::E_POINTS);
 };
 

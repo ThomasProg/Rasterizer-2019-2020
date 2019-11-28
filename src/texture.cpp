@@ -1,19 +1,120 @@
 #include <cassert>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <iostream>
+
+// #define STB_IMAGE_IMPLEMENTATION
+// #include "stb_image.h"
 
 #include "texture.h"
 
 #include "color.h"
 
+Uint32 getpixel(SDL_Surface *surface, int x, int y)
+{
+    int bpp = surface->format->BytesPerPixel;
+    /* Here p is the address to the pixel we want to retrieve */
+    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch(bpp) {
+    case 1:
+        return *p;
+
+    case 2:
+        return *(Uint16 *)p;
+
+    case 3:
+        if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
+            return p[0] << 16 | p[1] << 8 | p[2];
+        else
+            return p[0] | p[1] << 8 | p[2] << 16;
+
+    case 4:
+        return *(Uint32 *)p;
+
+    default:
+        return 0;       /* shouldn't happen, but avoids warnings */
+    }
+}
+
 Texture::Texture(const char* filename)
     : width(width),
       height(height),
-      pixels(new Color[width * height]) //default constructor init pixels to black
+      pixels() //default constructor init pixels to black
 {
-    // SDL_Surface* surface = IMG_Load(filename);
-    // pixels = surface->pixels;
-    // SDL_FreeSurface(surface);
+    SDL_Surface* surface = IMG_Load(filename);
+
+    width = static_cast<unsigned int>(surface->w);
+    height = static_cast<unsigned int>(surface->h);
+
+    pixels = new Color[width * height];
+
+    for (int y = 0; y < 256; y++)
+    { 
+        for (int x = 0; x < 256; x++)
+        { 
+            Uint32 color = getpixel(surface, x, y);
+            char* colors = (char*) &color;
+            pixels[y * 256 + x][0] = colors[0];
+            pixels[y * 256 + x][1] = colors[1];
+            pixels[y * 256 + x][2] = colors[2];
+            pixels[y * 256 + x][3] = colors[3];
+        }
+    }
+
+    // for (int i = 0; i < width * height; i++)
+    // {
+    //     //pixel index
+    //     for (int j = 0; j < 4; j++)
+    //     {
+    //         //pixel color
+    //         pixels[i][j] = getpixel(surface, i, j);
+    //     }
+    //     // pixels[i].r = data[i];
+    //     // pixels[i].g = data[i + 1];
+    //     // pixels[i].b = data[i + 2];
+    // }
+
+    // int x, y, n;
+    // // unsigned char* data = stbi_load(filename, &x, &y, &n, STBI_rgb_alpha);
+    // unsigned char* data = stbi_load(filename, &x, &y, &n, STBI_rgb);
+
+    // if (data != NULL)
+    // {
+    //     width = static_cast<unsigned int>(x);
+    //     height = static_cast<unsigned int>(y);
+
+    //     pixels = new Color[x * y];
+
+    //     for (int i = 0; i < x * y; i++)
+    //     {
+    //         //pixel index
+    //         for (int j = 0; j < n; j++)
+    //         {
+    //             //pixel color
+    //             pixels[i][j] = data[i + j];
+    //         }
+    //         // pixels[i].r = data[i];
+    //         // pixels[i].g = data[i + 1];
+    //         // pixels[i].b = data[i + 2];
+    //     }
+    // }
+
+    // setDegradee();
+}
+
+void Texture::setDegradee()
+{
+    for (unsigned int i = 0; i < height; i++)
+    {
+        for (unsigned int j = 0; j < width; j++)
+        {
+            pixels[j + i * width].r = 255.f / height * i;
+            pixels[j + i * width].g = 0;//255.f / width * j;
+            pixels[j + i * width].b = 0;
+            pixels[j + i * width].a = 255;
+        }
+    }
 }
 
 Texture::Texture(unsigned int width, unsigned int height) 

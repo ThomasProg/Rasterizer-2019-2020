@@ -39,6 +39,8 @@ public:
     static Mat4 CreatePerspectiveProjectionMatrix(int width, int height,float near = 0,float far = 2,float fov = 1);
     static Mat4 CreateOrthogonalProjectionMatrix();
     static Mat4 CreateScreenConversionMatrix();
+
+    Mat4 GetInverse();
 };
 
 std::ostream& operator<<(std::ostream& stream, const Mat4& vector);

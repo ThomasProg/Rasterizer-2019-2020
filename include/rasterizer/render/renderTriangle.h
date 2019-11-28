@@ -12,6 +12,7 @@ class Vertex;
 class RasterizingVertex;
 class Color;
 class Light;
+class Texture;
 
 class RenderTriangle
 {
@@ -21,6 +22,7 @@ private:
     std::array<RasterizingVertex const *, 3> triangleVertices;
     FrameBuffer * const pTarget;
     const std::vector<Light>& lights;
+    Texture* texture;
 
 private: 
     float det;
@@ -31,7 +33,7 @@ public:
     RenderTriangle() = delete;
 
     // RenderTriangle(std::array<Vertex const * const, 3> triangleVertices);
-    RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget, const std::vector<Light>& lights);
+    RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget, const std::vector<Light>& lights, Texture* texture);
     //RenderTriangle(Vertex const * const v1, Vertex const * const v2, Vertex const * const v3);
     
     void draw();

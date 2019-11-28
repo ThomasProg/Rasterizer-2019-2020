@@ -5,7 +5,7 @@ void DoOnce::input(bool b)
     if (b && lastState != b)
     {
         isOn = !isOn;
-        onSwitch();
+        onSwitch(isOn);
     }
     lastState = b;
 }

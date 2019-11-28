@@ -22,7 +22,7 @@ public:
     std::vector<unsigned int> indices; //index buffer
     //goes by triplets to draw triangles
 
-    Texture* pTexture;
+    Texture* pTexture = nullptr;
 
 public:
     static Mesh* CreateCube(); //cube of size 1*1*1

@@ -10,14 +10,17 @@
 #include "color.h"
 #include "light.h"
 #include "material.h"
+#include "texture.h"
 
 constexpr int deltaPixelsX = 5; 
 constexpr int deltaPixelsY = 1; 
 
-RenderTriangle::RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget, const std::vector<Light>& lights)
+RenderTriangle::RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, 
+                                FrameBuffer* pTarget, const std::vector<Light>& lights, Texture* texture)
     : triangleVertices({&triangleVertices[0], &triangleVertices[1], &triangleVertices[2]}),
       pTarget(pTarget),
-      lights(lights)
+      lights(lights),
+      texture(texture)
 {
 
 }
@@ -105,9 +108,6 @@ void RenderTriangle::draw()
     cst[2] = (v3.y - v1.y);
     cst[3] = (v1.x - v3.x);
 
-
-
-
     int minX = std::min(std::min(v1.x, v2.x), v3.x);
     int maxX = std::max(std::max(v1.x, v2.x), v3.x);
     int minY = std::min(std::min(v1.y, v2.y), v3.y);
@@ -122,6 +122,8 @@ void RenderTriangle::draw()
     // intensityVertex[1] = getPixelLight(*triangleVertices[1]);
     // intensityVertex[2] = getPixelLight(*triangleVertices[2]);
 
+    float uP[3] = {0,1,0};
+    float vP[3] = {0,0,1};
 
     //TODO : set WeightVar outside of the loops
     for (int y = minY; y <= maxY; y++)
@@ -142,6 +144,9 @@ void RenderTriangle::draw()
                 RasterizingVertex vert;
                 vert.position3D = p;
 
+                float u = 0;
+                float v = 0;
+
                 //get color
                 for (unsigned int i = 0; i < 3; i++)
                 {
@@ -155,13 +160,19 @@ void RenderTriangle::draw()
 
                     vert.normal += weight[i] * triangleVertices[i]->normal;
 
+                    u += weight[i] * uP[i];
+                    v += weight[i] * vP[i];
+
                     //intensity += weight[i] * intensityVertex[i];
                 }
+                //std::cout << "u : " << static_cast<unsigned int>(u * float(texture->width)) << std::endl;
                 vert.normal.Normalize();
                 //vert.normal = crossProduct(v3-v1,v2-v1);
-                //intensity = getPixelLight(vert);
-                intensity = 1;
+                intensity = getPixelLight(vert);
                 
+                c = texture->GetPixelColor(static_cast<unsigned int>(u * float(texture->width)), 
+                                           static_cast<unsigned int>(v * float(texture->height)));
+
                 c *= intensity;
 
                 // if (intensity < 0)

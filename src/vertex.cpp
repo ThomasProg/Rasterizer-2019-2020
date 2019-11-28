@@ -8,7 +8,9 @@ Vertex::Vertex()
 Vertex::Vertex(const Vertex& copied)
     : position(copied.position),
       normal(copied.normal),
-      color(copied.color)
+      color(copied.color),
+      u(copied.u),
+      v(copied.v)
 {
 
 }

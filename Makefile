@@ -6,7 +6,7 @@ CFLAGS=$(CXXFLAGS)
 CC=gcc
 CXX=g++
 
-LDLIBS=-Llib -lglfw -lSDL2 -lSDL2main -lGL -lGLU -ldl
+LDLIBS=-Llib -lglfw -lSDL2 -lSDL2main -lGL -lGLU -ldl -lSDL2_image
 SRC=$(wildcard src/*.cpp) $(wildcard src/maths/*.cpp) $(wildcard src/rasterizer/*.cpp) $(wildcard src/rasterizer/render/*.cpp)
 OBJS=$(patsubst %.cpp, %.o, $(SRC))
 DEPS=$(OBJS:.o=.d)

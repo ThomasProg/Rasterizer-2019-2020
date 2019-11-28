@@ -14,6 +14,7 @@ struct Color
     //so we use less memory copying by copy instead of reference (using 4 more bytes)
     Color& operator=(Color setColor);
     Color& operator*=(float scalar);
+    unsigned char& operator[](unsigned int index);
 };
 
 #endif

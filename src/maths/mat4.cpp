@@ -384,3 +384,8 @@ Mat4 Mat4::CreateScreenConversionMatrix()
     
     return screen;
 }
+
+Mat4 Mat4::GetInverse()
+{
+    return *this;
+}

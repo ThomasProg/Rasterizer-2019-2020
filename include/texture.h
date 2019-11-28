@@ -23,6 +23,8 @@ public:
     void FillBlack();
 
     void ToTexture(SDL_Texture* sdlTexture) const;
+
+    void setDegradee();
 };
 
 #endif

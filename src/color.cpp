@@ -70,3 +70,28 @@ Color& Color::operator*=(float scalar)
 
   return *this;
 }
+
+unsigned char& Color::operator[](unsigned int index)
+{
+  switch (index)
+  {
+  case 0:
+    return r;
+    break;
+
+  case 1:
+    return g;
+    break;
+  
+  case 2:
+    return b;
+    break;
+
+  case 3:
+    return a;
+    break;
+
+  default:
+    break;
+  }
+}

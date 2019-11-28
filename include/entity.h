@@ -10,6 +10,8 @@ class Entity
 public:
     Mesh* mesh = nullptr;
     Mat4 transformation;
+
+    float alpha = 1.f; //entity transparency, [0;1]
 };
 
 #endif

@@ -49,15 +49,31 @@ Mesh* Mesh::CreateCube()
     mesh->vertices.emplace_back(Vertex(vec, vec));
     //mesh->normals.emplace_back(vec);
 
-    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max));
-    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max));
-    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, max));
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max)); 
+    mesh->vertices[mesh->vertices.size() - 1].u = 0;
+    mesh->vertices[mesh->vertices.size() - 1].v = 0;
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max)); 
+    mesh->vertices[mesh->vertices.size() - 1].u = 1;
+    mesh->vertices[mesh->vertices.size() - 1].v = 0;
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, max)); 
+    mesh->vertices[mesh->vertices.size() - 1].u = 0;
+    mesh->vertices[mesh->vertices.size() - 1].v = 1;
     ADDING_VERTEX_AND_NORMAL(Vec3(max, min, max));
+    mesh->vertices[mesh->vertices.size() - 1].u = 1;
+    mesh->vertices[mesh->vertices.size() - 1].v = 1;
 
     ADDING_VERTEX_AND_NORMAL(Vec3(max, min, min));
+    mesh->vertices[mesh->vertices.size() - 1].u = 0;
+    mesh->vertices[mesh->vertices.size() - 1].v = 0;
     ADDING_VERTEX_AND_NORMAL(Vec3(max, max, min));
+    mesh->vertices[mesh->vertices.size() - 1].u = 1;
+    mesh->vertices[mesh->vertices.size() - 1].v = 0;
     ADDING_VERTEX_AND_NORMAL(Vec3(min, max, min));
+    mesh->vertices[mesh->vertices.size() - 1].u = 0;
+    mesh->vertices[mesh->vertices.size() - 1].v = 1;
     ADDING_VERTEX_AND_NORMAL(Vec3(min, min, min));
+    mesh->vertices[mesh->vertices.size() - 1].u = 1;
+    mesh->vertices[mesh->vertices.size() - 1].v = 1;
 
 #undef ADDING_VERTEX_AND_NORMAL
 

@@ -4,15 +4,47 @@
 #include <SDL2/SDL.h>
 #include <vector>
 
+#include "mat4.h"
+#include "scene.h"
+#include "sdlUtilities.h"
+
+#include "rasterizer.h"
+
+#include "doOnce.h"
+
 class Light;
 class Scene;
 class Entity;
 
-void lightsInit(std::vector<Light>& lights);
-void entitiesInit(std::vector<Entity>& entities);
-void sceneInit(Scene& scene);
+class Events
+{
+private:
 
-void inputs(SDL_Event& event);
+    //inputs
+    SDL_Event event;
+    bool bRun;
+    Mat4 camera;
+
+    SDL_Utilities render;
+    Scene scene;
+
+    E_RasterizerMode renderMode = E_RasterizerMode::E_TRIANGLES;
+
+    DoOnce F1;
+
+public:
+    Events();
+    ~Events();
+
+    void lightsInit(std::vector<Light>& lights);
+    void entitiesInit(std::vector<Entity>& entities);
+    void sceneInit(Scene& scene);
+
+    void inputs(SDL_Event& event, bool& bRun);
+
+    void cameraInputs(int touch);
+    int run();
+};
 
 
 #endif
