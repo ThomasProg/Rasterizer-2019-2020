@@ -44,6 +44,8 @@ Mesh* Mesh::CreateCube()
 
     constexpr float min = -0.5;
     constexpr float max = 0.5;
+    // constexpr float min = 1.f;
+    // constexpr float max = 2.f;
 
 #define ADDING_VERTEX_AND_NORMAL(vec) \
     mesh->vertices.emplace_back(Vertex(vec, vec));

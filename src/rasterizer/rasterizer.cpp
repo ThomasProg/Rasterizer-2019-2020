@@ -365,6 +365,9 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         std::vector<Vec4> worldLoc;
         std::vector<Vec4> worldNormals;
 
+        worldLoc.reserve(entity.mesh->vertices.size());
+        worldNormals.reserve(entity.mesh->vertices.size());
+
         for (const Vertex& vertex : entity.mesh->vertices)
         {
             worldLoc.emplace_back(entity.transformation * Vec4(vertex.position, 1));
@@ -372,19 +375,26 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         }
 
         std::vector<Vec4> screenLoc;
+        screenLoc.reserve(worldLoc.size());
 
         for (const Vec4& loc3D : worldLoc)
         {
-            screenLoc.emplace_back(projectionMatrix * loc3D);
+            Vec4 v = projectionMatrix * loc3D;
+            v.x /= v.w;
+            v.y /= v.w;
+            v.z /= v.w;
+            v.w /= v.w;
+            screenLoc.emplace_back(v);
+            std::cout << v << std::endl;
         }
 
         std::vector<Vec4> scaledLoc;
+        scaledLoc.reserve(screenLoc.size());
 
         for (const Vec4& loc3D : screenLoc)
         {
             scaledLoc.emplace_back(Mat4::CreateScreenConversionMatrix() * loc3D);
-            if ((Mat4::CreateScreenConversionMatrix() * loc3D).w == 0)
-                std::cout << "0" << std::endl;
+            //scaledLoc.emplace_back(loc3D*100 + Vec4(windowWidth/2, windowHeight/2, 0, 0));
         }
 
 
@@ -394,21 +404,26 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
             unsigned int id2 = entity.mesh->indices[i+1];
             unsigned int id3 = entity.mesh->indices[i+2];
 
-            Vec3 v1 = scaledLoc[id1].getHomogenizedVec();
-            Vec3 v2 = scaledLoc[id2].getHomogenizedVec();
-            Vec3 v3 = scaledLoc[id3].getHomogenizedVec();
+            Vec3 v1 = scaledLoc[id1];//.getHomogenizedVec();
+            Vec3 v2 = scaledLoc[id2];//.getHomogenizedVec();
+            Vec3 v3 = scaledLoc[id3];//.getHomogenizedVec();
 
             Vertex vert1 = v1;
+            vert1.normal = worldNormals[id1];
             Vertex vert2 = v2;
+            vert2.normal = worldNormals[id2];
             Vertex vert3 = v3;
+            vert3.normal = worldNormals[id3];
 
             vert1.color = Color(250,250,250);
-            vert2.color = Color(250,250,250);
-            vert3.color = Color(250,250,250);
+            vert2.color = Color(250,100,250);
+            vert3.color = Color(250,250,100);
 
-            drawLine(pTarget, v1, v2);
-            drawLine(pTarget, v2, v3);
-            drawLine(pTarget, v3, v1);
+            // drawLine(pTarget, v1, v2);
+            // drawLine(pTarget, v2, v3);
+            // drawLine(pTarget, v3, v1);
+            
+            drawTriangle(vert1, vert2, vert3, pTarget, pScene->lights);
         }
 
         //RenderTriangles(pTarget, pScene->lights, , entity.mesh->pTexture);

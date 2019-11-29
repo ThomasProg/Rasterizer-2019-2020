@@ -41,8 +41,8 @@ void Events::entitiesInit(std::vector<Entity>& entities)
                     vertex.color = Color(2, i*(255/6), 2);
                 i++;
             }
-            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(-0.9, 0, 0.5));
-            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
+            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(0.15, 0.15, 0.15));
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, 0.0));
             cube.mesh->pTexture = new Texture("media/crate.png");
             entities.push_back(std::move(cube));
         }
@@ -172,7 +172,7 @@ int Events::run()
 
         frame += 1;
 
-        scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
+        scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.00, 0.01, 0.00));
         //scene.entities[1].transformation *= Mat4::CreateTranslationMatrix(Vec3(0.00, 0.00, 10 * sin(frame/10)));
         scene.lights[0].position.x = 10 * sin(frame/10);
         scene.lights[0].position.y = 10 * cos(frame/10);
@@ -183,8 +183,10 @@ int Events::run()
         // Rasterizer::RenderScene(&scene, &target, 
         //     Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0, 2, 1.4), 
         //     E_RasterizerMode::E_TRIANGLES);
-        Rasterizer::RenderScene(&scene, &target, Mat4::CreateOrthogonalProjectionMatrix(), camera.GetInverse(), renderMode);
-
+        //Rasterizer::RenderScene(&scene, &target, Mat4::CreateOrthogonalProjectionMatrix(), camera.GetInverse(), renderMode);
+        Rasterizer::RenderScene(&scene, &target, 
+            Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.1, 2, 90), 
+            camera.GetInverse(), renderMode);
 
         render.SDL_RenderTexture(target.texture);
     }

@@ -43,13 +43,11 @@ Color& Color::operator=(Color setColor)
 Color& Color::operator*=(float scalar)
 {
   if (scalar < 0)
-      return *this;
-
-  else if (scalar == 0)
   {
     r = 0;
     g = 0;
     b = 0;
+    return *this;
   }
 
   //since -1 < intensity < 1, we need to lerp the intensity for the color

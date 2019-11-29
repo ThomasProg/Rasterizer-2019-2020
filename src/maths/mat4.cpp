@@ -80,6 +80,15 @@ Mat4 Mat4::operator=(const Mat4& matrix)
 
 Vec4 Mat4::operator*(const Vec4& vect) const
 {
+    // Vec4 resultVect(0,0,0,0);
+    // for (unsigned int i = 0; i < nbLines; i++)
+    // {
+    //     for (unsigned int j = 0; j < nbColumns; j++)
+    //         resultVect[i] += elements[(i*nbColumns)+j]*vect[j];  
+        
+    // }
+    // return resultVect;
+
     Vec4 resultVect(0,0,0,0);
     for (unsigned int i = 0; i < nbLines; i++)
     {
@@ -264,27 +273,60 @@ std::ostream& operator<<(std::ostream& stream, const Mat4& matrix)
 
 Mat4 Mat4::CreatePerspectiveProjectionMatrix(int width, int height,float near,float far,float fov)
 {
+    // Mat4 perspective;
+    // float ratio = width/height;
+    // perspective.elements[0] =  1/(ratio*tan(fov/2));
+    // perspective.elements[1] =  0;
+    // perspective.elements[2] =  0;
+    // perspective.elements[3] =  0;
+
+    // perspective.elements[4] =  0;
+    // perspective.elements[5] =  1/tan(fov/2);
+    // perspective.elements[6] =  0;
+    // perspective.elements[7] =  0;
+    
+    // perspective.elements[8] =  0;
+    // perspective.elements[9] =  0;
+    // perspective.elements[10] = (-near-far)/(near-far);
+    // perspective.elements[11] = 2*(near*far)/(near-far);
+
+    // perspective.elements[12] = 0;
+    // perspective.elements[13] = 0;
+    // perspective.elements[14] = 1;
+    // perspective.elements[15] = 0;
+
+    float temp, temp2, temp3, temp4;
+    {
+        float ymax, xmax;
+        ymax = near * tanf(fov / PI / 360);
+        xmax = ymax * (width / height);
+
+        temp = 2 * near;
+        temp2 = 2.0 * xmax;
+        temp3 = 2 * ymax;
+        temp4 = far - near;
+    }
+
     Mat4 perspective;
-    float ratio = width/height;
-    perspective.elements[0] =  1/(ratio*tan(fov/2));
+    perspective.elements[0] =  temp/temp2;
     perspective.elements[1] =  0;
     perspective.elements[2] =  0;
     perspective.elements[3] =  0;
 
     perspective.elements[4] =  0;
-    perspective.elements[5] =  1/tan(fov/2);
+    perspective.elements[5] =  temp/temp3;
     perspective.elements[6] =  0;
     perspective.elements[7] =  0;
     
     perspective.elements[8] =  0;
     perspective.elements[9] =  0;
-    perspective.elements[10] = (near+far)/(near-far);
-    perspective.elements[11] = 2*(near+far)/(near-far);
+    perspective.elements[10] = (-far - near) / temp4;
+    perspective.elements[11] = -1;
 
     perspective.elements[12] = 0;
-    perspective.elements[13] = 0;
-    perspective.elements[14] = -1;
-    perspective.elements[15] = 0;
+    perspective.elements[13] = 0.0;
+    perspective.elements[14] = (-temp * far) / temp4;
+    perspective.elements[15] = 1;
 
     // Mat4 perspective;
     // float ratio = width/height;
