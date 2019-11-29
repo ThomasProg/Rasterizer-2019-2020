@@ -116,6 +116,11 @@ Vec4 operator+(const Vec4& a, const Vec4& b)
     return Vec4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
 }
 
+Vec4 Vec4::operator-(const Vec4& v) const
+{
+    return Vec4(x - v.x, y - v.y, z - v.z, w - v.w);
+}
+
 Vec4 operator*(const Vec4& vec, float f)
 {
     return Vec4(vec.x * f, vec.y * f, vec.z * f, vec.w * f);

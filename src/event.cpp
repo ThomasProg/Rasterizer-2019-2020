@@ -1,3 +1,7 @@
+#include "glad/glad.h"
+#include <GL/glu.h>
+#include <GLFW/glfw3.h>
+
 #include "event.h"
 
 #include "sdlUtilities.h"
@@ -127,7 +131,9 @@ void Events::inputs(SDL_Event& event, bool& bRun)
 }
 
 Events::Events()
+#ifdef __SDL__
     : render(SDL_Utilities(bRun))
+#endif
 {
     // F1.onSwitch = [&](bool isOn)
     // {
@@ -137,6 +143,30 @@ Events::Events()
     //         renderMode = E_RasterizerMode::E_TRIANGLES;
     // };
 
+    #ifdef __GLFW__
+    if (!glfwInit())
+    {
+        bRun = false;
+        return;
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+    window = glfwCreateWindow(windowWidth, windowHeight, "Geometry", NULL, NULL);
+
+    glfwMakeContextCurrent(window);
+
+    if (!gladLoadGL())
+    {
+        glfwTerminate();
+        bRun = false;
+        return;
+    }
+
+    //hide cursor
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    #endif
 }
 
 Events::~Events()
@@ -160,13 +190,23 @@ int Events::run()
     float fps;
     float lastTime = 0.f;
     //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.00, 0.00, PI/5));
-
+    #ifdef __SDL__
     while (bRun)
+    #endif
+    #ifdef __GLFW__
+    while (bRun && !glfwWindowShouldClose(window))
+    #endif
     {
+        #ifdef __GLFW__
+        glfwPollEvents();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        #endif
+
         float time = float (SDL_GetTicks()) / 1000.f;
         fps = 1.f/(time - lastTime);
         nbFps++;
         totalFps += fps;
+        std::cout << 1.f/(time - lastTime) << std::endl;
         lastTime = time;
         std::cout << totalFps / nbFps << std::endl;
 
@@ -177,7 +217,41 @@ int Events::run()
         scene.lights[0].position.x = 10 * sin(frame/10);
         scene.lights[0].position.y = 10 * cos(frame/10);
 
+        //SDL
         inputs(event, bRun);
+
+        //GLFW
+        #ifdef __GLFW__
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        if (glfwGetKey(window, GLFW_KEY_UP))
+            camera *= Mat4::CreateTranslationMatrix(Vec3(0, 0, 0.1));
+        if (glfwGetKey(window, GLFW_KEY_DOWN))
+            camera *= Mat4::CreateTranslationMatrix(Vec3(0, 0, -0.1));
+        if (glfwGetKey(window, GLFW_KEY_LEFT))
+            camera *= Mat4::CreateTranslationMatrix(Vec3(-0.1, 0, 0));
+        if (glfwGetKey(window, GLFW_KEY_RIGHT))
+            camera *= Mat4::CreateTranslationMatrix(Vec3(0.1, 0, 0));
+
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+
+        constexpr const double mouseSensibility = 2.f;
+
+        if (lastYPos - ypos < - mouseSensibility)
+            camera *= Mat4::CreateRotationMatrix(Vec3(-0.1, 0, 0));
+        if (lastYPos - ypos > mouseSensibility)
+            camera *= Mat4::CreateRotationMatrix(Vec3(0.1, 0, 0));
+
+        if (lastXPos - xpos < - mouseSensibility)
+            camera *= Mat4::CreateRotationMatrix(Vec3(0.0, -0.1, 0));
+        if (lastXPos - xpos > mouseSensibility)
+            camera *= Mat4::CreateRotationMatrix(Vec3(0.0, -0.1, 0));
+        #endif
+
+        lastXPos = xpos;
+        lastYPos = ypos;
+
 
         // rasterizer
         // Rasterizer::RenderScene(&scene, &target, 
@@ -188,8 +262,25 @@ int Events::run()
             Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.1, 2, 90), 
             camera.GetInverse(), renderMode);
 
+        // render.SDL_RenderTexture(target.texture);
+
+        #ifdef __GLFW__
+        glDrawPixels(windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, target.texture.pixels);
+        glfwSwapBuffers(window);
+        #endif
+
+        #ifdef __SDL__
+        SDL_RenderClear(render.renderer);
         render.SDL_RenderTexture(target.texture);
+
+        SDL_RenderPresent(render.renderer);
+        #endif
     }
+
+    #ifdef __GLFW__
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    #endif
 
     return EXIT_SUCCESS;
 }

@@ -387,14 +387,22 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         std::vector<Vec4> screenLoc;
         screenLoc.reserve(worldLoc.size());
 
+        //for (unsigned int i = 0; i < worldLoc.size(); i+=3)
         for (const Vec4& loc3D : worldLoc)
         {
-            Vec4 v = projectionMatrix * loc3D;
-            v.x /= v.w;
-            v.y /= v.w;
-            v.z /= v.w;
-            v.w /= v.w;
-            screenLoc.emplace_back(v);
+        //     Vec4 loc3D1 = worldLoc[i];
+        //     Vec4 loc3D2 = worldLoc[i+1];
+        //     Vec4 loc3D3 = worldLoc[i+2];
+
+        //     Vec3 n = crossProduct(loc3D2 - loc3D1, 
+        //                           loc3D3 - loc3D1);
+        //     if (dotProduct(Vec3(0,0,0), n) < 0)
+        //     {
+        //         screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D1).getHomogenizedVec());
+        //         screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D2).getHomogenizedVec());
+        //         screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D3).getHomogenizedVec());
+                 screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D).getHomogenizedVec());
+        //     }
         }
 
         std::vector<Vec4> scaledLoc;
@@ -438,3 +446,4 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         //RenderTriangles(pTarget, pScene->lights, , entity.mesh->pTexture);
     }
 }
+
