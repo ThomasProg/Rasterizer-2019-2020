@@ -167,8 +167,8 @@ void Clipping::ClipLines(const Entity& entity, FrameBuffer* pTarget,
             vert4.y = -dir.y*(dist1/total);
             vert4.z = -dir.z*(dist1/total);
         }
-        std::cout << vert4.x <<std::endl;
-        std::cout << vert4.y <<std::endl;
+        // std::cout << vert4.x <<std::endl;
+        // std::cout << vert4.y <<std::endl;
         addClippedVertex(vert3,{255,255,0,0}, norm1, transformedVertices,transformedIndices);
         addClippedVertex(vert4,{255,255,0,0}, norm2, transformedVertices,transformedIndices);
 
