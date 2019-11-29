@@ -11,6 +11,7 @@ struct Vec4
 public:
     float x, y, z, w;
 
+    Vec4(const Vec4& vec);
     Vec4(float x, float y, float z, float w);
     Vec4(const Vec3& vec3, float w = 1.f);
 

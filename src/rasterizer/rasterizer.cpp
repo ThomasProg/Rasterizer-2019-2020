@@ -382,7 +382,9 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
 
         for (const Vec4& loc3D : screenLoc)
         {
-            screenLoc.emplace_back(Mat4::CreateScreenConversionMatrix() * loc3D);
+            scaledLoc.emplace_back(Mat4::CreateScreenConversionMatrix() * loc3D);
+            if ((Mat4::CreateScreenConversionMatrix() * loc3D).w == 0)
+                std::cout << "0" << std::endl;
         }
 
 
@@ -392,9 +394,9 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
             unsigned int id2 = entity.mesh->indices[i+1];
             unsigned int id3 = entity.mesh->indices[i+2];
 
-            Vec3 v1 = scaledLoc[i].getHomogenizedVec();
-            Vec3 v2 = scaledLoc[i+1].getHomogenizedVec();
-            Vec3 v3 = scaledLoc[i+2].getHomogenizedVec();
+            Vec3 v1 = scaledLoc[id1].getHomogenizedVec();
+            Vec3 v2 = scaledLoc[id2].getHomogenizedVec();
+            Vec3 v3 = scaledLoc[id3].getHomogenizedVec();
 
             Vertex vert1 = v1;
             Vertex vert2 = v2;
@@ -411,6 +413,4 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
 
         //RenderTriangles(pTarget, pScene->lights, , entity.mesh->pTexture);
     }
-
-
 }

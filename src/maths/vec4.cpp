@@ -6,6 +6,15 @@
 
 #include "vec3.h"
 
+Vec4::Vec4(const Vec4& vec)
+    : x(vec.x), 
+      y(vec.y),
+      z(vec.z),
+      w(vec.w)
+{
+    
+}
+
 Vec4::Vec4(float x, float y, float z, float w)
     : x(x), 
       y(y),
