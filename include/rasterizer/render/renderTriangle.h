@@ -36,13 +36,13 @@ public:
     RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget, const std::vector<Light>& lights, Texture* texture);
     //RenderTriangle(Vertex const * const v1, Vertex const * const v2, Vertex const * const v3);
     
-    void draw();
-    void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
-    void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
-    void drawHorizontalLine(Vec2 p1, Vec2 p2, int height, const std::array<const Vertex*, 3>& triangleVertices) const;
+    // void draw();
+    // void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
+    // void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
+    // void drawHorizontalLine(Vec2 p1, Vec2 p2, int height, const std::array<const Vertex*, 3>& triangleVertices) const;
 
-    bool getWeight2D(const Vec2& p, float* weight) const;
-    bool getWeight(const Vec2& p, float* weight) const;
+    //bool getWeight2D(const Vec2& p, float* weight) const;
+    //bool getWeight(const Vec2& p, float* weight) const;
     Color getColorAtPixel(Vec2 p, bool& isValid, float* weight) const;
 
     static float getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights);
