@@ -139,6 +139,11 @@ void Texture::SetPixelColor(unsigned int x, unsigned int y, Color c)
 
 Color Texture::GetPixelColor(unsigned int x, unsigned int y) const
 {
+    if (!(0 <= x && x < width && 0 <= y && y < height))
+    {
+        std::cout << "y" << std::endl;
+    }
+
     assert(0 <= x && x < width && 0 <= y && y < height);
     return pixels[x + y * width];   
 }
@@ -146,14 +151,14 @@ Color Texture::GetPixelColor(unsigned int x, unsigned int y) const
 void Texture::FillBlack()
 {
     // 4 * sizeof(unsigned char)
-    memset(pixels, 0, 4 * sizeof(unsigned char) * width * height);
-    // for (unsigned int i = 0; i < width * height; i++)
-    // {
-    //     pixels[i].r = 0.f;
-    //     pixels[i].g = 0.f;
-    //     pixels[i].b = 0.f;
-    //     pixels[i].a = 1.f;
-    // }
+    //memset(pixels, 0, 4 * sizeof(unsigned char) * width * height);
+    for (unsigned int i = 0; i < width * height; i++)
+    {
+        pixels[i].r = 0;
+        pixels[i].g = 0;
+        pixels[i].b = 0;
+        pixels[i].a = 255;
+    }
 }
 
 void Texture::ToTexture(SDL_Texture* sdlTexture) const

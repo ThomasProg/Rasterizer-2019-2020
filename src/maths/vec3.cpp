@@ -115,3 +115,4 @@ Vec3 crossProduct(Vec3 v1, Vec3 v2)
         v1.x * v2.y - v1.y * v2.x
     );
 }
+

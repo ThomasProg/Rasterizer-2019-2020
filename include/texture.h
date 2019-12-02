@@ -7,7 +7,7 @@ struct Color;
 class Texture
 {
 public:
-    unsigned int width, height; //TODO : since can't const, make accessor
+    unsigned int width = 0, height = 0; //TODO : since can't const, make accessor
 public:
     Color* pixels = nullptr;
 

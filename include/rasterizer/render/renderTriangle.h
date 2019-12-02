@@ -48,6 +48,6 @@ public:
     static float getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights);
 };
 
-void drawTriangle(Vertex vert1, Vertex vert2, Vertex vert3, FrameBuffer* pTarget, std::vector<Light>& lights);
+void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture = nullptr);
 
 #endif

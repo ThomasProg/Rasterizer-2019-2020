@@ -32,7 +32,7 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     // //cube
     {
         unsigned int i = 0;
-        for (unsigned int j = 0; j < 1; j++)
+        for (unsigned int j = 0; j < 2; j++)
         {
             Entity cube;
             cube.mesh = Mesh::CreateCube();
@@ -46,9 +46,10 @@ void Events::entitiesInit(std::vector<Entity>& entities)
                 i++;
             }
             cube.transformation *= Mat4::CreateScaleMatrix(Vec3(0.15, 0.15, 0.15));
-            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, 0.0));
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
             cube.mesh->pTexture = new Texture("media/crate.png");
             entities.push_back(std::move(cube));
+            cube.alpha = j/2.f+0.5;
         }
     }
 
@@ -56,15 +57,15 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     // for (unsigned int j = 0; j < 1; j++)
     // {
     //     Entity sphere;
-    //     sphere.mesh = Mesh::CreateSphere(20, 20);
+    //     sphere.mesh = Mesh::CreateSphere(15, 15);
     //     // float ii = 0;
     //     for (Vertex& vertex : sphere.mesh->vertices)
     //     {
     //         vertex.color = Color(0, 10, 255);
     //         //ii += 255.f / 20*20;
     //     }
-    //     sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.25, 0.0, 0.0));
-    //     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
+    //     sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
+    //     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(0.05, 0.05, 0.05));
     //     entities.push_back(std::move(sphere));
     // }
 
@@ -202,13 +203,13 @@ int Events::run()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         #endif
 
-        float time = float (SDL_GetTicks()) / 1000.f;
-        fps = 1.f/(time - lastTime);
-        nbFps++;
-        totalFps += fps;
-        std::cout << 1.f/(time - lastTime) << std::endl;
-        lastTime = time;
-        std::cout << totalFps / nbFps << std::endl;
+        // float time = float (SDL_GetTicks()) / 1000.f;
+        // fps = 1.f/(time - lastTime);
+        // nbFps++;
+        // totalFps += fps;
+        // std::cout << 1.f/(time - lastTime) << std::endl;
+        // lastTime = time;
+        // std::cout << totalFps / nbFps << std::endl;
 
         frame += 1;
 
@@ -247,10 +248,10 @@ int Events::run()
             camera *= Mat4::CreateRotationMatrix(Vec3(0.0, -0.1, 0));
         if (lastXPos - xpos > mouseSensibility)
             camera *= Mat4::CreateRotationMatrix(Vec3(0.0, -0.1, 0));
-        #endif
 
         lastXPos = xpos;
         lastYPos = ypos;
+        #endif
 
 
         // rasterizer

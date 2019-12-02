@@ -14,7 +14,11 @@ struct Color
     //so we use less memory copying by copy instead of reference (using 4 more bytes)
     Color& operator=(Color setColor);
     Color& operator*=(float scalar);
+    Color operator*(float scalar);
+    Color operator+(const Color& rhs);
     unsigned char& operator[](unsigned int index);
+
+    float getTransparence() const; //returns transparence 0 < a < 1
 };
 
 #endif

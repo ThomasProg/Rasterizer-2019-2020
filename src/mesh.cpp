@@ -44,50 +44,119 @@ Mesh* Mesh::CreateCube()
 
     constexpr float min = -0.5;
     constexpr float max = 0.5;
-    // constexpr float min = 1.f;
-    // constexpr float max = 2.f;
-
 #define ADDING_VERTEX_AND_NORMAL(vec) \
-    mesh->vertices.emplace_back(Vertex(vec, vec));
-    //mesh->normals.emplace_back(vec);
+mesh->vertices.emplace_back(Vertex(vec, vec));
+#define ADDING_UV(a, b)\
+mesh->vertices[mesh->vertices.size() - 1].u = a;\
+mesh->vertices[mesh->vertices.size() - 1].v = b;
 
-    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max)); 
-    mesh->vertices[mesh->vertices.size() - 1].u = 0;
-    mesh->vertices[mesh->vertices.size() - 1].v = 0;
-    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max)); 
-    mesh->vertices[mesh->vertices.size() - 1].u = 1;
-    mesh->vertices[mesh->vertices.size() - 1].v = 0;
-    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, max)); 
-    mesh->vertices[mesh->vertices.size() - 1].u = 0;
-    mesh->vertices[mesh->vertices.size() - 1].v = 1;
-    ADDING_VERTEX_AND_NORMAL(Vec3(max, min, max));
-    mesh->vertices[mesh->vertices.size() - 1].u = 1;
-    mesh->vertices[mesh->vertices.size() - 1].v = 1;
+    //z axis
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max)); //0
+    ADDING_UV(0, 0);
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max)); //1
+    ADDING_UV(1, 0);
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, max)); //2
+    ADDING_UV(0, 1);
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, min, max)); //3
+    ADDING_UV(1, 1);
+    mesh->addQuad(0, 1, 3, 2);
 
-    ADDING_VERTEX_AND_NORMAL(Vec3(max, min, min));
-    mesh->vertices[mesh->vertices.size() - 1].u = 0;
-    mesh->vertices[mesh->vertices.size() - 1].v = 0;
-    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, min));
-    mesh->vertices[mesh->vertices.size() - 1].u = 1;
-    mesh->vertices[mesh->vertices.size() - 1].v = 0;
-    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, min));
-    mesh->vertices[mesh->vertices.size() - 1].u = 0;
-    mesh->vertices[mesh->vertices.size() - 1].v = 1;
-    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, min));
-    mesh->vertices[mesh->vertices.size() - 1].u = 1;
-    mesh->vertices[mesh->vertices.size() - 1].v = 1;
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, min, min)); //4
+    ADDING_UV(0, 1);
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, min)); //5
+    ADDING_UV(0, 0); 
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, min)); //6
+    ADDING_UV(1, 0);
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, min)); //7
+    ADDING_UV(1, 1);
+    mesh->addQuad(6, 5, 4, 7);
+
+    //x axis
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max)); //0
+    ADDING_UV(1, 0);
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, max)); //2
+    ADDING_UV(1, 1);
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, min)); //7
+    ADDING_UV(0, 1);
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, min)); //6
+    ADDING_UV(0, 0);
+    mesh->addQuad(0+4*2, 1+4*2, 2+4*2, 3+4*2);
+
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max)); //1
+    ADDING_UV(0, 0);
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, min, max)); //3
+    ADDING_UV(0, 1);
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, min, min)); //4
+    ADDING_UV(1, 1);
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, min)); //5
+    ADDING_UV(1, 0);
+    mesh->addQuad(0+4*3, 1+4*3, 2+4*3, 3+4*3);
+
+    //y axis
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max)); //0
+    ADDING_UV(0, 1);
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max)); //1
+    ADDING_UV(1, 1);
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, max, min)); //5
+    ADDING_UV(1, 0);
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, max, min)); //6
+    ADDING_UV(0, 0);
+    mesh->addQuad(0+4*4, 1+4*4, 2+4*4, 3+4*4);
+
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, max)); //2
+    ADDING_UV(1, 1);
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, min, max)); //3
+    ADDING_UV(0, 1);
+    ADDING_VERTEX_AND_NORMAL(Vec3(max, min, min)); //4
+    ADDING_UV(0, 0);
+    ADDING_VERTEX_AND_NORMAL(Vec3(min, min, min)); //7
+    ADDING_UV(1, 0);
+    mesh->addQuad(0+4*5, 1+4*5, 2+4*5, 3+4*5);
 
 #undef ADDING_VERTEX_AND_NORMAL
+#undef ADDING_UV
 
-    //visible faces (see schema)
-    mesh->addQuad(1, 5, 4, 3); //x+
-    mesh->addQuad(0, 6, 5, 1); //y+
-    mesh->addQuad(0, 1, 3, 2); //z+
+// #define ADDING_VERTEX_AND_NORMAL(vec) \
+//     mesh->vertices.emplace_back(Vertex(vec, vec));
+//     //mesh->normals.emplace_back(vec);
 
-    //hidden faces (see schema)
-    mesh->addQuad(0, 2, 7, 6); //x-
-    mesh->addQuad(2, 3, 4, 7); //y-
-    mesh->addQuad(6, 7, 4, 5); //z- 
+//     ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max)); 
+//     mesh->vertices[mesh->vertices.size() - 1].u = 0;
+//     mesh->vertices[mesh->vertices.size() - 1].v = 0;
+//     ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max)); 
+//     mesh->vertices[mesh->vertices.size() - 1].u = 1;
+//     mesh->vertices[mesh->vertices.size() - 1].v = 0;
+//     ADDING_VERTEX_AND_NORMAL(Vec3(min, min, max)); 
+//     mesh->vertices[mesh->vertices.size() - 1].u = 0;
+//     mesh->vertices[mesh->vertices.size() - 1].v = 1;
+//     ADDING_VERTEX_AND_NORMAL(Vec3(max, min, max));
+//     mesh->vertices[mesh->vertices.size() - 1].u = 1;
+//     mesh->vertices[mesh->vertices.size() - 1].v = 1;
+
+//     ADDING_VERTEX_AND_NORMAL(Vec3(max, min, min));
+//     mesh->vertices[mesh->vertices.size() - 1].u = 1;
+//     mesh->vertices[mesh->vertices.size() - 1].v = 1;
+//     ADDING_VERTEX_AND_NORMAL(Vec3(max, max, min));
+//     mesh->vertices[mesh->vertices.size() - 1].u = 1;
+//     mesh->vertices[mesh->vertices.size() - 1].v = 0;
+//     ADDING_VERTEX_AND_NORMAL(Vec3(min, max, min));
+//     mesh->vertices[mesh->vertices.size() - 1].u = 0;
+//     mesh->vertices[mesh->vertices.size() - 1].v = 0;
+//     ADDING_VERTEX_AND_NORMAL(Vec3(min, min, min));
+//     mesh->vertices[mesh->vertices.size() - 1].u = 0;
+//     mesh->vertices[mesh->vertices.size() - 1].v = 1;
+
+// #undef ADDING_VERTEX_AND_NORMAL
+
+//     //visible faces (see schema)
+//     mesh->addQuad(1, 5, 4, 3); //x+
+//     mesh->addQuad(0, 6, 5, 1); //y+
+//     mesh->addQuad(0, 1, 3, 2); //z+
+
+//     //hidden faces (see schema)
+//     mesh->addQuad(0, 2, 7, 6); //x-
+//     mesh->addQuad(2, 3, 4, 7); //y-
+//     mesh->addQuad(6, 7, 4, 5); //z- 
 
     return mesh;
 }

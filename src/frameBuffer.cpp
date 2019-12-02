@@ -16,14 +16,34 @@ FrameBuffer::FrameBuffer(unsigned int width, unsigned int height)
 {
     
 }
-//#include <iostream>
+
 void FrameBuffer::SetPixel(unsigned int x, unsigned int y, float newDepth, Color c)
 {
     float currentDepth = depthBuffer.getDepth(x, y);
+    if (!(x > 0 && x < width && y > 0 && y < height))
+        return;
+
+    Color oldColor = GetPixelColor(x, y);
+
     if (currentDepth > newDepth)
     {
-        texture.SetPixelColor(x, y, c);
-        depthBuffer.setDepth(x, y, newDepth);
+    //     // Color newColor = c * (255.f/float(c.a)) + oldColor *  (255.f/float(oldColor.a)) * (1 - (255.f/float(c.a))) 
+    //     //                 * (1 / (255.f / float(c.a) + 255.f / float(oldColor.a) * (1 - 255.f / float(c.a))));
+        // if (c.a != 255)
+        // {
+            float div = (c.getTransparence() + oldColor.getTransparence() * (1 - c.getTransparence()));
+            
+            Color newColor = c * (c.getTransparence() / div) + oldColor * (oldColor.getTransparence() * (1 - c.getTransparence()) / div);
+            newColor.a = (c.a + oldColor.a * (1 - c.a));
+                            
+            texture.SetPixelColor(x, y, newColor);
+            depthBuffer.setDepth(x, y, newDepth);
+        // }
+        // else 
+        // {
+        //     texture.SetPixelColor(x, y, c);
+        //     depthBuffer.setDepth(x, y, newDepth);
+        // }
     }
     // else 
     //     std::cout << x << " / " << y << std::endl;

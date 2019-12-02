@@ -154,7 +154,6 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         std::vector<Vec4> screenLoc;
         screenLoc.reserve(worldLoc.size());
 
-        //for (unsigned int i = 0; i < worldLoc.size(); i+=3)
         for (const Vec4& loc3D : worldLoc)
         {
         //     Vec4 loc3D1 = worldLoc[i];
@@ -172,42 +171,110 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         //     }
         }
 
-        std::vector<Vec4> scaledLoc;
-        scaledLoc.reserve(screenLoc.size());
+        std::vector<Vec4> culledLoc;
+        std::vector<Vec3> culledNormals;
+        std::vector<Vec2> culledUVs;
+        //culledLoc.reserve(worldLoc.size());
 
-        for (const Vec4& loc3D : screenLoc)
-        {
-            scaledLoc.emplace_back(Mat4::CreateScreenConversionMatrix() * loc3D);
-            //scaledLoc.emplace_back(loc3D*100 + Vec4(windowWidth/2, windowHeight/2, 0, 0));
-        }
-
-
-        for (unsigned int i = 0; i < entity.mesh->indices.size(); i += 3)
+        for (unsigned int i = 0; i < entity.mesh->indices.size(); i+=3)
         {
             unsigned int id1 = entity.mesh->indices[i];
             unsigned int id2 = entity.mesh->indices[i+1];
             unsigned int id3 = entity.mesh->indices[i+2];
 
+            // Vec3 cameraLoc = Vec3(0, 0, 0);//Vec3(windowWidth/2, windowHeight/2, 0);
+            // Vec3 L = cameraLoc;
+            // L = Vec3(0, 0, 1);
+            // Vec3 N = crossProduct(Vec3((screenLoc[id2] - screenLoc[id1])), Vec3((screenLoc[id3] - screenLoc[id1])));
+            //std::cout << N << std::endl;
+            //if (dotProduct(L, N) >= 0)
+            //drawLine(pTarget, Vertex(worldLoc[id1]), Vertex(Vec3(worldLoc[id1]) + N));
+            // if (dotProduct(N, Vec3(0,0,-1)) < 0)
+            // {
+            //     std::cout << dotProduct(N, Vec3(0,0,-1)) << std::endl;
+            //     continue;
+            // }
+
+            culledLoc.emplace_back(screenLoc[id1]);
+            culledLoc.emplace_back(screenLoc[id2]);
+            culledLoc.emplace_back(screenLoc[id3]);
+
+            culledNormals.emplace_back(worldNormals[id1]);
+            culledUVs.emplace_back(entity.mesh->vertices[id1].u, entity.mesh->vertices[id1].v);
+
+            culledNormals.emplace_back(worldNormals[id2]);
+            culledUVs.emplace_back(entity.mesh->vertices[id2].u, entity.mesh->vertices[id2].v);
+            
+            culledNormals.emplace_back(worldNormals[id3]);
+            culledUVs.emplace_back(entity.mesh->vertices[id3].u, entity.mesh->vertices[id3].v);
+        }
+
+        std::vector<Vec4> scaledLoc;
+        scaledLoc.reserve(culledLoc.size());
+
+        for (const Vec4& loc3D : culledLoc)
+        {
+            scaledLoc.emplace_back(Mat4::CreateScreenConversionMatrix() * loc3D);
+            //scaledLoc.emplace_back(loc3D*100 + Vec4(windowWidth/2, windowHeight/2, 0, 0));
+        }
+
+        //for (unsigned int i = 0; i < entity.mesh->indices.size(); i += 3)
+        for (unsigned int i = 0; i < culledNormals.size(); i += 3)
+        {
+            // unsigned int id1 = entity.mesh->indices[i];
+            // unsigned int id2 = entity.mesh->indices[i+1];
+            // unsigned int id3 = entity.mesh->indices[i+2];
+
+            // Vec3 v1 = scaledLoc[id1];//.getHomogenizedVec();
+            // Vec3 v2 = scaledLoc[id2];//.getHomogenizedVec();
+            // Vec3 v3 = scaledLoc[id3];//.getHomogenizedVec();
+
+            unsigned int id1 = i;
+            unsigned int id2 = i+1;
+            unsigned int id3 = i+2;
+
             Vec3 v1 = scaledLoc[id1];//.getHomogenizedVec();
             Vec3 v2 = scaledLoc[id2];//.getHomogenizedVec();
             Vec3 v3 = scaledLoc[id3];//.getHomogenizedVec();
 
+            // Vertex vert1 = v1;
+            // vert1.normal = worldNormals[id1];
+            // vert1.u = entity.mesh->vertices[id1].u;
+            // vert1.v = entity.mesh->vertices[id1].v;
+            // Vertex vert2 = v2;
+            // vert2.normal = worldNormals[id2];
+            // vert2.u = entity.mesh->vertices[id2].u;
+            // vert2.v = entity.mesh->vertices[id2].v;
+            // Vertex vert3 = v3;
+            // vert3.normal = worldNormals[id3];
+            // vert3.u = entity.mesh->vertices[id3].u;
+            // vert3.v = entity.mesh->vertices[id3].v;
+
             Vertex vert1 = v1;
-            vert1.normal = worldNormals[id1];
+            vert1.normal = culledNormals[id1];
+            vert1.u = culledUVs[id1].x;
+            vert1.v = culledUVs[id1].y;
             Vertex vert2 = v2;
-            vert2.normal = worldNormals[id2];
+            vert2.normal = culledNormals[id2];
+            vert2.u = culledUVs[id2].x;
+            vert2.v = culledUVs[id2].y;
             Vertex vert3 = v3;
-            vert3.normal = worldNormals[id3];
+            vert3.normal = culledNormals[id3];
+            vert3.u = culledUVs[id3].x;
+            vert3.v = culledUVs[id3].y;
 
             vert1.color = Color(250,250,250);
             vert2.color = Color(250,100,250);
             vert3.color = Color(250,250,100);
-
             // drawLine(pTarget, v1, v2);
             // drawLine(pTarget, v2, v3);
             // drawLine(pTarget, v3, v1);
+
+            vert1.color.a *= entity.alpha;
+            vert2.color.a *= entity.alpha;
+            vert3.color.a *= entity.alpha;
             
-            drawTriangle(vert1, vert2, vert3, pTarget, pScene->lights);
+            drawTriangle(vert1, vert2, vert3, pTarget, pScene->lights, entity.mesh->pTexture);
         }
 
         //RenderTriangles(pTarget, pScene->lights, , entity.mesh->pTexture);

@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cassert>
 #include "maths/utilityFunctions.h"
 
 #include "renderTriangle.h"
@@ -76,7 +77,7 @@ bool getWeight(const Vec2& p, Vec3 p1, Vec3 p2, Vec3 p3, float* weight)
     return weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0;
 }
 
-void drawTriangle(Vertex vert1, Vertex vert2, Vertex vert3, FrameBuffer* pTarget, std::vector<Light>& lights)
+void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture)
 {
     std::array<Vertex*, 3> triangleVertices;
     triangleVertices[0] = &vert1;
@@ -102,8 +103,8 @@ void drawTriangle(Vertex vert1, Vertex vert2, Vertex vert3, FrameBuffer* pTarget
     // intensityVertex[1] = getPixelLight(*triangleVertices[1]);
     // intensityVertex[2] = getPixelLight(*triangleVertices[2]);
 
-    float uP[3] = {0,1,0};
-    float vP[3] = {0,0,1};
+    float uP[3] = {vert1.u,vert2.u,vert3.u};
+    float vP[3] = {vert1.v,vert2.v,vert3.v};
 
     //TODO : set WeightVar outside of the loops
     for (int y = minY; y <= maxY; y++)
@@ -117,7 +118,7 @@ void drawTriangle(Vertex vert1, Vertex vert2, Vertex vert3, FrameBuffer* pTarget
                 //std::cout << "grs" << std::endl;
             if (isValid)
             {   
-                Color c(0,0,0);
+                Color c(0, 0, 0, 0);
 
                 float intensity = 0.f;
 
@@ -135,6 +136,7 @@ void drawTriangle(Vertex vert1, Vertex vert2, Vertex vert3, FrameBuffer* pTarget
                     c.r += weight[i] * triangleVertices[i]->color.r;
                     c.g += weight[i] * triangleVertices[i]->color.g;
                     c.b += weight[i] * triangleVertices[i]->color.b;
+                    c.a += weight[i] * triangleVertices[i]->color.a;
 
                     p.x += weight[i] * triangleVertices[i]->position.x;
                     p.y += weight[i] * triangleVertices[i]->position.y;
@@ -147,16 +149,41 @@ void drawTriangle(Vertex vert1, Vertex vert2, Vertex vert3, FrameBuffer* pTarget
 
                     //intensity += weight[i] * intensityVertex[i];
                 }
+
+                //unprecision of interpolation of char
+                if (triangleVertices[0]->color.a == 255 
+                    && triangleVertices[1]->color.a == 255 
+                    && triangleVertices[2]->color.a == 255)
+                    c.a = 255;
+                
+                //std::cout << (unsigned int) (c.a) << '\n';
+
                 //std::cout << "u : " << static_cast<unsigned int>(u * float(texture->width)) << std::endl;
                 vert.normal.Normalize();
+                //std::cout << (unsigned int ) (c.a) << '\n';
+
+                // if (dotProduct(vert.normal, Vec3(0,0,1)) >= 0)
+                //     continue;
+                // if (vert.normal.z > 0.9)
+                //     continue;
+
                 //vert.normal = crossProduct(v3-v1,v2-v1);
                 intensity = RenderTriangle::getPixelLight(vert, lights);
                 
-                // c = texture->GetPixelColor(static_cast<unsigned int>(u * float(texture->width)), 
-                //                            static_cast<unsigned int>(v * float(texture->height)));
+
+                if (texture != nullptr)
+                {
+                    char alpha = c.a;
+                    assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
+                    //nearest interpolation
+                    //max uv is 1, 1 * width = width, width isn't a valid index, so we substract by 1
+                    c = texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width)-1)), 
+                                               static_cast<unsigned int>(v * (float(texture->height)-1)));
+                    c.a = alpha;
+                }
 
                 c *= intensity;
-                
+
                 //calcul z
                 float z = (v1.z) * weight[0] + (v2.z) * weight[1] + (v3.z) * weight[2];
                 

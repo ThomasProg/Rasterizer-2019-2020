@@ -42,7 +42,7 @@ Color& Color::operator=(Color setColor)
 
 Color& Color::operator*=(float scalar)
 {
-  if (scalar < 0)
+  if (scalar <= 0)
   {
     r = 0;
     g = 0;
@@ -92,4 +92,58 @@ unsigned char& Color::operator[](unsigned int index)
   default:
     break;
   }
+}
+
+Color Color::operator*(float scalar)
+{
+  Color c = *this;
+  if (scalar <= 0)
+  {
+    c.r = 0;
+    c.g = 0;
+    c.b = 0;
+
+    return c;
+  }
+
+  //since -1 < intensity < 1, we need to lerp the intensity for the color
+  if (r > 255.f / scalar)
+      c.r = 255;
+  else 
+      c.r *= scalar;
+      
+  if (g > 255.f / scalar)
+      c.g = 255;
+  else
+      c.g *= scalar;
+
+  if (b > 255.f / scalar)
+      c.b = 255;       
+  else 
+      c.b *= scalar;  
+
+  return c;
+}
+
+Color Color::operator+(const Color& rhs)
+{
+  Color c;
+  #define addAndClampChar(result, f1, f2) \
+    if (f1 > 255 - f2)\
+      result = 255;        \
+    else                \
+      result = f1 + f2;
+
+  addAndClampChar(c.r, this->r, rhs.r);
+  addAndClampChar(c.g, this->g, rhs.g);
+  addAndClampChar(c.b, this->b, rhs.b);
+
+  #undef addAndClampChar
+
+  return c;
+}
+
+float Color::getTransparence() const
+{
+  return float(this->a) / 255.f;
 }
