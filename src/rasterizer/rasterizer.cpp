@@ -182,16 +182,21 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
             unsigned int id2 = entity.mesh->indices[i+1];
             unsigned int id3 = entity.mesh->indices[i+2];
 
-            // Vec3 cameraLoc = Vec3(0, 0, 0);//Vec3(windowWidth/2, windowHeight/2, 0);
+            // Vec3 cameraLoc = Vec3(0, 0, 1);//Vec3(windowWidth/2, windowHeight/2, 0);
             // Vec3 L = cameraLoc;
-            // L = Vec3(0, 0, 1);
-            // Vec3 N = crossProduct(Vec3((screenLoc[id2] - screenLoc[id1])), Vec3((screenLoc[id3] - screenLoc[id1])));
-            //std::cout << N << std::endl;
-            //if (dotProduct(L, N) >= 0)
-            //drawLine(pTarget, Vertex(worldLoc[id1]), Vertex(Vec3(worldLoc[id1]) + N));
-            // if (dotProduct(N, Vec3(0,0,-1)) < 0)
+            // L = Vec3(0, 0, -1);
+
+            // Vec3 N = crossProduct(Vec3((worldLoc[id2] - worldLoc[id1])), Vec3((worldLoc[id3] - worldLoc[id1])));
+            // // Vec4 Q = projectionMatrix * inverseCameraMatrix * Vec4(N, 0);
+
+            // //std::cout << N << std::endl;
+
+            // // if (dotProduct(L, Q) >= 0)
+            // //     drawLine(pTarget, Vertex(worldLoc[id1]), Vertex(Vec3(worldLoc[id1]) + N));
+            // if (dotProduct(N, Vec3(0,0,1)) >= 0)
             // {
-            //     std::cout << dotProduct(N, Vec3(0,0,-1)) << std::endl;
+            //     //std::cout << dotProduct(N, Vec3(0,0,-1)) << std::endl;
+            //     drawLine(pTarget, Vertex(Vec3(50,50,50)), Vertex(Vec3(50,50,50) + N * 1000));
             //     continue;
             // }
 

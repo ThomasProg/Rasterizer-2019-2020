@@ -295,38 +295,78 @@ Mat4 Mat4::CreatePerspectiveProjectionMatrix(int width, int height,float near,fl
     // perspective.elements[14] = 1;
     // perspective.elements[15] = 0;
 
-    float temp, temp2, temp3, temp4;
-    {
-        float ymax, xmax;
-        ymax = near * tanf(fov / PI / 360);
-        xmax = ymax * (width / height);
+    /////////////////////////////////////////////////////////
 
-        temp = 2 * near;
-        temp2 = 2.0 * xmax;
-        temp3 = 2 * ymax;
-        temp4 = far - near;
-    }
+    // float temp, temp2, temp3, temp4;
+    // {
+    //     float ymax, xmax;
+    //     ymax = near * tanf(fov / PI / 360);
+    //     xmax = ymax * (width / height);
 
-    Mat4 perspective;
-    perspective.elements[0] =  temp/temp2;
-    perspective.elements[1] =  0;
-    perspective.elements[2] =  0;
-    perspective.elements[3] =  0;
+    //     temp = 2 * near;
+    //     temp2 = 2.0 * xmax;
+    //     temp3 = 2 * ymax;
+    //     temp4 = far - near;
+    // }
 
-    perspective.elements[4] =  0;
-    perspective.elements[5] =  temp/temp3;
-    perspective.elements[6] =  0;
-    perspective.elements[7] =  0;
+    // Mat4 perspective;
+    // perspective.elements[0] =  temp/temp2;
+    // perspective.elements[1] =  0;
+    // perspective.elements[2] =  0;
+    // perspective.elements[3] =  0;
+
+    // perspective.elements[4] =  0;
+    // perspective.elements[5] =  temp/temp3;
+    // perspective.elements[6] =  0;
+    // perspective.elements[7] =  0;
     
-    perspective.elements[8] =  0;
-    perspective.elements[9] =  0;
-    perspective.elements[10] = (-far - near) / temp4;
-    perspective.elements[11] = -1;
+    // perspective.elements[8] =  0;
+    // perspective.elements[9] =  0;
+    // perspective.elements[10] = (-far - near) / temp4;
+    // perspective.elements[11] = (-temp * far) / temp4;
 
-    perspective.elements[12] = 0;
-    perspective.elements[13] = 0.0;
-    perspective.elements[14] = (-temp * far) / temp4;
-    perspective.elements[15] = 1;
+    // perspective.elements[12] = 0;
+    // perspective.elements[13] = 0.0;
+    // perspective.elements[14] = -1;
+    // perspective.elements[15] = 1;
+
+    /////////////////////////////////////////////////////////
+
+    float ymax, xmax;
+    ymax = tanf(fov * PI / 360.f);
+    // ymin = -ymax;
+    // xmin = -ymax * aspectRatio;
+    xmax = ymax * width / height;
+
+    // float left = -xmax;
+    // float right = xmax;
+    // float bottom = -ymax;
+    // float top = ymax;
+
+    Mat4 m;
+    // float temp, temp2, temp3, temp4;
+    // temp = 2.0 * near;
+    // temp2 = right - left;
+    // temp3 = top - bottom;
+    float temp4 = far - near;
+    
+    m.elements[0] = 1/xmax;
+    m.elements[1] = 0.0;
+    m.elements[2] = 0.0;
+    m.elements[3] = 0.0;
+    m.elements[4] = 0.0;
+    m.elements[5] = 1/ymax;
+    m.elements[6] = 0.0;
+    m.elements[7] = 0.0;
+    m.elements[8] = 0.f;//(right + left) / temp2;
+    m.elements[9] = 0.f;//(top + bottom) / temp3;
+    m.elements[10] = -(far + near) / temp4;
+    m.elements[11] = -1;//-2 * (far * near) / temp4;
+    m.elements[12] = 0.0;
+    m.elements[13] = 0.0;
+    m.elements[14] = -2 * (far * near) / temp4;
+    m.elements[15] = 0.0;
+    /////////////////////////////////////////////////////////
 
     // Mat4 perspective;
     // float ratio = width/height;
@@ -350,7 +390,7 @@ Mat4 Mat4::CreatePerspectiveProjectionMatrix(int width, int height,float near,fl
     // perspective.elements[14] = 1.0;
     // perspective.elements[15] = 1;
 
-    return perspective;
+    return m;
 }
 
 Mat4 Mat4::CreateOrthogonalProjectionMatrix()

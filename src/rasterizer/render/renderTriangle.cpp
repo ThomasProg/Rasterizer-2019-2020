@@ -150,6 +150,13 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTar
                     //intensity += weight[i] * intensityVertex[i];
                 }
 
+                if (!(x > 0 && x < pTarget->width && y > 0 && y < pTarget->height))
+                    continue;
+
+                // float currentDepth = pTarget->depthBuffer.getDepth(x, y);
+                // if (currentDepth <= p.z)
+                //     continue;
+
                 //unprecision of interpolation of char
                 if (triangleVertices[0]->color.a == 255 
                     && triangleVertices[1]->color.a == 255 

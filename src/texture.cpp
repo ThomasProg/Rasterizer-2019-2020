@@ -139,10 +139,10 @@ void Texture::SetPixelColor(unsigned int x, unsigned int y, Color c)
 
 Color Texture::GetPixelColor(unsigned int x, unsigned int y) const
 {
-    if (!(0 <= x && x < width && 0 <= y && y < height))
-    {
-        std::cout << "y" << std::endl;
-    }
+    // if (!(0 <= x && x < width && 0 <= y && y < height))
+    // {
+    //     std::cout << "y" << std::endl;
+    // }
 
     assert(0 <= x && x < width && 0 <= y && y < height);
     return pixels[x + y * width];   
