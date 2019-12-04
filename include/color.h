@@ -21,4 +21,6 @@ struct Color
     float getTransparence() const; //returns transparence 0 < a < 1
 };
 
+Color getAverageColor(Color lhs, Color rhs, float lhsRatio);
+
 #endif

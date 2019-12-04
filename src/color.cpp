@@ -147,3 +147,15 @@ float Color::getTransparence() const
 {
   return float(this->a) / 255.f;
 }
+
+Color getAverageColor(Color lhs, Color rhs, float lhsRatio)
+{
+  Color newColor = lhs * lhsRatio + rhs * (1 - lhsRatio);
+
+  // newColor.r = getAverageChar(lhs.r, lhs.r);
+  // newColor.g = getAverageChar(lhs.g, lhs.g);
+  // newColor.b = getAverageChar(lhs.b, lhs.b);
+  // newColor.a = getAverageChar(lhs.a, lhs.a);
+
+  return newColor;
+}

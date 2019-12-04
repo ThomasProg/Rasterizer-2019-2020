@@ -153,9 +153,9 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTar
                 if (!(x > 0 && x < pTarget->width && y > 0 && y < pTarget->height))
                     continue;
 
-                // float currentDepth = pTarget->depthBuffer.getDepth(x, y);
-                // if (currentDepth <= p.z)
-                //     continue;
+                float currentDepth = pTarget->depthBuffer.getDepth(x, y);
+                if (currentDepth <= p.z)
+                    continue;
 
                 //unprecision of interpolation of char
                 if (triangleVertices[0]->color.a == 255 
@@ -163,30 +163,77 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTar
                     && triangleVertices[2]->color.a == 255)
                     c.a = 255;
                 
-                //std::cout << (unsigned int) (c.a) << '\n';
-
-                //std::cout << "u : " << static_cast<unsigned int>(u * float(texture->width)) << std::endl;
                 vert.normal.Normalize();
-                //std::cout << (unsigned int ) (c.a) << '\n';
 
-                // if (dotProduct(vert.normal, Vec3(0,0,1)) >= 0)
-                //     continue;
-                // if (vert.normal.z > 0.9)
-                //     continue;
-
-                //vert.normal = crossProduct(v3-v1,v2-v1);
                 intensity = RenderTriangle::getPixelLight(vert, lights);
                 
 
-                if (texture != nullptr)
+                if (texture != nullptr && texture->pixels != nullptr)
                 {
-                    char alpha = c.a;
-                    assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
-                    //nearest interpolation
-                    //max uv is 1, 1 * width = width, width isn't a valid index, so we substract by 1
-                    c = texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width)-1)), 
-                                               static_cast<unsigned int>(v * (float(texture->height)-1)));
-                    c.a = alpha;
+                    //TODO : enum for interpolation type
+
+                    {
+                        char alpha = c.a;
+                        assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
+                        //nearest interpolation
+                        //max uv is 1, 1 * width = width, width isn't a valid index, so we substract by 1
+                        c = texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width))), 
+                                                   static_cast<unsigned int>(v * (float(texture->height))));
+                        c.a = alpha;
+                    }
+
+                    //bilinear interpolation
+                    {
+                        // floor
+                        // x1,y1--------x2,y1
+                        //   |            |
+                        //   |            |
+                        //   |  x,y       |
+                        //   |   #        |
+                        //   |            |
+                        // x1,y2--------x2,y2
+                        //               ceil
+
+                        char alpha = c.a;
+
+                        const int x1 = static_cast<int>(floor(u * (float(texture->width)-1)));
+                        const int x2 = static_cast<int>(ceil(u * (float(texture->width)-1)));
+
+                        const int y1 = static_cast<int>(floor(v * (float(texture->height)-1)));
+                        const int y2 = static_cast<int>(ceil(v * (float(texture->height)-1)));
+
+                        const float curX = u * (float(texture->width) - 1);
+                        const float curY = v * (float(texture->height) - 1);
+
+                        if (x2 - x1 == 0)
+                        {
+                            Color c1 = texture->GetPixelColor(x1, y1);
+                            Color c2 = texture->GetPixelColor(x1, y2);
+
+                            c = getAverageColor(c1, c2, 1 - (curY - y1) / (y2 - y1));
+                        }
+                        else if (y2 - y1 == 0)
+                        {
+                            Color c1 = texture->GetPixelColor(x1, y1);
+                            Color c2 = texture->GetPixelColor(x2, y1);
+
+                            c = getAverageColor(c1, c2, 1 - (curY - y1) / (y2 - y1));
+                        }
+                        else 
+                        {
+                            Color c11 = texture->GetPixelColor(x1, y1);
+                            Color c21 = texture->GetPixelColor(x2, y1);
+                            Color c12 = texture->GetPixelColor(x1, y2);
+                            Color c22 = texture->GetPixelColor(x2, y2);
+
+                            Color c1 = getAverageColor(c11, c21, 1 - (curX - x1 / (x2 - x1)));
+                            Color c2 = getAverageColor(c12, c22, 1 - (curX - x1 / (x2 - x1)));
+
+                            c = getAverageColor(c1, c2, 1 - (curY - y1) / (y2 - y1));
+                        }
+
+                        c.a = alpha;
+                    }
                 }
 
                 c *= intensity;

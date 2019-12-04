@@ -47,8 +47,30 @@ void Events::entitiesInit(std::vector<Entity>& entities)
             }
             cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
             //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
-            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 0, -5));
+            //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 0, 0));
             cube.mesh->pTexture = new Texture("media/crate.png");
+            entities.push_back(std::move(cube));
+            cube.alpha = j/2.f+0.5;
+        }
+
+
+        for (unsigned int j = 0; j < 1; j++)
+        {
+            Entity cube;
+            cube.mesh = Mesh::CreateCube();
+            i = 0;
+            for (Vertex& vertex : cube.mesh->vertices)
+            {
+                if (i % 2 == 0)
+                    vertex.color = Color(i*(255/6), 2, 2);
+                else
+                    vertex.color = Color(2, i*(255/6), 2);
+                i++;
+            }
+            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
+            //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(1, 0, -2));
+            cube.mesh->pTexture = new Texture("media/crate2.png");
             entities.push_back(std::move(cube));
             cube.alpha = j/2.f+0.5;
         }
@@ -167,8 +189,9 @@ Events::Events()
     }
 
     //hide cursor
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     #endif
+    //camera = Mat4::CreateTranslationMatrix(Vec3(0,0,10));
 }
 
 Events::~Events()
@@ -208,10 +231,11 @@ int Events::run()
         //std::cout << m << std::endl;
 
         float time = float (SDL_GetTicks()) / 1000.f;
-        fps = 1.f/(time - lastTime);
+        float deltaTime = time - lastTime;
+        fps = 1.f/(deltaTime);
         nbFps++;
         totalFps += fps;
-        std::cout << 1.f/(time - lastTime) << std::endl;
+        std::cout << 1.f/(deltaTime) << std::endl;
         lastTime = time;
         //std::cout << totalFps / nbFps << std::endl;
 
@@ -227,34 +251,42 @@ int Events::run()
 
         //GLFW
         #ifdef __GLFW__
+        if (glfwGetKey(window, GLFW_KEY_W))
+            camera.location += Vec3(0, 0, -1);
+
+        if (glfwGetKey(window, GLFW_KEY_S))
+            camera.location += Vec3(0, 0, 1);
+        
         if (glfwGetKey(window, GLFW_KEY_ESCAPE))
             glfwSetWindowShouldClose(window, GL_TRUE);
         if (glfwGetKey(window, GLFW_KEY_UP))
-            camera *= Mat4::CreateTranslationMatrix(Vec3(0, 0, 0.1));
+            camera.rotation += Vec3(cos(camera.rotationSpeed)*deltaTime,0,0);
         if (glfwGetKey(window, GLFW_KEY_DOWN))
-            camera *= Mat4::CreateTranslationMatrix(Vec3(0, 0, -0.1));
+            camera.rotation += Vec3(-cos(camera.rotationSpeed)*deltaTime, 0, 0);
         if (glfwGetKey(window, GLFW_KEY_LEFT))
-            camera *= Mat4::CreateTranslationMatrix(Vec3(-0.1, 0, 0));
+            camera.rotation += Vec3(0,sin(camera.rotationSpeed)*deltaTime,0);
         if (glfwGetKey(window, GLFW_KEY_RIGHT))
-            camera *= Mat4::CreateTranslationMatrix(Vec3(0.1, 0, 0));
+            camera.rotation += Vec3(0,-sin(camera.rotationSpeed)*deltaTime,0);
 
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-
-        constexpr const double mouseSensibility = 2.f;
-
-        if (lastYPos - ypos < - mouseSensibility)
-            camera *= Mat4::CreateRotationMatrix(Vec3(-0.1, 0, 0));
-        if (lastYPos - ypos > mouseSensibility)
-            camera *= Mat4::CreateRotationMatrix(Vec3(0.1, 0, 0));
-
-        if (lastXPos - xpos < - mouseSensibility)
-            camera *= Mat4::CreateRotationMatrix(Vec3(0.0, -0.1, 0));
-        if (lastXPos - xpos > mouseSensibility)
-            camera *= Mat4::CreateRotationMatrix(Vec3(0.0, -0.1, 0));
-
-        lastXPos = xpos;
-        lastYPos = ypos;
+        camera.actualize();
+        
+        //double xpos, ypos;
+        //glfwGetCursorPos(window, &xpos, &ypos);
+//
+        //constexpr const double mouseSensibility = 2.f;
+//
+        //if (lastYPos - ypos < - mouseSensibility)
+        //    camera *= Mat4::CreateRotationMatrix(Vec3(-0.1, 0, 0));
+        //if (lastYPos - ypos > mouseSensibility)
+        //    camera *= Mat4::CreateRotationMatrix(Vec3(0.1, 0, 0));
+//
+        //if (lastXPos - xpos < - mouseSensibility)
+        //    camera *= Mat4::CreateRotationMatrix(Vec3(0.0, -0.1, 0));
+        //if (lastXPos - xpos > mouseSensibility)
+        //    camera *= Mat4::CreateRotationMatrix(Vec3(0.0, -0.1, 0));
+//
+        //lastXPos = xpos;
+        //lastYPos = ypos;
         #endif
 
 
@@ -265,7 +297,7 @@ int Events::run()
         //Rasterizer::RenderScene(&scene, &target, Mat4::CreateOrthogonalProjectionMatrix(), camera.GetInverse(), renderMode);
         Rasterizer::RenderScene(&scene, &target, 
             Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 90), 
-            camera.GetInverse(), renderMode);
+            camera.getTransform().GetInverse(), renderMode);
 
         // render.SDL_RenderTexture(target.texture);
 

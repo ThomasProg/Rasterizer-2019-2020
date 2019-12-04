@@ -12,6 +12,8 @@
 
 #include "rasterizer.h"
 
+#include "camera.h"
+
 #include "doOnce.h"
 
 //#define __SDL__
@@ -28,7 +30,7 @@ private:
     //inputs
     SDL_Event event;
     bool bRun = true;
-    Mat4 camera;
+    Camera camera;
 
     double lastXPos = 0, lastYPos = 0;
 

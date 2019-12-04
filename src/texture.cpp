@@ -49,16 +49,16 @@ Texture::Texture(const char* filename)
 
     pixels = new Color[width * height];
 
-    for (int y = 0; y < 256; y++)
+    for (int y = 0; y < height; y++)
     { 
-        for (int x = 0; x < 256; x++)
+        for (int x = 0; x < width; x++)
         { 
             Uint32 color = getpixel(surface, x, y);
             char* colors = (char*) &color;
-            pixels[y * 256 + x][0] = colors[0];
-            pixels[y * 256 + x][1] = colors[1];
-            pixels[y * 256 + x][2] = colors[2];
-            pixels[y * 256 + x][3] = colors[3];
+            pixels[y * width + x][0] = colors[0];
+            pixels[y * width + x][1] = colors[1];
+            pixels[y * width + x][2] = colors[2];
+            pixels[y * width + x][3] = colors[3];
         }
     }
 
