@@ -273,81 +273,12 @@ std::ostream& operator<<(std::ostream& stream, const Mat4& matrix)
 
 Mat4 Mat4::CreatePerspectiveProjectionMatrix(int width, int height,float near,float far,float fov)
 {
-    // Mat4 perspective;
-    // float ratio = width/height;
-    // perspective.elements[0] =  1/(ratio*tan(fov/2));
-    // perspective.elements[1] =  0;
-    // perspective.elements[2] =  0;
-    // perspective.elements[3] =  0;
-
-    // perspective.elements[4] =  0;
-    // perspective.elements[5] =  1/tan(fov/2);
-    // perspective.elements[6] =  0;
-    // perspective.elements[7] =  0;
-    
-    // perspective.elements[8] =  0;
-    // perspective.elements[9] =  0;
-    // perspective.elements[10] = (-near-far)/(near-far);
-    // perspective.elements[11] = 2*(near*far)/(near-far);
-
-    // perspective.elements[12] = 0;
-    // perspective.elements[13] = 0;
-    // perspective.elements[14] = 1;
-    // perspective.elements[15] = 0;
-
-    /////////////////////////////////////////////////////////
-
-    // float temp, temp2, temp3, temp4;
-    // {
-    //     float ymax, xmax;
-    //     ymax = near * tanf(fov / PI / 360);
-    //     xmax = ymax * (width / height);
-
-    //     temp = 2 * near;
-    //     temp2 = 2.0 * xmax;
-    //     temp3 = 2 * ymax;
-    //     temp4 = far - near;
-    // }
-
-    // Mat4 perspective;
-    // perspective.elements[0] =  temp/temp2;
-    // perspective.elements[1] =  0;
-    // perspective.elements[2] =  0;
-    // perspective.elements[3] =  0;
-
-    // perspective.elements[4] =  0;
-    // perspective.elements[5] =  temp/temp3;
-    // perspective.elements[6] =  0;
-    // perspective.elements[7] =  0;
-    
-    // perspective.elements[8] =  0;
-    // perspective.elements[9] =  0;
-    // perspective.elements[10] = (-far - near) / temp4;
-    // perspective.elements[11] = (-temp * far) / temp4;
-
-    // perspective.elements[12] = 0;
-    // perspective.elements[13] = 0.0;
-    // perspective.elements[14] = -1;
-    // perspective.elements[15] = 1;
-
-    /////////////////////////////////////////////////////////
-
     float ymax, xmax;
     ymax = tanf(fov * PI / 360.f);
-    // ymin = -ymax;
-    // xmin = -ymax * aspectRatio;
     xmax = ymax * width / height;
 
-    // float left = -xmax;
-    // float right = xmax;
-    // float bottom = -ymax;
-    // float top = ymax;
-
     Mat4 m;
-    // float temp, temp2, temp3, temp4;
-    // temp = 2.0 * near;
-    // temp2 = right - left;
-    // temp3 = top - bottom;
+
     float temp4 = far - near;
     
     m.elements[0] = 1/xmax;
@@ -358,37 +289,14 @@ Mat4 Mat4::CreatePerspectiveProjectionMatrix(int width, int height,float near,fl
     m.elements[5] = 1/ymax;
     m.elements[6] = 0.0;
     m.elements[7] = 0.0;
-    m.elements[8] = 0.f;//(right + left) / temp2;
-    m.elements[9] = 0.f;//(top + bottom) / temp3;
+    m.elements[8] = 0.f;
+    m.elements[9] = 0.f;
     m.elements[10] = -(far + near) / temp4;
-    m.elements[11] = -1;//-2 * (far * near) / temp4;
+    m.elements[11] = -1;
     m.elements[12] = 0.0;
     m.elements[13] = 0.0;
     m.elements[14] = -2 * (far * near) / temp4;
     m.elements[15] = 0.0;
-    /////////////////////////////////////////////////////////
-
-    // Mat4 perspective;
-    // float ratio = width/height;
-    // perspective.elements[0] =  0.5;
-    // perspective.elements[1] =  0;
-    // perspective.elements[2] =  0;
-    // perspective.elements[3] =  0;
-
-    // perspective.elements[4] =  0;
-    // perspective.elements[5] =  0.5;
-    // perspective.elements[6] =  0;
-    // perspective.elements[7] =  0;
-    
-    // perspective.elements[8] =  0;
-    // perspective.elements[9] =  0;
-    // perspective.elements[10] = 1;
-    // perspective.elements[11] = 0;
-
-    // perspective.elements[12] = 0;
-    // perspective.elements[13] = 0.0;
-    // perspective.elements[14] = 1.0;
-    // perspective.elements[15] = 1;
 
     return m;
 }
@@ -467,7 +375,104 @@ Mat4 Mat4::CreateScreenConversionMatrix()
     return screen;
 }
 
-Mat4 Mat4::GetInverse()
+float Mat4::det_2(unsigned x,unsigned y,unsigned z,unsigned w) const
 {
-    return *this;
+    return (elements[x]*elements[y] - elements[z] *elements[w]);
+}
+
+Mat4 Mat4::CoMatrix() const
+{   
+    Mat4 coM;
+    float temp1 = det_2(10,15,14,11);
+    float temp2 = det_2(14,7,6,15);
+    float temp3 = det_2(6,11,10,7);
+
+    coM.elements[0] = (elements[5]*temp1 + elements[9]*temp2 + elements[13]*temp3);
+    coM.elements[1] = -(elements[4]*temp1 + elements[8]*temp2 + elements[12]*temp3); //check  
+    coM.elements[2] = (elements[4]*det_2(9,15,13,11) + elements[8]*det_2(13,7,5,15) + elements[12]*det_2(5,11,9,7));  
+    coM.elements[3] = -(elements[4]*det_2(9,14,13,10) + elements[8]*det_2(13,6,5,14) + elements[12]*det_2(5,10,9,6));
+
+    temp2 = det_2(14,3,2,15);
+    temp3 = det_2(2,11,10,3);
+
+    coM.elements[4] = -(elements[1]*temp1 + elements[9]*temp2 + elements[13]*temp3);
+    coM.elements[5] = (elements[0]*temp1 + elements[8]*temp2 + elements[12]*temp3); //check
+    
+    coM.elements[6] = -(elements[0]*det_2(9,15,13,11) + elements[8]*det_2(13,3,1,15) + elements[12]*det_2(1,11,9,3));
+    coM.elements[7] = (elements[0]*det_2(9,14,13,10) + elements[8]*det_2(13,2,1,14) + elements[12]*det_2(1,10,9,2));
+    
+    coM.elements[8] = (elements[1]*det_2(6,15,14,7) + elements[5]*det_2(14,3,2,15) + elements[13]*det_2(2,7,6,3));
+    coM.elements[9] = -(elements[0]*det_2(6,15,14,7) + elements[4]*det_2(14,3,2,15) + elements[12]*det_2(2,7,6,3));
+    coM.elements[10] = (elements[0]*det_2(5,15,13,7) + elements[4]*det_2(13,3,1,15) + elements[12]*det_2(1,7,5,3));
+    coM.elements[11] = -(elements[0]*det_2(5,14,13,6) + elements[4]*det_2(13,2,1,14) + elements[12]*det_2(1,6,5,2));
+
+    coM.elements[12] = -(elements[1]*det_2(6,11,10,7) + elements[5]*det_2(10,3,2,11) + elements[9]*det_2(2,7,6,3));
+    coM.elements[13] = (elements[0]*det_2(6,11,10,7) + elements[4]*det_2(10,3,2,11) + elements[8]*det_2(2,7,6,3));
+    coM.elements[14] = -(elements[0]*det_2(5,11,9,7) + elements[4]*det_2(9,3,1,11) + elements[8]*det_2(1,7,5,3));
+    coM.elements[15] = (elements[0]*det_2(5,10,9,6) + elements[4]*det_2(9,2,1,10) + elements[8]*det_2(1,6,5,2));
+
+
+    return coM;
+}
+
+Mat4 Mat4::GetInverse() const
+{
+    Mat4 inverse;
+    Mat4 AdjM = this->CoMatrix().Transpose();
+
+    inverse.elements[0] = AdjM.elements[0]/determinant();
+    inverse.elements[1] = AdjM.elements[1]/determinant();
+    inverse.elements[2] = AdjM.elements[2]/determinant();
+    inverse.elements[3] = AdjM.elements[3]/determinant();
+
+    inverse.elements[4] = AdjM.elements[4]/determinant();
+    inverse.elements[5] = AdjM.elements[5]/determinant();
+    inverse.elements[6] = AdjM.elements[6]/determinant();
+    inverse.elements[7] = AdjM.elements[7]/determinant();
+    
+    inverse.elements[8] = AdjM.elements[8]/determinant();
+    inverse.elements[9] = AdjM.elements[9]/determinant();
+    inverse.elements[10] = AdjM.elements[10]/determinant();
+    inverse.elements[11] = AdjM.elements[11]/determinant();
+
+    inverse.elements[12] = AdjM.elements[12]/determinant();
+    inverse.elements[13] = AdjM.elements[13]/determinant();
+    inverse.elements[14] = AdjM.elements[14]/determinant();
+    inverse.elements[15] = AdjM.elements[15]/determinant();
+
+    return inverse;
+}
+float Mat4::determinant() const
+{
+
+    return (elements[0] * (elements[5] * det_2(10,15,14,11) + elements[9] * det_2(14,7,6,15) + elements[13] * det_2(6,11,10,7)) -
+            elements[1] * (elements[4] * det_2(10,15,14,11) + elements[8] * det_2(14,7,6,15) + elements[12] * det_2(6,11,10,7)) +
+            elements[2] * (elements[4] * det_2(9,15,13,11 ) + elements[8] * det_2(13,7,5,15) + elements[12] * det_2(5,11,9,7) ) -
+            elements[3] * (elements[4] * det_2(9,14,13,10 ) + elements[8] * det_2(13,6,5,14) + elements[12] * det_2(5,10,9,6)));
+}
+
+Mat4 Mat4::Transpose() const
+{
+    Mat4 Transpose;
+    Transpose.elements[0] = elements[0];
+    Transpose.elements[1] = elements[4];
+    Transpose.elements[2] = elements[8];
+    Transpose.elements[3] = elements[12];
+
+    Transpose.elements[4] = elements[1];
+    Transpose.elements[5] = elements[5];
+    Transpose.elements[6] = elements[9];
+    Transpose.elements[7] = elements[13];
+    
+    Transpose.elements[8] = elements[2];
+    Transpose.elements[9] = elements[6];
+    Transpose.elements[10] = elements[10];
+    Transpose.elements[11] = elements[14];
+    
+    Transpose.elements[12] = elements[3];
+    Transpose.elements[13] = elements[7];
+    Transpose.elements[14] = elements[11];
+    Transpose.elements[15] = elements[15];
+
+    return Transpose;
 }

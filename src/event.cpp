@@ -47,7 +47,7 @@ void Events::entitiesInit(std::vector<Entity>& entities)
             }
             cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
             //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
-            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 2, -10));
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 0, -5));
             cube.mesh->pTexture = new Texture("media/crate.png");
             entities.push_back(std::move(cube));
             cube.alpha = j/2.f+0.5;
@@ -205,7 +205,7 @@ int Events::run()
         #endif
 
         Mat4 m = Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 90);
-        std::cout << m << std::endl;
+        //std::cout << m << std::endl;
 
         float time = float (SDL_GetTicks()) / 1000.f;
         fps = 1.f/(time - lastTime);

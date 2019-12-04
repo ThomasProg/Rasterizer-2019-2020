@@ -28,6 +28,11 @@ public:
     float* operator[](unsigned int id);
     const float* operator[](unsigned int id) const;
 
+    float determinant() const;
+    float det_2(unsigned x,unsigned y,unsigned z,unsigned w) const ;
+    Mat4 CoMatrix() const;  
+    Mat4 Transpose() const;
+
     static Mat4 CreateTransformMatrix(const Vec3& rotation, const Vec3& position, const Vec3& scale);
 
     static Mat4 CreateTranslationMatrix(const Vec3& translation);
@@ -36,11 +41,12 @@ public:
     static Mat4 CreateYRotationMatrix(float angle);
     static Mat4 CreateZRotationMatrix(float angle);
     static Mat4 CreateRotationMatrix(const Vec3& rotation);
+
     static Mat4 CreatePerspectiveProjectionMatrix(int width, int height,float near = 0,float far = 2,float fov = 1);
     static Mat4 CreateOrthogonalProjectionMatrix();
     static Mat4 CreateScreenConversionMatrix();
 
-    Mat4 GetInverse();
+    Mat4 GetInverse() const;
 };
 
 std::ostream& operator<<(std::ostream& stream, const Mat4& vector);
