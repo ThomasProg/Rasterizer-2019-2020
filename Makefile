@@ -1,6 +1,6 @@
 MAKEFLAGS+=--no-builtin-rules --no-builtin-variables
 
-CXXFLAGS=-O0 -g -Wall -MMD -Wno-unused-function
+CXXFLAGS=-O3 -g -Wall -MMD -Wno-unused-function
 CXXFLAGS+=-Iinclude -ItestMains -Iinclude/maths -Iinclude/rasterizer -Iinclude/rasterizer/render -Iinclude/glad
 CFLAGS=$(CXXFLAGS)
 CC=gcc
@@ -24,7 +24,7 @@ all: exe
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
 exe: $(OBJS)
-	$(CXX) -o $@ $(LDFLAGS) -pg $^ $(LDLIBS)
+	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 clean:
 	rm -f $(DEPS) $(OBJS)  exe

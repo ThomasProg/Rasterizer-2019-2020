@@ -14,7 +14,8 @@ public:
     Vec3 location;
     Vec3 rotation;
 
-    static constexpr float rotationSpeed = 45*PI/180;
+    static constexpr float rotationSpeed = 90 * PI / 180;
+    static constexpr float translationSpeed = 15;
 
     const Mat4& getTransform() const 
     {

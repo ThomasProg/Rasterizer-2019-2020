@@ -106,21 +106,35 @@ Color Color::operator*(float scalar)
     return c;
   }
 
-  //since -1 < intensity < 1, we need to lerp the intensity for the color
-  if (r > 255.f / scalar)
-      c.r = 255;
-  else 
-      c.r *= scalar;
-      
-  if (g > 255.f / scalar)
-      c.g = 255;
-  else
-      c.g *= scalar;
+  #define multiplyAndClampChar(result, c, scalar) \
+    if (c > 255 / scalar)\
+      result = 255;        \
+    else                \
+      result = c * scalar;
 
-  if (b > 255.f / scalar)
-      c.b = 255;       
-  else 
-      c.b *= scalar;  
+  multiplyAndClampChar(c.r, this->r, scalar) 
+  multiplyAndClampChar(c.g, this->g, scalar) 
+  multiplyAndClampChar(c.b, this->b, scalar) 
+
+  //TODO : TODELETE
+
+  // //since -1 < intensity < 1, we need to lerp the intensity for the color
+  // if (r > 255.f / scalar)
+  //     c.r = 255;
+  // else 
+  //     c.r *= scalar;
+      
+  // if (g > 255.f / scalar)
+  //     c.g = 255;
+  // else
+  //     c.g *= scalar;
+
+  // if (b > 255.f / scalar)
+  //     c.b = 255;       
+  // else 
+  //     c.b *= scalar;  
+
+  #undef multiplyAndClampChar
 
   return c;
 }

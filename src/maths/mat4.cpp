@@ -273,13 +273,12 @@ std::ostream& operator<<(std::ostream& stream, const Mat4& matrix)
 
 Mat4 Mat4::CreatePerspectiveProjectionMatrix(int width, int height,float near,float far,float fov)
 {
-    float ymax, xmax;
-    ymax = tanf(fov * PI / 360.f);
-    xmax = ymax * width / height;
+    float ymax = tanf(fov * PI / 180.f / 2);
+    float xmax = ymax * width / height;
 
     Mat4 m;
 
-    float temp4 = far - near;
+    float temp = far - near;
     
     m.elements[0] = 1/xmax;
     m.elements[1] = 0.0;
@@ -291,11 +290,11 @@ Mat4 Mat4::CreatePerspectiveProjectionMatrix(int width, int height,float near,fl
     m.elements[7] = 0.0;
     m.elements[8] = 0.f;
     m.elements[9] = 0.f;
-    m.elements[10] = -(far + near) / temp4;
+    m.elements[10] = -(far + near) / temp;
     m.elements[11] = -1;
     m.elements[12] = 0.0;
     m.elements[13] = 0.0;
-    m.elements[14] = -2 * (far * near) / temp4;
+    m.elements[14] = -2 * (far * near) / temp;
     m.elements[15] = 0.0;
 
     return m;

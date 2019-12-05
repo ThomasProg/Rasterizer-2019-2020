@@ -26,7 +26,7 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::
     {
         ambient = light.ambientComponent * mat.ambient;
 
-        Vec3 pixelLightDist = (light.position-vertex.position3D);
+        Vec3 pixelLightDist = (light.playerRelativeLocation-vertex.position3D);
         pixelLightDist.Normalize();
         
         float cosTeta  = dotProduct(pixelLightDist,(vertex.normal));
@@ -106,6 +106,17 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTar
     float uP[3] = {vert1.u,vert2.u,vert3.u};
     float vP[3] = {vert1.v,vert2.v,vert3.v};
 
+    //BECAREFUL
+    //clipping in rasterization
+    if (minY < 0)
+        minY = 0;
+    if (minX < 0)
+        minX = 0;
+    if (maxY > pTarget->height)
+        maxY = pTarget->height;
+    if (maxX > pTarget->width)
+        maxX = pTarget->width;
+
     //TODO : set WeightVar outside of the loops
     for (int y = minY; y <= maxY; y++)
     {
@@ -150,9 +161,10 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTar
                     //intensity += weight[i] * intensityVertex[i];
                 }
 
+                //BECAREFUL
                 if (!(x > 0 && x < pTarget->width && y > 0 && y < pTarget->height))
                     continue;
-
+                //BECAREFUL
                 float currentDepth = pTarget->depthBuffer.getDepth(x, y);
                 if (currentDepth <= p.z)
                     continue;
@@ -177,8 +189,8 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTar
                         assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
                         //nearest interpolation
                         //max uv is 1, 1 * width = width, width isn't a valid index, so we substract by 1
-                        c = texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width))), 
-                                                   static_cast<unsigned int>(v * (float(texture->height))));
+                        c = texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width) - 1)), 
+                                                   static_cast<unsigned int>(v * (float(texture->height) - 1)));
                         c.a = alpha;
                     }
 

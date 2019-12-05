@@ -59,7 +59,7 @@ mesh->vertices[mesh->vertices.size() - 1].v = b;
     ADDING_UV(0, 1);
     ADDING_VERTEX_AND_NORMAL(Vec3(max, min, max)); //3
     ADDING_UV(1, 1);
-    mesh->addQuad(0, 1, 3, 2);
+    mesh->addQuad(2, 3, 1, 0);
 
     ADDING_VERTEX_AND_NORMAL(Vec3(max, min, min)); //4
     ADDING_UV(0, 1);
@@ -80,7 +80,7 @@ mesh->vertices[mesh->vertices.size() - 1].v = b;
     ADDING_UV(0, 1);
     ADDING_VERTEX_AND_NORMAL(Vec3(min, max, min)); //6
     ADDING_UV(0, 0);
-    mesh->addQuad(0+4*2, 1+4*2, 2+4*2, 3+4*2);
+    mesh->addQuad(3+4*2, 2+4*2, 1+4*2, 0+4*2);
 
     ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max)); //1
     ADDING_UV(0, 0);
@@ -111,7 +111,7 @@ mesh->vertices[mesh->vertices.size() - 1].v = b;
     ADDING_UV(0, 0);
     ADDING_VERTEX_AND_NORMAL(Vec3(min, min, min)); //7
     ADDING_UV(1, 0);
-    mesh->addQuad(0+4*5, 1+4*5, 2+4*5, 3+4*5);
+    mesh->addQuad(3+4*5, 2+4*5, 1+4*5, 0+4*5);
 
 #undef ADDING_VERTEX_AND_NORMAL
 #undef ADDING_UV

@@ -130,12 +130,19 @@ void Rasterizer::RenderWireframe(FrameBuffer* pTarget,
     drawLine(pTarget, screenVertices[2], screenVertices[0]);
 }
 
-void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, E_RasterizerMode mode)
+#include "camera.h"
+
+void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, Camera& camera, E_RasterizerMode mode)
 {
     assert(pScene != nullptr && pTarget != nullptr);
 
     //init render texture
     pTarget->ResetPixels();
+
+    for (Light& light : pScene->lights)   
+    {
+        light.playerRelativeLocation = Vec4(light.position, 1);//inverseCameraMatrix * Vec4(light.position, 1);
+    }
 
     for (const Entity& entity : pScene->entities)
     {
@@ -151,13 +158,80 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
             worldNormals.emplace_back(entity.transformation * Vec4(vertex.normal, 0));
         }
 
-        std::vector<Vec4> screenLoc;
-        screenLoc.reserve(worldLoc.size());
+        std::vector<Vec4> culledLoc;
+        std::vector<Vec3> culledNormals;
+        std::vector<Vec2> culledUVs;
+        //culledLoc.reserve(worldLoc.size());
 
-        for (const Vec4& loc3D : worldLoc)
+        for (unsigned int i = 0; i < entity.mesh->indices.size(); i+=3)
+        {
+            unsigned int id1 = entity.mesh->indices[i];
+            unsigned int id2 = entity.mesh->indices[i+1];
+            unsigned int id3 = entity.mesh->indices[i+2];
+
+            //Vec3 cameraLoc = worldLoc[id1] - inverseCameraMatrix * Vec4(1, 1, 1, 1);
+            Vec3 cameraLoc = camera.location;
+            // cameraLoc.x *= cameraLoc.z;
+            // cameraLoc.y *= cameraLoc.z;
+            float cameraLength = camera.location.z;
+
+            //TODO : backface culling with camera
+
+            // cameraLoc.x = sin(camera.rotation.y) * cameraLength;
+            // cameraLoc.y = 0;
+            // cameraLoc.z = cos(camera.rotation.y) * cameraLength;
+
+            // cameraLoc.x = 0;
+            // cameraLoc.y = sin(camera.rotation.x) * cameraLength;
+            // cameraLoc.z = -cos(camera.rotation.x) * cameraLength;
+
+            // cameraLoc.x = -sin(camera.rotation.y) * cameraLength * sin(camera.rotation.x);
+            // cameraLoc.y = sin(camera.rotation.x) * cameraLength;
+            // cameraLoc.z = -cos(camera.rotation.x) * cameraLength * cos(camera.rotation.y);
+
+
+            // cameraLoc.x = -sin(camera.rotation.y) * cameraLength * cos(camera.rotation.x);
+            // cameraLoc.y = cos(camera.rotation.y) * cameraLength;
+            // cameraLoc.z = sin(camera.rotation.y) * cameraLength * sin(camera.rotation.x);
+
+            Vec3 N = crossProduct(Vec3((worldLoc[id2] - worldLoc[id1])), Vec3((worldLoc[id3] - worldLoc[id1])));
+            // // Vec4 Q = projectionMatrix * inverseCameraMatrix * Vec4(N, 0);
+
+            // //std::cout << N << std::endl;
+
+            //if (dotProduct(L, Q) >= 0)
+            // //     drawLine(pTarget, Vertex(worldLoc[id1]), Vertex(Vec3(worldLoc[id1]) + N));
+            // if (dotProduct(N, Vec3(0,0,1)) >= 0)
+            std::cout << inverseCameraMatrix * Vec4(0, 0, 1, 1) << std::endl;
+            //worldLoc[id1] - 
+            if (dotProduct(N, worldLoc[id1] - cameraLoc) <= 0)
+            {
+                //std::cout << dotProduct(N, Vec3(0,0,-1)) << std::endl;
+                // drawLine(pTarget, Vertex(Vec3(50,50,50)), Vertex(Vec3(50,50,50) + N * 1000));
+                continue;
+            }
+
+            culledLoc.emplace_back(worldLoc[id1]);
+            culledLoc.emplace_back(worldLoc[id2]);
+            culledLoc.emplace_back(worldLoc[id3]);
+
+            culledNormals.emplace_back(worldNormals[id1]);
+            culledUVs.emplace_back(entity.mesh->vertices[id1].u, entity.mesh->vertices[id1].v);
+
+            culledNormals.emplace_back(worldNormals[id2]);
+            culledUVs.emplace_back(entity.mesh->vertices[id2].u, entity.mesh->vertices[id2].v);
+            
+            culledNormals.emplace_back(worldNormals[id3]);
+            culledUVs.emplace_back(entity.mesh->vertices[id3].u, entity.mesh->vertices[id3].v);
+        }
+
+        std::vector<Vec4> screenLoc;
+        screenLoc.reserve(culledLoc.size());
+
+        for (const Vec4& loc3D : culledLoc)
         {
         //     Vec4 loc3D1 = worldLoc[i];
-        //     Vec4 loc3D2 = worldLoc[i+1];
+        //     Vec4 loc3D2 = worldLoc[i+1];scale
         //     Vec4 loc3D3 = worldLoc[i+2];
 
         //     Vec3 n = crossProduct(loc3D2 - loc3D1, 
@@ -171,60 +245,17 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         //     }
         }
 
-        std::vector<Vec4> culledLoc;
-        std::vector<Vec3> culledNormals;
-        std::vector<Vec2> culledUVs;
-        //culledLoc.reserve(worldLoc.size());
-
-        for (unsigned int i = 0; i < entity.mesh->indices.size(); i+=3)
-        {
-            unsigned int id1 = entity.mesh->indices[i];
-            unsigned int id2 = entity.mesh->indices[i+1];
-            unsigned int id3 = entity.mesh->indices[i+2];
-
-            // Vec3 cameraLoc = Vec3(0, 0, 1);//Vec3(windowWidth/2, windowHeight/2, 0);
-            // Vec3 L = cameraLoc;
-            // L = Vec3(0, 0, -1);
-
-            // Vec3 N = crossProduct(Vec3((worldLoc[id2] - worldLoc[id1])), Vec3((worldLoc[id3] - worldLoc[id1])));
-            // // Vec4 Q = projectionMatrix * inverseCameraMatrix * Vec4(N, 0);
-
-            // //std::cout << N << std::endl;
-
-            // // if (dotProduct(L, Q) >= 0)
-            // //     drawLine(pTarget, Vertex(worldLoc[id1]), Vertex(Vec3(worldLoc[id1]) + N));
-            // if (dotProduct(N, Vec3(0,0,1)) >= 0)
-            // {
-            //     //std::cout << dotProduct(N, Vec3(0,0,-1)) << std::endl;
-            //     drawLine(pTarget, Vertex(Vec3(50,50,50)), Vertex(Vec3(50,50,50) + N * 1000));
-            //     continue;
-            // }
-
-            culledLoc.emplace_back(screenLoc[id1]);
-            culledLoc.emplace_back(screenLoc[id2]);
-            culledLoc.emplace_back(screenLoc[id3]);
-
-            culledNormals.emplace_back(worldNormals[id1]);
-            culledUVs.emplace_back(entity.mesh->vertices[id1].u, entity.mesh->vertices[id1].v);
-
-            culledNormals.emplace_back(worldNormals[id2]);
-            culledUVs.emplace_back(entity.mesh->vertices[id2].u, entity.mesh->vertices[id2].v);
-            
-            culledNormals.emplace_back(worldNormals[id3]);
-            culledUVs.emplace_back(entity.mesh->vertices[id3].u, entity.mesh->vertices[id3].v);
-        }
-
         std::vector<Vec4> scaledLoc;
-        scaledLoc.reserve(culledLoc.size());
+        scaledLoc.reserve(screenLoc.size());
 
-        for (const Vec4& loc3D : culledLoc)
+        for (const Vec4& loc3D : screenLoc)
         {
             scaledLoc.emplace_back(Mat4::CreateScreenConversionMatrix() * loc3D);
             //scaledLoc.emplace_back(loc3D*100 + Vec4(windowWidth/2, windowHeight/2, 0, 0));
         }
 
         //for (unsigned int i = 0; i < entity.mesh->indices.size(); i += 3)
-        for (unsigned int i = 0; i < culledNormals.size(); i += 3)
+        for (unsigned int i = 0; i < scaledLoc.size(); i += 3)
         {
             // unsigned int id1 = entity.mesh->indices[i];
             // unsigned int id2 = entity.mesh->indices[i+1];
@@ -285,4 +316,3 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         //RenderTriangles(pTarget, pScene->lights, , entity.mesh->pTexture);
     }
 }
-

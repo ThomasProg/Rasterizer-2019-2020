@@ -47,33 +47,34 @@ void Events::entitiesInit(std::vector<Entity>& entities)
             }
             cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
             //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
-            //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 0, 0));
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 0, 0));
+            //cube.transformation *= Mat4::CreateRotationMatrix(Vec3(0.1, 0.5, 0.5));
             cube.mesh->pTexture = new Texture("media/crate.png");
             entities.push_back(std::move(cube));
             cube.alpha = j/2.f+0.5;
         }
 
 
-        for (unsigned int j = 0; j < 1; j++)
-        {
-            Entity cube;
-            cube.mesh = Mesh::CreateCube();
-            i = 0;
-            for (Vertex& vertex : cube.mesh->vertices)
-            {
-                if (i % 2 == 0)
-                    vertex.color = Color(i*(255/6), 2, 2);
-                else
-                    vertex.color = Color(2, i*(255/6), 2);
-                i++;
-            }
-            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
-            //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
-            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(1, 0, -2));
-            cube.mesh->pTexture = new Texture("media/crate2.png");
-            entities.push_back(std::move(cube));
-            cube.alpha = j/2.f+0.5;
-        }
+        // for (unsigned int j = 0; j < 1; j++)
+        // {
+        //     Entity cube;
+        //     cube.mesh = Mesh::CreateCube();
+        //     i = 0;
+        //     for (Vertex& vertex : cube.mesh->vertices)
+        //     {
+        //         if (i % 2 == 0)
+        //             vertex.color = Color(i*(255/6), 2, 2);
+        //         else
+        //             vertex.color = Color(2, i*(255/6), 2);
+        //         i++;
+        //     }
+        //     cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, -1, -0));
+        //     cube.transformation *= Mat4::CreateScaleMatrix(Vec3(10.0, 1.0, 10.0));
+        //     //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
+        //     cube.mesh->pTexture = new Texture("media/crate2.png");
+        //     entities.push_back(std::move(cube));
+        //     cube.alpha = j/2.f+0.5;
+        // }
     }
 
     // // sphere
@@ -241,10 +242,11 @@ int Events::run()
 
         frame += 1;
 
-        //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.09, 0.09, 0.09));
+        //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.03, 0.03, 0.03));
         //scene.entities[1].transformation *= Mat4::CreateTranslationMatrix(Vec3(0.00, 0.00, 10 * sin(frame/10)));
-        scene.lights[0].position.x = 10 * sin(frame/10);
-        scene.lights[0].position.y = 10 * cos(frame/10);
+
+        // scene.lights[0].position.x = 10 * sin(frame/10);
+        // scene.lights[0].position.y = 10 * cos(frame/10);
 
         //SDL
         inputs(event, bRun);
@@ -252,21 +254,21 @@ int Events::run()
         //GLFW
         #ifdef __GLFW__
         if (glfwGetKey(window, GLFW_KEY_W))
-            camera.location += Vec3(0, 0, -1);
+            camera.location += Vec3(0, 0, -camera.translationSpeed * deltaTime);
 
         if (glfwGetKey(window, GLFW_KEY_S))
-            camera.location += Vec3(0, 0, 1);
+            camera.location += Vec3(0, 0, camera.translationSpeed * deltaTime);
         
         if (glfwGetKey(window, GLFW_KEY_ESCAPE))
             glfwSetWindowShouldClose(window, GL_TRUE);
         if (glfwGetKey(window, GLFW_KEY_UP))
-            camera.rotation += Vec3(cos(camera.rotationSpeed)*deltaTime,0,0);
+            camera.rotation += Vec3(camera.rotationSpeed*deltaTime,0,0);
         if (glfwGetKey(window, GLFW_KEY_DOWN))
-            camera.rotation += Vec3(-cos(camera.rotationSpeed)*deltaTime, 0, 0);
+            camera.rotation += Vec3(-camera.rotationSpeed*deltaTime, 0, 0);
         if (glfwGetKey(window, GLFW_KEY_LEFT))
-            camera.rotation += Vec3(0,sin(camera.rotationSpeed)*deltaTime,0);
+            camera.rotation += Vec3(0,camera.rotationSpeed*deltaTime,0);
         if (glfwGetKey(window, GLFW_KEY_RIGHT))
-            camera.rotation += Vec3(0,-sin(camera.rotationSpeed)*deltaTime,0);
+            camera.rotation += Vec3(0,-camera.rotationSpeed*deltaTime,0);
 
         camera.actualize();
         
@@ -296,8 +298,8 @@ int Events::run()
         //     E_RasterizerMode::E_TRIANGLES);
         //Rasterizer::RenderScene(&scene, &target, Mat4::CreateOrthogonalProjectionMatrix(), camera.GetInverse(), renderMode);
         Rasterizer::RenderScene(&scene, &target, 
-            Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 90), 
-            camera.getTransform().GetInverse(), renderMode);
+            Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 45), 
+            camera.getTransform().GetInverse(), camera, renderMode);
 
         // render.SDL_RenderTexture(target.texture);
 

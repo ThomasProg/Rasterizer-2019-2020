@@ -14,6 +14,8 @@ class Vec3;
 class Mat4;
 class Light;
 
+class Camera;
+
 enum class E_RasterizerMode
 {
     E_TRIANGLES,
@@ -77,7 +79,7 @@ public:
     //                        std::vector<Vertex>& transformedVertices, 
     //                        std::vector<unsigned int>& transformedIndices);
 
-    static void RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix,
+    static void RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix,  Camera& camera,
                             E_RasterizerMode mode = E_RasterizerMode::E_POINTS);
 };
 
