@@ -19,6 +19,7 @@ public:
     float& operator[](unsigned int index);
     Vec3 operator-(const Vec3&) const;
     Vec3& operator+=(const Vec3& vec);
+    Vec3& operator/=(float f);
 
     Vec3 getNormalized() const;
 };

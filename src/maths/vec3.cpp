@@ -91,6 +91,14 @@ Vec3& Vec3::operator+=(const Vec3& vec)
     return *this;
 }
 
+Vec3& Vec3::operator/=(float f)
+{
+    x /= f;
+    y /= f;
+    z /= f;
+    return *this;
+}
+
 std::ostream& operator<<(std::ostream& stream, const Vec3& vector)
 {
     stream << "x : " << vector.x << " | y : " << vector.y << " | z : " << vector.z << std::endl;

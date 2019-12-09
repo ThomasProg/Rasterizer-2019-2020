@@ -5,17 +5,29 @@
 
 #include "macros.h"
 
+class GLFWwindow;
+
 class Camera
 {
 public:
     Camera();
     ~Camera();
     void actualize();
-    Vec3 location;
-    Vec3 rotation;
 
-    static constexpr float rotationSpeed = 90 * PI / 180;
-    static constexpr float translationSpeed = 15;
+    void inputs(float deltaTime, GLFWwindow* window);
+
+    float prevMouseLocX = 0, prevMouseLocY = 0;
+
+    //cartesian coordinates
+    Vec3 cartesianLocation = Vec3(0, 0, 30);
+    Vec3 cartesianRotation = Vec3(0, 0, 0);
+
+    //spherical coordinates
+    float spherialRadius = 30.f;
+    Vec3  sphericalRotation = Vec3(0, 0, 0);
+
+    static constexpr float rotationSpeed = 0.08;
+    static constexpr float translationSpeed = 10;
 
     const Mat4& getTransform() const 
     {

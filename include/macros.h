@@ -1,6 +1,9 @@
 #ifndef _MACROS_H_
 #define _MACROS_H_
 
+#define __BACKFACE_CULLING__
+#define __FIRST_PERSON__
+
 constexpr float PI = 3.14159265359f;
 constexpr float epsilon = 0.01;
 

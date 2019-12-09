@@ -46,7 +46,8 @@ private:
 
     E_RasterizerMode renderMode = E_RasterizerMode::E_TRIANGLES;
 
-    DoOnce F1;
+    DoOnce f1;
+    //bool f1;
 
 public:
     Events();

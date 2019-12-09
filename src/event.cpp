@@ -55,26 +55,26 @@ void Events::entitiesInit(std::vector<Entity>& entities)
         }
 
 
-        // for (unsigned int j = 0; j < 1; j++)
-        // {
-        //     Entity cube;
-        //     cube.mesh = Mesh::CreateCube();
-        //     i = 0;
-        //     for (Vertex& vertex : cube.mesh->vertices)
-        //     {
-        //         if (i % 2 == 0)
-        //             vertex.color = Color(i*(255/6), 2, 2);
-        //         else
-        //             vertex.color = Color(2, i*(255/6), 2);
-        //         i++;
-        //     }
-        //     cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, -1, -0));
-        //     cube.transformation *= Mat4::CreateScaleMatrix(Vec3(10.0, 1.0, 10.0));
-        //     //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
-        //     cube.mesh->pTexture = new Texture("media/crate2.png");
-        //     entities.push_back(std::move(cube));
-        //     cube.alpha = j/2.f+0.5;
-        // }
+        for (unsigned int j = 0; j < 1; j++)
+        {
+            Entity cube;
+            cube.mesh = Mesh::CreateCube();
+            i = 0;
+            for (Vertex& vertex : cube.mesh->vertices)
+            {
+                if (i % 2 == 0)
+                    vertex.color = Color(i*(255/6), 2, 2);
+                else
+                    vertex.color = Color(2, i*(255/6), 2);
+                i++;
+            }
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, -1, -0));
+            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(10.0, 1.0, 10.0));
+            //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
+            cube.mesh->pTexture = new Texture("media/crate2.png");
+            entities.push_back(std::move(cube));
+            cube.alpha = j/2.f+0.5;
+        }
     }
 
     // // sphere
@@ -88,8 +88,8 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     //         vertex.color = Color(0, 10, 255);
     //         //ii += 255.f / 20*20;
     //     }
-    //     sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
-    //     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(0.05, 0.05, 0.05));
+    //     //sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
+    //     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(0.5, 0.5, 0.5));
     //     entities.push_back(std::move(sphere));
     // }
 
@@ -190,7 +190,7 @@ Events::Events()
     }
 
     //hide cursor
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     #endif
     //camera = Mat4::CreateTranslationMatrix(Vec3(0,0,10));
 }
@@ -228,9 +228,6 @@ int Events::run()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         #endif
 
-        Mat4 m = Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 90);
-        //std::cout << m << std::endl;
-
         float time = float (SDL_GetTicks()) / 1000.f;
         float deltaTime = time - lastTime;
         fps = 1.f/(deltaTime);
@@ -241,6 +238,8 @@ int Events::run()
         //std::cout << totalFps / nbFps << std::endl;
 
         frame += 1;
+
+        //scene.entities[1].transformation = Mat4::CreateTranslationMatrix(camera.cartesianLocation / 2);
 
         //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.03, 0.03, 0.03));
         //scene.entities[1].transformation *= Mat4::CreateTranslationMatrix(Vec3(0.00, 0.00, 10 * sin(frame/10)));
@@ -253,22 +252,41 @@ int Events::run()
 
         //GLFW
         #ifdef __GLFW__
-        if (glfwGetKey(window, GLFW_KEY_W))
-            camera.location += Vec3(0, 0, -camera.translationSpeed * deltaTime);
 
-        if (glfwGetKey(window, GLFW_KEY_S))
-            camera.location += Vec3(0, 0, camera.translationSpeed * deltaTime);
+        #ifdef __THIRD_PERSON__
+        // if (glfwGetKey(window, GLFW_KEY_W))
+        //     camera.spherialRadius -= camera.translationSpeed * deltaTime;
+
+        // if (glfwGetKey(window, GLFW_KEY_S))
+        //     camera.spherialRadius += camera.translationSpeed * deltaTime;
         
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE))
-            glfwSetWindowShouldClose(window, GL_TRUE);
-        if (glfwGetKey(window, GLFW_KEY_UP))
-            camera.rotation += Vec3(camera.rotationSpeed*deltaTime,0,0);
-        if (glfwGetKey(window, GLFW_KEY_DOWN))
-            camera.rotation += Vec3(-camera.rotationSpeed*deltaTime, 0, 0);
-        if (glfwGetKey(window, GLFW_KEY_LEFT))
-            camera.rotation += Vec3(0,camera.rotationSpeed*deltaTime,0);
-        if (glfwGetKey(window, GLFW_KEY_RIGHT))
-            camera.rotation += Vec3(0,-camera.rotationSpeed*deltaTime,0);
+        // if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+        //     glfwSetWindowShouldClose(window, GL_TRUE);
+        // if (glfwGetKey(window, GLFW_KEY_UP))
+        //     camera.sphericalRotation += Vec3(camera.rotationSpeed*deltaTime,0,0);
+        // if (glfwGetKey(window, GLFW_KEY_DOWN))
+        //     camera.sphericalRotation += Vec3(-camera.rotationSpeed*deltaTime, 0, 0);
+        // if (glfwGetKey(window, GLFW_KEY_LEFT))
+        //     camera.sphericalRotation += Vec3(0,camera.rotationSpeed*deltaTime,0);
+        // if (glfwGetKey(window, GLFW_KEY_RIGHT))
+        //     camera.sphericalRotation += Vec3(0,-camera.rotationSpeed*deltaTime,0);
+        #endif
+
+        camera.inputs(deltaTime, window);
+
+        f1.onSwitch = [&](bool isOn)
+        {
+            if (isOn)
+            {
+                renderMode = E_RasterizerMode::E_WIREFRAME;
+            }
+            else 
+            {
+                renderMode = E_RasterizerMode::E_TRIANGLES;
+            }
+        };
+
+        f1.input(glfwGetKey(window, GLFW_KEY_F1));
 
         camera.actualize();
         
@@ -298,7 +316,7 @@ int Events::run()
         //     E_RasterizerMode::E_TRIANGLES);
         //Rasterizer::RenderScene(&scene, &target, Mat4::CreateOrthogonalProjectionMatrix(), camera.GetInverse(), renderMode);
         Rasterizer::RenderScene(&scene, &target, 
-            Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 45), 
+            Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 120), 
             camera.getTransform().GetInverse(), camera, renderMode);
 
         // render.SDL_RenderTexture(target.texture);

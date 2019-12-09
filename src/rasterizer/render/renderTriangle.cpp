@@ -13,7 +13,7 @@
 #include "material.h"
 #include "texture.h"
 
-float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights)
+float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, const Vec3& cameraLocation)
 {
     Material mat;
 
@@ -24,29 +24,32 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::
 
     for (const Light& light : lights)
     {
+        //ambient
         ambient = light.ambientComponent * mat.ambient;
 
-        Vec3 pixelLightDist = (light.playerRelativeLocation-vertex.position3D);
-        pixelLightDist.Normalize();
+        //diffuse
+        Vec3 pixelToLightVec = (light.playerRelativeLocation-vertex.position3D);
+        pixelToLightVec.Normalize();
         
-        float cosTeta  = dotProduct(pixelLightDist,(vertex.normal));
+        float cosTeta  = dotProduct(pixelToLightVec,(vertex.normal));
         
         if (cosTeta < 0)
             cosTeta = 0;
 
         diffuse = light.diffuseComponent * mat.diffuse * cosTeta;
 
-        Vec3 eyeToPixelVec = vertex.position3D; //TODO
-        eyeToPixelVec.z -= 1;
-        eyeToPixelVec.Normalize();
-        Vec3 h = pixelLightDist+eyeToPixelVec;
+        //specular
+        Vec3 pixelToEyeVec = cameraLocation - vertex.position3D; //TODO
+        pixelToEyeVec.z -= 1;
+        pixelToEyeVec.Normalize();
+        Vec3 h = pixelToLightVec+pixelToEyeVec;
         h.Normalize();
-        float cosAlpha = dotProduct(vertex.normal, h/h.GetMagnitude());
+        float cosAlpha = dotProduct(vertex.normal, h);
 
         if (cosAlpha < 0)
             cosAlpha = 0;
 
-        specular = light.specularComponent * mat.specular*std::pow(cosAlpha,mat.brillance);
+        specular = light.specularComponent * mat.specular * std::pow(cosAlpha, mat.brillance);
 
         total += ambient + diffuse + specular;
     }
@@ -77,12 +80,26 @@ bool getWeight(const Vec2& p, Vec3 p1, Vec3 p2, Vec3 p3, float* weight)
     return weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0;
 }
 
-void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture)
+void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, Vec3 worldLoc2, Vec3 worldLoc3, 
+                    const Vec3& cameraLocation, FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture)
 {
     std::array<Vertex*, 3> triangleVertices;
     triangleVertices[0] = &vert1;
     triangleVertices[1] = &vert2;
     triangleVertices[2] = &vert3;
+
+    std::array<Vec3*, 3> worldLoc;
+    worldLoc[0] = &worldLoc1;
+    worldLoc[1] = &worldLoc2;
+    worldLoc[2] = &worldLoc3;
+
+    //TODO : FIX TEXTURE 
+    // for (unsigned int i = 0; i < 3; i++)
+    // {
+    //     triangleVertices[i]->position /= worldLoc[i]->z;
+    //     worldLoc[i]->z = 1 / worldLoc[i]->z;
+    // }
+
 
     const Vec3& v1 = vert1.position;
     const Vec3& v2 = vert2.position;
@@ -135,6 +152,22 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTar
 
                  Vec3 p(0,0,0);
 
+                //get color
+                for (unsigned int i = 0; i < 3; i++)
+                {
+                    p.x += weight[i] * worldLoc[i]->x;
+                    p.y += weight[i] * worldLoc[i]->y;
+                    p.z += weight[i] * worldLoc[i]->z;
+                }
+
+                //BECAREFUL
+                if (!(x > 0 && x < pTarget->width && y > 0 && y < pTarget->height))
+                    continue;
+                //BECAREFUL
+                float currentDepth = pTarget->depthBuffer.getDepth(x, y);
+                if (currentDepth <= p.z)
+                    continue;
+
                 RasterizingVertex vert;
                 vert.position3D = p;
 
@@ -149,10 +182,6 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTar
                     c.b += weight[i] * triangleVertices[i]->color.b;
                     c.a += weight[i] * triangleVertices[i]->color.a;
 
-                    p.x += weight[i] * triangleVertices[i]->position.x;
-                    p.y += weight[i] * triangleVertices[i]->position.y;
-                    p.z += weight[i] * triangleVertices[i]->position.z;
-
                     vert.normal += weight[i] * triangleVertices[i]->normal;
 
                     u += weight[i] * uP[i];
@@ -161,13 +190,8 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTar
                     //intensity += weight[i] * intensityVertex[i];
                 }
 
-                //BECAREFUL
-                if (!(x > 0 && x < pTarget->width && y > 0 && y < pTarget->height))
-                    continue;
-                //BECAREFUL
-                float currentDepth = pTarget->depthBuffer.getDepth(x, y);
-                if (currentDepth <= p.z)
-                    continue;
+                // u /= p.z;
+                // v /= p.z;
 
                 //unprecision of interpolation of char
                 if (triangleVertices[0]->color.a == 255 
@@ -177,8 +201,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTar
                 
                 vert.normal.Normalize();
 
-                intensity = RenderTriangle::getPixelLight(vert, lights);
-                
+                intensity = RenderTriangle::getPixelLight(vert, lights, cameraLocation);
 
                 if (texture != nullptr && texture->pixels != nullptr)
                 {

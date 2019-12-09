@@ -45,9 +45,11 @@ public:
     //bool getWeight(const Vec2& p, float* weight) const;
     Color getColorAtPixel(Vec2 p, bool& isValid, float* weight) const;
 
-    static float getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights);
+    static float getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, const Vec3& cameraLocation);
 };
 
-void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture = nullptr);
+void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, Vec3 worldLoc2, Vec3 worldLoc3,
+                    const Vec3& cameraLocation,
+                    FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture = nullptr);
 
 #endif

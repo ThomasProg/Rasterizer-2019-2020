@@ -141,7 +141,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
 
     for (Light& light : pScene->lights)   
     {
-        light.playerRelativeLocation = Vec4(light.position, 1);//inverseCameraMatrix * Vec4(light.position, 1);
+        light.playerRelativeLocation = inverseCameraMatrix * Vec4(light.position, 1);
     }
 
     for (const Entity& entity : pScene->entities)
@@ -170,46 +170,20 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
             unsigned int id3 = entity.mesh->indices[i+2];
 
             //Vec3 cameraLoc = worldLoc[id1] - inverseCameraMatrix * Vec4(1, 1, 1, 1);
-            Vec3 cameraLoc = camera.location;
-            // cameraLoc.x *= cameraLoc.z;
-            // cameraLoc.y *= cameraLoc.z;
-            float cameraLength = camera.location.z;
+            Vec3 cameraLoc = camera.cartesianLocation;
 
-            //TODO : backface culling with camera
-
-            // cameraLoc.x = sin(camera.rotation.y) * cameraLength;
-            // cameraLoc.y = 0;
-            // cameraLoc.z = cos(camera.rotation.y) * cameraLength;
-
-            // cameraLoc.x = 0;
-            // cameraLoc.y = sin(camera.rotation.x) * cameraLength;
-            // cameraLoc.z = -cos(camera.rotation.x) * cameraLength;
-
-            // cameraLoc.x = -sin(camera.rotation.y) * cameraLength * sin(camera.rotation.x);
-            // cameraLoc.y = sin(camera.rotation.x) * cameraLength;
-            // cameraLoc.z = -cos(camera.rotation.x) * cameraLength * cos(camera.rotation.y);
-
-
-            // cameraLoc.x = -sin(camera.rotation.y) * cameraLength * cos(camera.rotation.x);
-            // cameraLoc.y = cos(camera.rotation.y) * cameraLength;
-            // cameraLoc.z = sin(camera.rotation.y) * cameraLength * sin(camera.rotation.x);
+            //float cameraLength = camera.location.z;
 
             Vec3 N = crossProduct(Vec3((worldLoc[id2] - worldLoc[id1])), Vec3((worldLoc[id3] - worldLoc[id1])));
-            // // Vec4 Q = projectionMatrix * inverseCameraMatrix * Vec4(N, 0);
 
-            // //std::cout << N << std::endl;
+            #ifdef __BACKFACE_CULLING__
 
-            //if (dotProduct(L, Q) >= 0)
-            // //     drawLine(pTarget, Vertex(worldLoc[id1]), Vertex(Vec3(worldLoc[id1]) + N));
-            // if (dotProduct(N, Vec3(0,0,1)) >= 0)
-            std::cout << inverseCameraMatrix * Vec4(0, 0, 1, 1) << std::endl;
-            //worldLoc[id1] - 
-            if (dotProduct(N, worldLoc[id1] - cameraLoc) <= 0)
+            if (dotProduct(N, worldLoc[id1] - cameraLoc) > 0)
             {
-                //std::cout << dotProduct(N, Vec3(0,0,-1)) << std::endl;
-                // drawLine(pTarget, Vertex(Vec3(50,50,50)), Vertex(Vec3(50,50,50) + N * 1000));
                 continue;
             }
+
+            #endif
 
             culledLoc.emplace_back(worldLoc[id1]);
             culledLoc.emplace_back(worldLoc[id2]);
@@ -309,10 +283,17 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
             vert1.color.a *= entity.alpha;
             vert2.color.a *= entity.alpha;
             vert3.color.a *= entity.alpha;
-            
-            drawTriangle(vert1, vert2, vert3, pTarget, pScene->lights, entity.mesh->pTexture);
-        }
 
-        //RenderTriangles(pTarget, pScene->lights, , entity.mesh->pTexture);
+            if (mode == E_RasterizerMode::E_WIREFRAME)
+            {
+                drawLine(pTarget, vert1, vert2);
+                drawLine(pTarget, vert2, vert3);
+                drawLine(pTarget, vert3, vert1);
+            }
+            else
+                drawTriangle(vert1, vert2, vert3, culledLoc[id1], culledLoc[id2], culledLoc[id3], 
+                                camera.cartesianLocation,
+                                pTarget, pScene->lights, entity.mesh->pTexture);
+        }
     }
 }
