@@ -14,7 +14,7 @@ DepthBuffer::DepthBuffer(unsigned int width, unsigned int height)
 DepthBuffer::~DepthBuffer()
 {
     if (depth != nullptr)
-        delete depth;
+        delete[] depth;
 }
 // #include <cstring>
 void DepthBuffer::resetDepth()

@@ -9,13 +9,10 @@ class GLFWwindow;
 
 class Camera
 {
+private:
+    Mat4 transform;
+
 public:
-    Camera();
-    ~Camera();
-    void actualize();
-
-    void inputs(float deltaTime, GLFWwindow* window);
-
     float prevMouseLocX = 0, prevMouseLocY = 0;
 
     //cartesian coordinates
@@ -29,15 +26,14 @@ public:
     static constexpr float rotationSpeed = 0.08;
     static constexpr float translationSpeed = 10;
 
-    const Mat4& getTransform() const 
-    {
-        return transform;
-    };
+public:
 
+    Camera();
+    ~Camera();
+    void actualize();
 
-private:
-    Mat4 transform;
-
+    void inputs(float deltaTime, GLFWwindow* window);
+    __inline const Mat4& getTransform() noexcept const  { return transform; };
 };
 
 #endif

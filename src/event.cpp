@@ -286,6 +286,9 @@ int Events::run()
             }
         };
 
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+            bRun = false;
+
         f1.input(glfwGetKey(window, GLFW_KEY_F1));
 
         camera.actualize();

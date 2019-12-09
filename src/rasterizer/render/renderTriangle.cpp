@@ -28,21 +28,18 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::
         ambient = light.ambientComponent * mat.ambient;
 
         //diffuse
-        Vec3 pixelToLightVec = (light.playerRelativeLocation-vertex.position3D);
+        Vec3 pixelToLightVec = (light.position - vertex.position3D);
         pixelToLightVec.Normalize();
         
-        float cosTeta  = dotProduct(pixelToLightVec,(vertex.normal));
-        
-        if (cosTeta < 0)
-            cosTeta = 0;
+        float cosTeta = std::max(0.f, dotProduct(pixelToLightVec, vertex.normal));
 
         diffuse = light.diffuseComponent * mat.diffuse * cosTeta;
 
         //specular
         Vec3 pixelToEyeVec = cameraLocation - vertex.position3D; //TODO
-        pixelToEyeVec.z -= 1;
+        // pixelToEyeVec.z -= 1;
         pixelToEyeVec.Normalize();
-        Vec3 h = pixelToLightVec+pixelToEyeVec;
+        Vec3 h = pixelToLightVec + pixelToEyeVec;
         h.Normalize();
         float cosAlpha = dotProduct(vertex.normal, h);
 
@@ -58,7 +55,8 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::
 }
 
 ////////Get weight of a point in a triangle//////////
-bool getWeight(const Vec2& p, Vec3 p1, Vec3 p2, Vec3 p3, float* weight)
+inline
+bool getWeight(const Vec2& p, const Vec3& p1, const Vec3& p2, const Vec3& p3, float* weight)
 {
     float det = (p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y);
     if (det == 0)
@@ -169,7 +167,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                     continue;
 
                 RasterizingVertex vert;
-                vert.position3D = p;
+                vert.position3D = std::move(p);
 
                 float u = 0;
                 float v = 0;
@@ -245,14 +243,14 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                             Color c1 = texture->GetPixelColor(x1, y1);
                             Color c2 = texture->GetPixelColor(x1, y2);
 
-                            c = getAverageColor(c1, c2, 1 - (curY - y1) / (y2 - y1));
+                            c = getAverageColor(c2, c1, (curY - y1) / (y2 - y1));
                         }
                         else if (y2 - y1 == 0)
                         {
                             Color c1 = texture->GetPixelColor(x1, y1);
                             Color c2 = texture->GetPixelColor(x2, y1);
 
-                            c = getAverageColor(c1, c2, 1 - (curY - y1) / (y2 - y1));
+                            c = getAverageColor(c2, c1, (curX - x1) / (x2 - x1));
                         }
                         else 
                         {
@@ -261,10 +259,10 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                             Color c12 = texture->GetPixelColor(x1, y2);
                             Color c22 = texture->GetPixelColor(x2, y2);
 
-                            Color c1 = getAverageColor(c11, c21, 1 - (curX - x1 / (x2 - x1)));
-                            Color c2 = getAverageColor(c12, c22, 1 - (curX - x1 / (x2 - x1)));
+                            Color c1 = getAverageColor(c21, c11, (curX - x1 / (x2 - x1)));
+                            Color c2 = getAverageColor(c22, c12, (curX - x1 / (x2 - x1)));
 
-                            c = getAverageColor(c1, c2, 1 - (curY - y1) / (y2 - y1));
+                            c = getAverageColor(c2, c1, (curY - y1) / (y2 - y1));
                         }
 
                         c.a = alpha;

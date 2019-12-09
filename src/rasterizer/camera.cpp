@@ -20,7 +20,7 @@ void Camera::actualize()
     // cartesianLocation.x = spherialRadius * std::sin(sphericalRotation.x) * std::cos(sphericalRotation.y);
     // cartesianLocation.y = spherialRadius * std::sin(sphericalRotation.x) * std::sin(sphericalRotation.y);
     // cartesianLocation.z = spherialRadius * std::cos(sphericalRotation.x);
-    std::cout << cartesianLocation << std::endl;
+    //std::cout << cartesianLocation << std::endl;
 
     transform = Mat4::CreateTranslationMatrix(cartesianLocation) * Mat4::CreateRotationMatrix(cartesianRotation);
 }

@@ -128,7 +128,7 @@ Texture::Texture(unsigned int width, unsigned int height)
 Texture::~Texture()
 {
     if (pixels != nullptr)
-        delete pixels;
+        delete[] pixels;
 }
 
 void Texture::SetPixelColor(unsigned int x, unsigned int y, Color c)

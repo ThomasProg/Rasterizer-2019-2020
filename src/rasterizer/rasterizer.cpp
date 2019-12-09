@@ -139,15 +139,15 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
     //init render texture
     pTarget->ResetPixels();
 
-    for (Light& light : pScene->lights)   
-    {
-        light.playerRelativeLocation = inverseCameraMatrix * Vec4(light.position, 1);
-    }
+    // for (Light& light : pScene->lights)   
+    // {
+    //     light.playerRelativeLocation = inverseCameraMatrix * Vec4(light.position, 1);
+    // }
 
     for (const Entity& entity : pScene->entities)
     {
-        std::vector<Vec4> worldLoc;
-        std::vector<Vec4> worldNormals;
+        std::vector<Vec4> worldLoc;     //relative to Camera
+        std::vector<Vec4> worldNormals; //relative to Camera
 
         worldLoc.reserve(entity.mesh->vertices.size());
         worldNormals.reserve(entity.mesh->vertices.size());
@@ -199,10 +199,17 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
             culledUVs.emplace_back(entity.mesh->vertices[id3].u, entity.mesh->vertices[id3].v);
         }
 
-        std::vector<Vec4> screenLoc;
-        screenLoc.reserve(culledLoc.size());
-
+        std::vector<Vec4> notRelativeToCameraLoc;
+        notRelativeToCameraLoc.reserve(culledLoc.size());
         for (const Vec4& loc3D : culledLoc)
+        {
+            notRelativeToCameraLoc.emplace_back((inverseCameraMatrix * loc3D).getHomogenizedVec());
+        }
+
+        std::vector<Vec4> screenLoc;
+        screenLoc.reserve(notRelativeToCameraLoc.size());
+
+        for (const Vec4& loc3D : notRelativeToCameraLoc)
         {
         //     Vec4 loc3D1 = worldLoc[i];
         //     Vec4 loc3D2 = worldLoc[i+1];scale
@@ -215,7 +222,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         //         screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D1).getHomogenizedVec());
         //         screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D2).getHomogenizedVec());
         //         screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D3).getHomogenizedVec());
-                 screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D).getHomogenizedVec());
+                 screenLoc.emplace_back((projectionMatrix * loc3D).getHomogenizedVec());
         //     }
         }
 
@@ -273,12 +280,8 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
             vert3.u = culledUVs[id3].x;
             vert3.v = culledUVs[id3].y;
 
-            vert1.color = Color(250,250,250);
-            vert2.color = Color(250,100,250);
-            vert3.color = Color(250,250,100);
-            // drawLine(pTarget, v1, v2);
-            // drawLine(pTarget, v2, v3);
-            // drawLine(pTarget, v3, v1);
+            //triangle default color
+            __FORCE_UNTEXTURED_TRIANGLE_COLOR__
 
             vert1.color.a *= entity.alpha;
             vert2.color.a *= entity.alpha;
