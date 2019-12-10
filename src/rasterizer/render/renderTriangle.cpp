@@ -94,13 +94,14 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
     ww[1] = w2;
     ww[2] = w3;
 
-    float totalWW = 0;
+    // float totalWW = 0;
 
     // for (unsigned int i = 0; i < triangleVertices.size(); i++)
     // {
-    //     triangleVertices[i].position /= w[i];
+    //     triangleVertices[i]->position /=  triangleVertices[i]->position.z;
     //     // triangleVertices[i]->u /= ww[i];
     //     // triangleVertices[i]->v /= ww[i];
+    //     triangleVertices[i]->position.z = 1 / triangleVertices[i]->position.z;
     // }
 
     std::array<Vec3*, 3> worldLoc;
@@ -158,6 +159,17 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
             float weight[3];
             isValid = getWeight(Vec2(x,y), v1, v2, v3, weight);
 
+            // weight[0] /= worldLoc[0]->w;
+            // weight[1] /= worldLoc[1]->w;
+            // weight[2] /= worldLoc[2]->w;
+            weight[0] /= ww[0];
+            weight[1] /= ww[1];
+            weight[2] /= ww[2];
+            float total = weight[0] + weight[1] + weight[2];
+            weight[0] = weight[0] / total;
+            weight[1] = weight[1] / total;
+            weight[2] = weight[2] / total;
+
                 //std::cout << "grs" << std::endl;
             if (isValid)
             {   
@@ -204,10 +216,19 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                     u += weight[i] * uP[i];
                     v += weight[i] * vP[i];
 
-                    totalWW += weight[i] * ww[i];
+                    // totalWW += weight[i] * ww[i];
 
                     //intensity += weight[i] * intensityVertex[i];
                 }
+
+                // float zz = 1 / weight[0] * worldLoc[0]->z
+                //             + 1 / weight[1] * worldLoc[1]->z
+                //             + 1 / weight[2] * worldLoc[2]->z;
+                
+                // c.r *= zz;
+                // c.g *= zz;
+                // c.b *= zz;
+
                 // u /= totalWW;
                 // v /= totalWW;
 
@@ -316,3 +337,10 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
         }
     }
 }
+
+
+// w[0] /= clipCoords[0]
+// w[1] /= clipCoords[1]
+// w[2] /= clipCoords[2]
+// w = w / (w.x + w.y + w.z)
+
