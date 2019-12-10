@@ -114,22 +114,7 @@ void Events::sceneInit(Scene& scene)
     entitiesInit(scene.entities);
 }
 
-void Events::cameraInputs(int touch)
-{
-    // if (touch == SDLK_UP || touch == SDLK_w)
-    //     camera = Mat4::CreateTranslationMatrix(Vec3(0, 0, 1)) * camera;
-
-    // if (touch == SDLK_DOWN || touch == SDLK_s)
-    //     camera = Mat4::CreateTranslationMatrix(Vec3(0, 0, -1)) * camera;
-
-    // if (touch == SDLK_RIGHT || touch == SDLK_d)
-    //     camera = Mat4::CreateTranslationMatrix(Vec3(1, 0, 0)) * camera;
-
-    // if (touch == SDLK_DOWN || touch == SDLK_a)
-    //     camera = Mat4::CreateTranslationMatrix(Vec3(-1, 0, 0)) * camera;
-}
-
-void Events::inputs(SDL_Event& event, bool& bRun)
+void Events::inputs(SDL_Event& event)
 {
     //inputs
     while (SDL_PollEvent(&event))
@@ -137,7 +122,7 @@ void Events::inputs(SDL_Event& event, bool& bRun)
         switch(event.type)
         {
             case SDL_KEYDOWN:
-                cameraInputs(event.key.keysym.sym);
+                //cameraInputs(event.key.keysym.sym);
                 switch(event.key.keysym.sym)
                 {
                     case SDLK_ESCAPE :
@@ -208,7 +193,7 @@ int Events::run()
 
     sceneInit(scene);
 
-    FrameBuffer target(windowWidth, windowHeight);
+    FrameBuffer target(textureResolutionX, textureResolutionY);
     //Texture target(windowWidth, windowHeight);
 
     unsigned int nbFps = 0;
@@ -249,7 +234,7 @@ int Events::run()
         // scene.lights[0].position.y = 10 * cos(frame/10);
 
         //SDL
-        inputs(event, bRun);
+        inputs(event);
 
         //GLFW
         #ifdef __GLFW__
@@ -324,9 +309,15 @@ int Events::run()
             camera.getTransform().GetInverse(), camera, renderMode);
 
         // render.SDL_RenderTexture(target.texture);
-
+        
         #ifdef __GLFW__
+        #ifndef __ANTI_ALIASING__
         glDrawPixels(windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, target.texture.pixels);
+        #else
+        Texture renderedTexture(windowWidth, windowHeight);
+        Rasterizer::antiAliasingCompression(target.texture, renderedTexture);
+        glDrawPixels(windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, renderedTexture.pixels);
+        #endif
         glfwSwapBuffers(window);
         #endif
 

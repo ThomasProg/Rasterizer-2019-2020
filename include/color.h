@@ -12,15 +12,17 @@ struct Color
 
     //sizeof(Color) == 4, 
     //so we use less memory copying by copy instead of reference (using 4 more bytes)
-    Color& operator=(Color setColor);
-    Color& operator*=(float scalar);
-    Color operator*(float scalar);
-    Color operator+(const Color& rhs);
-    unsigned char& operator[](unsigned int index);
+    Color& operator=(Color setColor) noexcept;
+    Color& operator*=(float scalar) noexcept;
+    Color operator*(float scalar) noexcept;
+    Color operator+(const Color& rhs) noexcept;
+    Color operator/(unsigned int f) noexcept;
+    Color& operator+=(const Color& rhs) noexcept;
+    unsigned char& operator[](unsigned int index) noexcept;
 
-    float getTransparence() const; //returns transparence 0 < a < 1
+    float getTransparence() const noexcept; //returns transparence 0 < a < 1
 };
 
-Color getAverageColor(Color lhs, Color rhs, float lhsRatio);
+Color getAverageColor(Color lhs, Color rhs, float lhsRatio) noexcept;
 
 #endif

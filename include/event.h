@@ -14,11 +14,9 @@
 
 #include "camera.h"
 
+#include "macros.h"
 #include "doOnce.h"
 #include "ressourceManager.hpp"
-
-//#define __SDL__
-#define __GLFW__
 
 class Light;
 class Scene;
@@ -59,9 +57,8 @@ public:
     void entitiesInit(std::vector<Entity>& entities);
     void sceneInit(Scene& scene);
 
-    void inputs(SDL_Event& event, bool& bRun);
+    void inputs(SDL_Event& event);
 
-    void cameraInputs(int touch);
     int run();
 };
 

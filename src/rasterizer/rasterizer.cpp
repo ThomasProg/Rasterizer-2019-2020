@@ -19,6 +19,7 @@
 #include "texture.h"
 #include "frameBuffer.h"
 
+#include "camera.h"
 #include "entity.h"
 #include "vertex.h"
 #include "vertex2.h"
@@ -130,7 +131,66 @@ void Rasterizer::RenderWireframe(FrameBuffer* pTarget,
     drawLine(pTarget, screenVertices[2], screenVertices[0]);
 }
 
-#include "camera.h"
+void Rasterizer::antiAliasingCompression(const Texture& highResolutionTexture, Texture& finalTexture)
+{  
+    // std::cout << "Size : " << highResolutionTexture.width << ' ' << highResolutionTexture.height << std::endl;
+    // std::cout << "Size : " << finalTexture.width << ' ' << finalTexture.height << std::endl;
+
+    // for (unsigned int y = 0; y < finalTexture.height; y++)
+    // {
+    //     for (unsigned int x = 0; x < finalTexture.width; x++)
+    //     {
+    //         //unsigned int id = x * antiAliasingX + y * (target.width) * antiAliasingY;
+
+    //         Color finalColor (0, 0, 0, 0);
+
+    //         // //get pixel color
+    //         // for (unsigned int i = 0; i < antiAliasingY; i++)
+    //         // {
+    //         //     for (unsigned int j = 0; j < antiAliasingX; j++)
+    //         //     {       
+    //         //         finalColor += target.pixels[((x * antiAliasingX + j) 
+    //         //                     + (y * antiAliasingY * renderedTarget.width + i))
+    //         //                     / (antiAliasingX * antiAliasingY)];
+    //         //     }  
+    //         // }
+
+    //         //finalColor = target.pixels[x * 4 + y * renderedTarget.width * 2 * 2];
+
+    //         //renderedTarget.pixels[x + y * renderedTarget.width] = std::move(finalColor);
+    //         finalTexture.pixels[x + y * finalTexture.width] = std::move(highResolutionTexture.pixels[x * antiAliasingX + y * finalTexture.width * antiAliasingX * antiAliasingY]);
+    //     }
+    // }
+
+    for (unsigned int y = 0; y < finalTexture.height; y++)
+    {
+        for (unsigned int x = 0; x < finalTexture.width; x++)
+        {
+            //unsigned int id = x * antiAliasingX + y * (target.width) * antiAliasingY;
+
+            Color finalColor (0, 0, 0, 0);
+
+            //get pixel color
+            for (unsigned int i = 0; i < antiAliasingY; i++)
+            {
+                for (unsigned int j = 0; j < antiAliasingX; j++)
+                {       
+                    finalColor += highResolutionTexture.pixels[x * antiAliasingX + j + 
+                                                                (i + y * antiAliasingY) * highResolutionTexture.width] 
+                                                                / (antiAliasingY * antiAliasingX);
+                }  
+            }
+
+            //finalColor = target.pixels[x * 4 + y * renderedTarget.width * 2 * 2];
+
+            finalTexture.pixels[x + y * finalTexture.width] = std::move(finalColor);
+
+            // unsigned int id = x + y * highResolutionTexture.width;
+            // finalTexture.pixels[x + y * finalTexture.width] = highResolutionTexture.pixels[x*antiAliasingX + y*antiAliasingY * highResolutionTexture.width];
+        
+        }
+    }
+}
 
 void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, Camera& camera, E_RasterizerMode mode)
 {

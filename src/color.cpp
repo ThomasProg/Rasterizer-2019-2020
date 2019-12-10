@@ -30,7 +30,7 @@ Color::Color(const Color& setColor)
 
 }
 
-Color& Color::operator=(Color setColor)
+Color& Color::operator=(Color setColor) noexcept
 {
     r = setColor.r;
     g = setColor.g;
@@ -40,7 +40,7 @@ Color& Color::operator=(Color setColor)
     return *this;
 }
 
-Color& Color::operator*=(float scalar)
+Color& Color::operator*=(float scalar) noexcept
 {
   if (scalar <= 0)
   {
@@ -69,7 +69,20 @@ Color& Color::operator*=(float scalar)
   return *this;
 }
 
-unsigned char& Color::operator[](unsigned int index)
+Color Color::operator/(unsigned int f) noexcept
+{
+  return Color(r / f, g / f, b / f, a / f);
+}
+
+Color& Color::operator+=(const Color& rhs) noexcept
+{
+    r += rhs.r;
+    g += rhs.g;
+    b += rhs.b;
+    return *this;
+}
+
+unsigned char& Color::operator[](unsigned int index) noexcept
 {
   switch (index)
   {
@@ -94,7 +107,7 @@ unsigned char& Color::operator[](unsigned int index)
   }
 }
 
-Color Color::operator*(float scalar)
+Color Color::operator*(float scalar) noexcept
 {
   Color c = *this;
   if (scalar <= 0)
@@ -139,7 +152,7 @@ Color Color::operator*(float scalar)
   return c;
 }
 
-Color Color::operator+(const Color& rhs)
+Color Color::operator+(const Color& rhs) noexcept
 {
   Color c;
   #define addAndClampChar(result, f1, f2) \
@@ -157,12 +170,12 @@ Color Color::operator+(const Color& rhs)
   return c;
 }
 
-float Color::getTransparence() const
+float Color::getTransparence() const noexcept
 {
   return float(this->a) / 255.f;
 }
 
-Color getAverageColor(Color lhs, Color rhs, float lhsRatio)
+Color getAverageColor(Color lhs, Color rhs, float lhsRatio) noexcept
 {
   Color newColor = lhs * lhsRatio + rhs * (1 - lhsRatio);
 

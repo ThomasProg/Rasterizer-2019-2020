@@ -349,29 +349,37 @@ Mat4 Mat4::CreateOrthogonalProjectionMatrix()
 
 Mat4 Mat4::CreateScreenConversionMatrix()
 {
-    Mat4 screen;
+    return 
+    {
+        2.f/5.f * textureResolutionX/2, 0, 0, textureResolutionX/2,
+        0, 2.f/5.f * textureResolutionY/2, 0, textureResolutionY/2,
+        0, 0, 1, -1,
+        0, 0, 0, 1
+    };
 
-    screen.elements[0] = 2.f/5.f * windowWidth/2;
-    screen.elements[1] = 0;
-    screen.elements[2] = 0;
-    screen.elements[3] = windowWidth/2;
+    // Mat4 screen;
 
-    screen.elements[4] = 0;
-    screen.elements[5] = 2.f/5.f * windowHeight/2;
-    screen.elements[6] = 0;
-    screen.elements[7] = windowHeight/2;
+    // screen.elements[0] = 2.f/5.f * windowWidth/2;
+    // screen.elements[1] = 0;
+    // screen.elements[2] = 0;
+    // screen.elements[3] = windowWidth/2;
+
+    // screen.elements[4] = 0;
+    // screen.elements[5] = 2.f/5.f * windowHeight/2;
+    // screen.elements[6] = 0;
+    // screen.elements[7] = windowHeight/2;
     
-    screen.elements[8] = 0;
-    screen.elements[9] = 0;
-    screen.elements[10] = 1;
-    screen.elements[11] = -1;
+    // screen.elements[8] = 0;
+    // screen.elements[9] = 0;
+    // screen.elements[10] = 1;
+    // screen.elements[11] = -1;
 
-    screen.elements[12] = 0;
-    screen.elements[13] = 0;
-    screen.elements[14] = 0;
-    screen.elements[15] = 1;
+    // screen.elements[12] = 0;
+    // screen.elements[13] = 0;
+    // screen.elements[14] = 0;
+    // screen.elements[15] = 1;
     
-    return screen;
+    // return screen;
 }
 
 float Mat4::det_2(unsigned x,unsigned y,unsigned z,unsigned w) const

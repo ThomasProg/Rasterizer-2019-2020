@@ -1,4 +1,5 @@
 #include <cmath>
+#include <algorithm>
 #include <cassert>
 #include "maths/utilityFunctions.h"
 
@@ -14,6 +15,13 @@
 #include "texture.h"
 
 #include "macros.h"
+
+template<class T>
+constexpr const T& clamp( const T& v, const T& lo, const T& hi )
+{
+    assert( !(hi < lo) );
+    return (v < lo) ? lo : (hi < v) ? hi : v;
+}
 
 float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, const Vec3& cameraLocation)
 {
@@ -72,10 +80,6 @@ bool getWeight(const Vec2& p, const Vec3& p1, const Vec3& p2, const Vec3& p3, fl
     weight[0] = ((p2.y - p3.y) * (p.x - p3.x) + (p3.x - p2.x) * (p.y - p3.y)) / det;
     weight[1] = ((p3.y - p1.y) * (p.x - p3.x) + (p1.x - p3.x) * (p.y - p3.y)) / det;
     weight[2] = 1 - weight[1] - weight[0];
-
-    // weight[0] = (cst[0] * (p.x - p3.x) + cst[1] * (p.y - p3.y)) / det;
-    // weight[1] = (cst[2] * (p.x - p3.x) + cst[3] * (p.y - p3.y)) / det;
-    // weight[2] = 1 - weight[1] - weight[0];
     
     return weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0;
 }
@@ -89,10 +93,12 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
     triangleVertices[1] = &vert2;
     triangleVertices[2] = &vert3;
 
+    #ifdef __PERSPECTIVE_FIX__
     float ww[3];
     ww[0] = w1;
     ww[1] = w2;
     ww[2] = w3;
+    #endif
 
     // float totalWW = 0;
 
@@ -162,6 +168,8 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
             // weight[0] /= worldLoc[0]->w;
             // weight[1] /= worldLoc[1]->w;
             // weight[2] /= worldLoc[2]->w;
+
+            #ifdef __PERSPECTIVE_FIX__
             weight[0] /= ww[0];
             weight[1] /= ww[1];
             weight[2] /= ww[2];
@@ -169,6 +177,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
             weight[0] = weight[0] / total;
             weight[1] = weight[1] / total;
             weight[2] = weight[2] / total;
+            #endif
 
                 //std::cout << "grs" << std::endl;
             if (isValid)
@@ -275,6 +284,11 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                         //               ceil
 
                         char alpha = c.a;
+
+                        //TODO : assert ?
+                        //if not in range, due to float imprecision
+                        u = clamp(u, 0.f, 1.f);
+                        v = clamp(v, 0.f, 1.f);
 
                         const int x1 = static_cast<int>(floor(u * (float(texture->width)-1)));
                         const int x2 = static_cast<int>(ceil(u * (float(texture->width)-1)));

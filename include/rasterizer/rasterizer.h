@@ -79,6 +79,8 @@ public:
     //                        std::vector<Vertex>& transformedVertices, 
     //                        std::vector<unsigned int>& transformedIndices);
 
+    static void antiAliasingCompression(const Texture& highResolutionTexture, Texture& finalTexture);
+
     static void RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix,  Camera& camera,
                             E_RasterizerMode mode = E_RasterizerMode::E_POINTS);
 };
