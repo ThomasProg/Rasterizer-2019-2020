@@ -13,6 +13,8 @@ public:
 
 public:
     Texture() = delete;
+    Texture(const Texture& rhs);
+    Texture(Texture&& rhs) noexcept;
     Texture(const char* filename);
     Texture(unsigned int width, unsigned int height);
     ~Texture();

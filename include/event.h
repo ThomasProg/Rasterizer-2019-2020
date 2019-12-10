@@ -15,6 +15,7 @@
 #include "camera.h"
 
 #include "doOnce.h"
+#include "ressourceManager.hpp"
 
 //#define __SDL__
 #define __GLFW__
@@ -43,6 +44,7 @@ private:
     #endif
     
     Scene scene;
+    RessourceManager textureManager;
 
     E_RasterizerMode renderMode = E_RasterizerMode::E_TRIANGLES;
 

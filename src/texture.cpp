@@ -37,6 +37,24 @@ Uint32 getpixel(SDL_Surface *surface, int x, int y)
     }
 }
 
+Texture::Texture(const Texture& rhs)
+    : width(rhs.width), height(rhs.height), pixels(new Color[width * height])
+{
+    pixels = new Color[width * height];
+    for (unsigned int i = 0; i < width * height; i++)
+    {
+        pixels[i] = rhs.pixels[i];
+    }
+}
+
+Texture::Texture(Texture&& rhs) noexcept
+    : width(std::move(rhs.width)),
+      height(std::move(rhs.height)),
+      pixels(std::move(rhs.pixels))
+{
+    rhs.pixels = nullptr;
+}
+
 Texture::Texture(const char* filename)
     : width(width),
       height(height),
@@ -61,6 +79,8 @@ Texture::Texture(const char* filename)
             pixels[y * width + x][3] = colors[3];
         }
     }
+
+    SDL_FreeSurface(surface);
 
     // for (int i = 0; i < width * height; i++)
     // {

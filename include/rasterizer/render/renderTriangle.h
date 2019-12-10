@@ -49,6 +49,7 @@ public:
 };
 
 void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, Vec3 worldLoc2, Vec3 worldLoc3,
+                    float w1, float w2, float w3,
                     const Vec3& cameraLocation,
                     FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture = nullptr);
 

@@ -49,32 +49,33 @@ void Events::entitiesInit(std::vector<Entity>& entities)
             //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
             cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 0, 0));
             //cube.transformation *= Mat4::CreateRotationMatrix(Vec3(0.1, 0.5, 0.5));
-            cube.mesh->pTexture = new Texture("media/crate.png");
+            cube.mesh->pTexture = &textureManager.textures[0];
+            //cube.mesh->pTexture = new Texture("media/crate.png");
             entities.push_back(std::move(cube));
             cube.alpha = j/2.f+0.5;
         }
 
 
-        for (unsigned int j = 0; j < 1; j++)
-        {
-            Entity cube;
-            cube.mesh = Mesh::CreateCube();
-            i = 0;
-            for (Vertex& vertex : cube.mesh->vertices)
-            {
-                if (i % 2 == 0)
-                    vertex.color = Color(i*(255/6), 2, 2);
-                else
-                    vertex.color = Color(2, i*(255/6), 2);
-                i++;
-            }
-            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, -1, -0));
-            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(10.0, 1.0, 10.0));
-            //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
-            cube.mesh->pTexture = new Texture("media/crate2.png");
-            entities.push_back(std::move(cube));
-            cube.alpha = j/2.f+0.5;
-        }
+        // for (unsigned int j = 0; j < 1; j++)
+        // {
+        //     Entity cube;
+        //     cube.mesh = Mesh::CreateCube();
+        //     i = 0;
+        //     for (Vertex& vertex : cube.mesh->vertices)
+        //     {
+        //         if (i % 2 == 0)
+        //             vertex.color = Color(i*(255/6), 2, 2);
+        //         else
+        //             vertex.color = Color(2, i*(255/6), 2);
+        //         i++;
+        //     }
+        //     cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, -1, -0));
+        //     cube.transformation *= Mat4::CreateScaleMatrix(Vec3(10.0, 1.0, 10.0));
+        //     //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
+        //     cube.mesh->pTexture = new Texture("media/crate2.png");
+        //     entities.push_back(std::move(cube));
+        //     cube.alpha = j/2.f+0.5;
+        // }
     }
 
     // // sphere
@@ -233,7 +234,7 @@ int Events::run()
         fps = 1.f/(deltaTime);
         nbFps++;
         totalFps += fps;
-        std::cout << 1.f/(deltaTime) << std::endl;
+        //std::cout << 1.f/(deltaTime) << std::endl;
         lastTime = time;
         //std::cout << totalFps / nbFps << std::endl;
 

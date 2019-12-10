@@ -33,7 +33,7 @@ public:
     void actualize();
 
     void inputs(float deltaTime, GLFWwindow* window);
-    __inline const Mat4& getTransform() noexcept const  { return transform; };
+    __inline const Mat4& getTransform() const noexcept  { return transform; };
 };
 
 #endif

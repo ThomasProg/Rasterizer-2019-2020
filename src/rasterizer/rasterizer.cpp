@@ -209,8 +209,12 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         std::vector<Vec4> screenLoc;
         screenLoc.reserve(notRelativeToCameraLoc.size());
 
+        std::vector<float> verticesW;
+        verticesW.reserve(notRelativeToCameraLoc.size());
+
         for (const Vec4& loc3D : notRelativeToCameraLoc)
         {
+            
         //     Vec4 loc3D1 = worldLoc[i];
         //     Vec4 loc3D2 = worldLoc[i+1];scale
         //     Vec4 loc3D3 = worldLoc[i+2];
@@ -222,7 +226,9 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
         //         screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D1).getHomogenizedVec());
         //         screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D2).getHomogenizedVec());
         //         screenLoc.emplace_back((projectionMatrix * inverseCameraMatrix * loc3D3).getHomogenizedVec());
-                 screenLoc.emplace_back((projectionMatrix * loc3D).getHomogenizedVec());
+            Vec4 projectedLoc = projectionMatrix * loc3D;
+            verticesW.emplace_back(projectedLoc.w);
+            screenLoc.emplace_back(projectedLoc.getHomogenizedVec());
         //     }
         }
 
@@ -295,6 +301,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
             }
             else
                 drawTriangle(vert1, vert2, vert3, culledLoc[id1], culledLoc[id2], culledLoc[id3], 
+                                verticesW[id1], verticesW[id2], verticesW[id3],
                                 camera.cartesianLocation,
                                 pTarget, pScene->lights, entity.mesh->pTexture);
         }

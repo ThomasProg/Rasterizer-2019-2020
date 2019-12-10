@@ -13,6 +13,8 @@
 #include "material.h"
 #include "texture.h"
 
+#include "macros.h"
+
 float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, const Vec3& cameraLocation)
 {
     Material mat;
@@ -79,12 +81,27 @@ bool getWeight(const Vec2& p, const Vec3& p1, const Vec3& p2, const Vec3& p3, fl
 }
 
 void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, Vec3 worldLoc2, Vec3 worldLoc3, 
+                    float w1, float w2, float w3,
                     const Vec3& cameraLocation, FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture)
 {
     std::array<Vertex*, 3> triangleVertices;
     triangleVertices[0] = &vert1;
     triangleVertices[1] = &vert2;
     triangleVertices[2] = &vert3;
+
+    float ww[3];
+    ww[0] = w1;
+    ww[1] = w2;
+    ww[2] = w3;
+
+    float totalWW = 0;
+
+    // for (unsigned int i = 0; i < triangleVertices.size(); i++)
+    // {
+    //     triangleVertices[i].position /= w[i];
+    //     // triangleVertices[i]->u /= ww[i];
+    //     // triangleVertices[i]->v /= ww[i];
+    // }
 
     std::array<Vec3*, 3> worldLoc;
     worldLoc[0] = &worldLoc1;
@@ -158,6 +175,8 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                     p.z += weight[i] * worldLoc[i]->z;
                 }
 
+                // p.z = 1 / p.z;
+
                 //BECAREFUL
                 if (!(x > 0 && x < pTarget->width && y > 0 && y < pTarget->height))
                     continue;
@@ -185,8 +204,12 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                     u += weight[i] * uP[i];
                     v += weight[i] * vP[i];
 
+                    totalWW += weight[i] * ww[i];
+
                     //intensity += weight[i] * intensityVertex[i];
                 }
+                // u /= totalWW;
+                // v /= totalWW;
 
                 // u /= p.z;
                 // v /= p.z;
@@ -205,6 +228,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                 {
                     //TODO : enum for interpolation type
 
+                    #ifdef __NEAREST_INTERPOLATION__
                     {
                         char alpha = c.a;
                         assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
@@ -214,7 +238,9 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                                                    static_cast<unsigned int>(v * (float(texture->height) - 1)));
                         c.a = alpha;
                     }
+                    #endif
 
+                    #ifdef __BILINEAR_INTERPOLATION__
                     //bilinear interpolation
                     {
                         // floor
@@ -267,6 +293,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
 
                         c.a = alpha;
                     }
+                    #endif
                 }
 
                 c *= intensity;
