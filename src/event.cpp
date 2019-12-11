@@ -47,13 +47,14 @@ void Events::entitiesInit(std::vector<Entity>& entities)
             }
             cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
             //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
-            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 0, 0));
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 0, j*2));
             //cube.transformation *= Mat4::CreateRotationMatrix(Vec3(0.1, 0.5, 0.5));
             cube.mesh->pTexture = &textureManager.textures[0];
+            cube.alpha = 1.f - float(j) / 2.f;
             //cube.mesh->pTexture = new Texture("media/crate.png");
             entities.push_back(std::move(cube));
-            cube.alpha = j/2.f+0.5;
         }
+        
 
 
         // for (unsigned int j = 0; j < 1; j++)
@@ -315,7 +316,7 @@ int Events::run()
         glDrawPixels(windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, target.texture.pixels);
         #else
         Texture renderedTexture(windowWidth, windowHeight);
-        Rasterizer::antiAliasingCompression(target.texture, renderedTexture);
+        Rasterizer::antiAliasingCompression(target, renderedTexture);
         glDrawPixels(windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, renderedTexture.pixels);
         #endif
         glfwSwapBuffers(window);

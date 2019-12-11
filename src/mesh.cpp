@@ -116,48 +116,6 @@ mesh->vertices[mesh->vertices.size() - 1].v = b;
 #undef ADDING_VERTEX_AND_NORMAL
 #undef ADDING_UV
 
-// #define ADDING_VERTEX_AND_NORMAL(vec) \
-//     mesh->vertices.emplace_back(Vertex(vec, vec));
-//     //mesh->normals.emplace_back(vec);
-
-//     ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max)); 
-//     mesh->vertices[mesh->vertices.size() - 1].u = 0;
-//     mesh->vertices[mesh->vertices.size() - 1].v = 0;
-//     ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max)); 
-//     mesh->vertices[mesh->vertices.size() - 1].u = 1;
-//     mesh->vertices[mesh->vertices.size() - 1].v = 0;
-//     ADDING_VERTEX_AND_NORMAL(Vec3(min, min, max)); 
-//     mesh->vertices[mesh->vertices.size() - 1].u = 0;
-//     mesh->vertices[mesh->vertices.size() - 1].v = 1;
-//     ADDING_VERTEX_AND_NORMAL(Vec3(max, min, max));
-//     mesh->vertices[mesh->vertices.size() - 1].u = 1;
-//     mesh->vertices[mesh->vertices.size() - 1].v = 1;
-
-//     ADDING_VERTEX_AND_NORMAL(Vec3(max, min, min));
-//     mesh->vertices[mesh->vertices.size() - 1].u = 1;
-//     mesh->vertices[mesh->vertices.size() - 1].v = 1;
-//     ADDING_VERTEX_AND_NORMAL(Vec3(max, max, min));
-//     mesh->vertices[mesh->vertices.size() - 1].u = 1;
-//     mesh->vertices[mesh->vertices.size() - 1].v = 0;
-//     ADDING_VERTEX_AND_NORMAL(Vec3(min, max, min));
-//     mesh->vertices[mesh->vertices.size() - 1].u = 0;
-//     mesh->vertices[mesh->vertices.size() - 1].v = 0;
-//     ADDING_VERTEX_AND_NORMAL(Vec3(min, min, min));
-//     mesh->vertices[mesh->vertices.size() - 1].u = 0;
-//     mesh->vertices[mesh->vertices.size() - 1].v = 1;
-
-// #undef ADDING_VERTEX_AND_NORMAL
-
-//     //visible faces (see schema)
-//     mesh->addQuad(1, 5, 4, 3); //x+
-//     mesh->addQuad(0, 6, 5, 1); //y+
-//     mesh->addQuad(0, 1, 3, 2); //z+
-
-//     //hidden faces (see schema)
-//     mesh->addQuad(0, 2, 7, 6); //x-
-//     mesh->addQuad(2, 3, 4, 7); //y-
-//     mesh->addQuad(6, 7, 4, 5); //z- 
-
     return mesh;
 }
 
@@ -237,9 +195,6 @@ Mesh* Mesh::CreateTriangle(Vec3 point1, Vec3 point2, Vec3 point3)
     mesh->vertices.reserve(3);
     //mesh->normals.reserve(8);
     mesh->indices.reserve(3);
-
-    constexpr float min = -0.5;
-    constexpr float max = 0.5;
 
 #define ADDING_VERTEX_AND_NORMAL(vec) \
     mesh->vertices.emplace_back(Vertex(vec, vec));

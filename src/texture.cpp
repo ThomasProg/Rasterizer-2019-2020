@@ -56,8 +56,8 @@ Texture::Texture(Texture&& rhs) noexcept
 }
 
 Texture::Texture(const char* filename)
-    : width(width),
-      height(height),
+    : width(0),
+      height(0),
       pixels() //default constructor init pixels to black
 {
     SDL_Surface* surface = IMG_Load(filename);
@@ -67,9 +67,9 @@ Texture::Texture(const char* filename)
 
     pixels = new Color[width * height];
 
-    for (int y = 0; y < height; y++)
+    for (unsigned int y = 0; y < height; y++)
     { 
-        for (int x = 0; x < width; x++)
+        for (unsigned int x = 0; x < width; x++)
         { 
             Uint32 color = getpixel(surface, x, y);
             char* colors = (char*) &color;

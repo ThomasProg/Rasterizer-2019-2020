@@ -22,7 +22,7 @@ void Camera::actualize()
     // cartesianLocation.z = spherialRadius * std::cos(sphericalRotation.x);
     //std::cout << cartesianLocation << std::endl;
 
-    transform = Mat4::CreateTranslationMatrix(cartesianLocation) * Mat4::CreateRotationMatrix(cartesianRotation);
+    transform = Mat4::CreateTranslationMatrix(cartesianLocation) * Mat4::CreateRotationMatrix(cartesianRotation) * Mat4::CreateRotationMatrix(Vec3(0,0,0.2));
 }
 
 void Camera::inputs(float deltaTime, GLFWwindow* window)

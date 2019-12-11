@@ -103,6 +103,7 @@ unsigned char& Color::operator[](unsigned int index) noexcept
     break;
 
   default:
+    return r;
     break;
   }
 }

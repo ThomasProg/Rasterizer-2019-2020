@@ -92,8 +92,8 @@ void drawLine(FrameBuffer* pTarget, const Vertex& vertex1, const Vertex& vertex2
                        vertex1.position.z * ratio + vertex2.position.z * (1 - ratio));
             //std::cout << "z : " << point.z << std::endl;
 
-            float weight1 = Vec2(point.x - x1, point.y - y1).GetMagnitude() / magnitude;
-            float weight2 = Vec2(point.x - x1, point.y - y1).GetMagnitude() / magnitude;
+            // float weight1 = Vec2(point.x - x1, point.y - y1).GetMagnitude() / magnitude;
+            // float weight2 = Vec2(point.x - x1, point.y - y1).GetMagnitude() / magnitude;
             
             //Color c(vertex1.color.r, vertex1.color.g, vertex1.color.b);
             Color c(255,255,255);
@@ -131,56 +131,76 @@ void Rasterizer::RenderWireframe(FrameBuffer* pTarget,
     drawLine(pTarget, screenVertices[2], screenVertices[0]);
 }
 
-void Rasterizer::antiAliasingCompression(const Texture& highResolutionTexture, Texture& finalTexture)
+void Rasterizer::antiAliasingCompression(const FrameBuffer& highResolutionFB, Texture& finalTexture)
 {  
-    // std::cout << "Size : " << highResolutionTexture.width << ' ' << highResolutionTexture.height << std::endl;
-    // std::cout << "Size : " << finalTexture.width << ' ' << finalTexture.height << std::endl;
-
-    // for (unsigned int y = 0; y < finalTexture.height; y++)
-    // {
-    //     for (unsigned int x = 0; x < finalTexture.width; x++)
-    //     {
-    //         //unsigned int id = x * antiAliasingX + y * (target.width) * antiAliasingY;
-
-    //         Color finalColor (0, 0, 0, 0);
-
-    //         // //get pixel color
-    //         // for (unsigned int i = 0; i < antiAliasingY; i++)
-    //         // {
-    //         //     for (unsigned int j = 0; j < antiAliasingX; j++)
-    //         //     {       
-    //         //         finalColor += target.pixels[((x * antiAliasingX + j) 
-    //         //                     + (y * antiAliasingY * renderedTarget.width + i))
-    //         //                     / (antiAliasingX * antiAliasingY)];
-    //         //     }  
-    //         // }
-
-    //         //finalColor = target.pixels[x * 4 + y * renderedTarget.width * 2 * 2];
-
-    //         //renderedTarget.pixels[x + y * renderedTarget.width] = std::move(finalColor);
-    //         finalTexture.pixels[x + y * finalTexture.width] = std::move(highResolutionTexture.pixels[x * antiAliasingX + y * finalTexture.width * antiAliasingX * antiAliasingY]);
-    //     }
-    // }
-
+    const Texture& highResolutionTexture = highResolutionFB.texture;
     for (unsigned int y = 0; y < finalTexture.height; y++)
     {
         for (unsigned int x = 0; x < finalTexture.width; x++)
         {
             //unsigned int id = x * antiAliasingX + y * (target.width) * antiAliasingY;
-
             Color finalColor (0, 0, 0, 0);
+
+            #ifdef __MULTI_SAMPLING__
+            unsigned int nbMixedColors = 0;
+
+            for (unsigned int i = 0; i < antiAliasingY; i++)
+            {
+                for (unsigned int j = 0; j < antiAliasingX; j++)
+                {    
+                    unsigned int highResIndex = x * antiAliasingX + j + 
+                                                                (i + y * antiAliasingY) * highResolutionTexture.width;
+                    if (highResolutionFB.depthBuffer.depth[highResIndex] < depthMax)
+                        nbMixedColors++;
+                }
+            }
+
+            if (nbMixedColors == 0)
+                continue;
+            
+            //get pixel color
+            for (unsigned int i = 0; i < antiAliasingY; i++)
+            {
+                for (unsigned int j = 0; j < antiAliasingX; j++)
+                {       
+                    unsigned int highResIndex = x * antiAliasingX + j + 
+                                                                (i + y * antiAliasingY) * highResolutionTexture.width;
+                    if (highResolutionFB.depthBuffer.depth[highResIndex] < depthMax)
+                    {
+                        finalColor += highResolutionTexture.pixels[highResIndex] / nbMixedColors;
+                        // if (i != 0 && j != 0)
+                        //     std::cout << "YES" << std::endl;
+                    }
+
+                    // finalColor += highResolutionTexture.pixels[x * antiAliasingX + j + 
+                    //                                             (i + y * antiAliasingY) * highResolutionTexture.width] 
+                    //                                             / (antiAliasingY * antiAliasingX);
+                }  
+            }
+            #endif
+
+            #ifdef __SUPER_SAMPLING__
 
             //get pixel color
             for (unsigned int i = 0; i < antiAliasingY; i++)
             {
                 for (unsigned int j = 0; j < antiAliasingX; j++)
                 {       
-                    finalColor += highResolutionTexture.pixels[x * antiAliasingX + j + 
-                                                                (i + y * antiAliasingY) * highResolutionTexture.width] 
-                                                                / (antiAliasingY * antiAliasingX);
+                    unsigned int highResIndex = x * antiAliasingX + j + 
+                                                                (i + y * antiAliasingY) * highResolutionTexture.width;
+
+                    if (highResolutionFB.depthBuffer.depth[highResIndex] < depthMax)
+                    {
+                        finalColor += highResolutionTexture.pixels[highResIndex] / (antiAliasingY * antiAliasingX);
+                    }
+
+                    // finalColor += highResolutionTexture.pixels[x * antiAliasingX + j + 
+                    //                                             (i + y * antiAliasingY) * highResolutionTexture.width] 
+                    //                                             / (antiAliasingY * antiAliasingX);
                 }  
             }
 
+            #endif
             //finalColor = target.pixels[x * 4 + y * renderedTarget.width * 2 * 2];
 
             finalTexture.pixels[x + y * finalTexture.width] = std::move(finalColor);

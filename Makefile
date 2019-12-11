@@ -27,4 +27,14 @@ exe: $(OBJS)
 	$(CXX) -o $@ $(LDFLAGS) -pg -no-pie $^ $(LDLIBS)
 
 clean:
-	rm -f $(DEPS) $(OBJS)  exe
+	rm -f $(DEPS) $(OBJS) gmon.out exe
+
+gmon:
+	rm -f output.txt \
+	&& gprof exe gmon.out > output.txt
+
+regmon:
+	rm output.txt && make gmon
+
+threading:
+	make -j

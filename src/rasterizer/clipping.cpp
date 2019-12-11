@@ -150,10 +150,10 @@ void Clipping::ClipLines(const Entity& entity, FrameBuffer* pTarget,
         Vec4 vert3 = vert1;
         Vec4 vert4 = vert2;
         Vec4 dir = {(vert2.x-vert1.x),(vert2.y-vert1.y),(vert2.z-vert1.z),1};
-        Vec4 unit = {0,0,0,1};
-        unit.x = dir.x/ sqrt(pow(dir.x, 2) + pow(dir.y,2));
-        unit.y = dir.y/ sqrt(pow(dir.x, 2) + pow(dir.y,2));
-        unit.z = dir.z/ sqrt(pow(dir.x, 2) + pow(dir.y,2));
+        // Vec4 unit = {0,0,0,1};
+        // unit.x = dir.x/ sqrt(pow(dir.x, 2) + pow(dir.y,2));
+        // unit.y = dir.y/ sqrt(pow(dir.x, 2) + pow(dir.y,2));
+        // unit.z = dir.z/ sqrt(pow(dir.x, 2) + pow(dir.y,2));
         //unit.Homogenize();
         if (vert2.x > 1)
         {
