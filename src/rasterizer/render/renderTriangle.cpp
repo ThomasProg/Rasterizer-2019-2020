@@ -399,6 +399,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
     bool bOld = false;
     for (unsigned int x = minX; x <= maxX; x += antiAliasingX)
     {
+        bOld = false;
         for (unsigned int y = minY; y <= maxY; y += antiAliasingY)
         {
             float weight[3];
@@ -421,6 +422,9 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                             if (pTarget->GetDepth(currentX, currentY) >= depthMax)
                             {
                                 pTarget->depthBuffer.setDepth(currentX, currentY, depthMax - 1);
+                                #ifdef __ANTI_ALIASING_DEBUG__
+                                pTarget->SetPixel(currentX, currentY, 0, Color(255, 0, 0, 255));
+                                #endif
                             }
                         }
                     }
@@ -443,6 +447,9 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                             if (pTarget->GetDepth(currentX, currentY) >= depthMax)
                             {
                                 pTarget->depthBuffer.setDepth(currentX, currentY, depthMax - 1);
+                                #ifdef __ANTI_ALIASING_DEBUG__
+                                pTarget->SetPixel(currentX, currentY, 0, Color(0, 255, 0, 255));
+                                #endif
                             }
                         }
                     }
@@ -454,6 +461,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
 
     for (unsigned int y = minY; y <= maxY; y += antiAliasingY)
     {
+        bOld = false;
         for (unsigned int x = minX; x <= maxX; x += antiAliasingX)
         {
             float weight[3];
@@ -475,6 +483,9 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                             if (pTarget->GetDepth(currentX, currentY) >= depthMax)
                             {
                                 pTarget->depthBuffer.setDepth(currentX, currentY, depthMax - 1);
+                                #ifdef __ANTI_ALIASING_DEBUG__
+                                pTarget->SetPixel(currentX, currentY, 0, Color(0, 0, 255, 255));
+                                #endif
                             }
                         }
                     }
@@ -488,19 +499,23 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                     {
                         const float currentX = x + (iAliasing - antiAliasingX);
                         const float currentY = y + (jAliasing - antiAliasingY);
-                        if (!tryToDrawPixel(currentX, currentY, isValid, isInside, 
-                                        v1, v2, v3, 
-                                        triangleVertices,
-                                        ww, uP, vP, cameraLocation, 
-                                        worldLoc, pTarget, lights, texture))
-                        {
-                            if (pTarget->GetDepth(currentX, currentY) >= depthMax)
+                        // if (currentX > minX && currentY > minY && currentX < maxX && currentY < maxY)
+                        // {
+                            if (!tryToDrawPixel(currentX, currentY, isValid, isInside, 
+                                            v1, v2, v3, 
+                                            triangleVertices,
+                                            ww, uP, vP, cameraLocation, 
+                                            worldLoc, pTarget, lights, texture))
                             {
-                                pTarget->depthBuffer.setDepth(currentX, currentY, depthMax - 1);
-                                //pTarget->SetPixel(x, y, 250, Color(0, 0, 0, 255));
+                                if (pTarget->GetDepth(currentX, currentY) >= depthMax)
+                                {
+                                    pTarget->depthBuffer.setDepth(currentX, currentY, depthMax - 1);
+                                    #ifdef __ANTI_ALIASING_DEBUG__
+                                    pTarget->SetPixel(currentX, currentY, 0, Color(255, 255, 0, 255));
+                                    #endif
+                                }
                             }
-                        }
-
+                        //}
                     }
                 }
             }
@@ -509,10 +524,3 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
     }
     #endif
 }
-
-
-// w[0] /= clipCoords[0]
-// w[1] /= clipCoords[1]
-// w[2] /= clipCoords[2]
-// w = w / (w.x + w.y + w.z)
-

@@ -18,6 +18,8 @@
 //#define __SUPER_SAMPLING__
 #define __MULTI_SAMPLING__
 
+//#define __ANTI_ALIASING_DEBUG__
+
 //#define __ENABLE_TRANSPARENCY__
 
 //#define __SDL__
