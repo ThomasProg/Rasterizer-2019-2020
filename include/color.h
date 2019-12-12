@@ -63,6 +63,7 @@ struct Color
     //void clamp();
 
     float getTransparence() const noexcept; //returns transparence 0 < a < 1
+    void  copyRGB(const Color& rhs) noexcept;
 };
 
 std::ostream& operator<<(std::ostream& stream, const Color& c);

@@ -7,6 +7,8 @@
 #include "vec2.h"
 #include "color.h"
 
+#include "material.h"
+
 class FrameBuffer;
 
 class Vertex;
@@ -46,12 +48,13 @@ public:
     //bool getWeight(const Vec2& p, float* weight) const;
     Color getColorAtPixel(Vec2 p, bool& isValid, float* weight) const;
 
-    static float getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, const Vec3& cameraLocation);
+    static float getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, 
+                                const Vec3& cameraLocation, const Material& mat);
 };
 
 void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, Vec3 worldLoc2, Vec3 worldLoc3,
                     float w1, float w2, float w3,
                     const Vec3& cameraLocation,
-                    FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture = nullptr);
+                    FrameBuffer* pTarget, std::vector<Light>& lights, const Material& mat, Texture* texture = nullptr);
 
 #endif

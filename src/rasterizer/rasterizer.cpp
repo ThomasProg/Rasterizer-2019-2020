@@ -404,7 +404,7 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
                 // rendering.v3.color = Color(250,250,100);
 
 
-                rendering.drawTriangleX(pTarget, w, camera.cartesianLocation, lights, entity->mesh->pTexture);    
+                rendering.drawTriangleX(pTarget, w, camera.cartesianLocation, lights, entity->mesh->pTexture, entity->mat);    
             }
         }
     }
@@ -464,7 +464,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget,
                     > (b->center - camera.cartesianLocation).getLengthSquared();
         }  
     );
-
+    
     renderEntities(opaqueEntities, pScene->lights, pTarget, projectionMatrix, inverseCameraMatrix, camera, mode);
 
     renderEntities(transparentEntities, pScene->lights, pTarget, projectionMatrix, inverseCameraMatrix, camera, mode);

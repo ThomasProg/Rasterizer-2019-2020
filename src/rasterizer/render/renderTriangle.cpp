@@ -23,10 +23,9 @@ constexpr const T& clamp( const T& v, const T& lo, const T& hi )
     return (v < lo) ? lo : (hi < v) ? hi : v;
 }
 
-float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, const Vec3& cameraLocation)
+float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, 
+                                    const Vec3& cameraLocation, const Material& mat)
 {
-    Material mat;
-
     float ambient  = 0.f;
     float diffuse  = 0.f;
     float specular = 0.f;  
@@ -84,11 +83,15 @@ bool getWeight(const Vec2& p, const Vec3& p1, const Vec3& p2, const Vec3& p3, fl
     return weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0;
 }
  
+
+ //TODO : remove v1, v2, and v3 : they are the same as worldLoc[i]
+__inline
 bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInside,
                     const Vec3& v1, const Vec3& v2, const Vec3& v3,
                     std::array<Vertex*, 3>& triangleVertices, 
                     float*  ww, float* uP, float* vP, const Vec3& cameraLocation,
-                    std::array<Vec3*, 3>& worldLoc, FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture, bool bShouldRecur = true)
+                    std::array<Vec3*, 3>& worldLoc, FrameBuffer* pTarget, std::vector<Light>& lights, 
+                    Texture* texture, const Material& mat, bool bShouldRecur = true)
 {   
     float weight[3];
     isValid = getWeight(Vec2(x,y), v1, v2, v3, weight);
@@ -182,7 +185,7 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
         
         vert.normal.Normalize();
 
-        intensity = RenderTriangle::getPixelLight(vert, lights, cameraLocation);
+        intensity = RenderTriangle::getPixelLight(vert, lights, cameraLocation, mat);
 
         if (texture != nullptr && texture->pixels != nullptr)
         {
@@ -190,14 +193,11 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
 
             #ifdef __NEAREST_INTERPOLATION__
             {
-                float alpha = c.a;
                 assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
                 //nearest interpolation
                 //max uv is 1, 1 * width = width, width isn't a valid index, so we substract by 1
-                c = texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width) - 1)), 
-                                            static_cast<unsigned int>(v * (float(texture->height) - 1)));
-    
-                c.a = alpha;
+                c.copyRGB(texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width) - 1)), 
+                                            static_cast<unsigned int>(v * (float(texture->height) - 1))));
             }
             #endif
 
@@ -213,8 +213,6 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
                 //   |            |
                 // x1,y2--------x2,y2
                 //               ceil
-
-                float alpha = c.a;
 
                 //TODO : assert ?
                 //if not in range, due to float imprecision
@@ -235,14 +233,14 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
                     Color c1 = texture->GetPixelColor(x1, y1);
                     Color c2 = texture->GetPixelColor(x1, y2);
 
-                    c = getAverageColor(c2, c1, (curY - y1) / (y2 - y1));
+                    c.copyRGB(getAverageColor(c2, c1, (curY - y1) / (y2 - y1)));
                 }
                 else if (y2 - y1 == 0)
                 {
                     Color c1 = texture->GetPixelColor(x1, y1);
                     Color c2 = texture->GetPixelColor(x2, y1);
 
-                    c = getAverageColor(c2, c1, (curX - x1) / (x2 - x1));
+                    c.copyRGB(getAverageColor(c2, c1, (curX - x1) / (x2 - x1)));
                 }
                 else 
                 {
@@ -254,13 +252,13 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
                     Color c1 = getAverageColor(c21, c11, (curX - x1 / (x2 - x1)));
                     Color c2 = getAverageColor(c22, c12, (curX - x1 / (x2 - x1)));
 
-                    c = getAverageColor(c2, c1, (curY - y1) / (y2 - y1));
+                    c.copyRGB(getAverageColor(c2, c1, (curY - y1) / (y2 - y1)));
                 }
-
-                c.a = alpha;
             }
             #endif
         }
+        
+        mat.additionalShaders(c, p);
 
         //c *= intensity;
         c.r *= intensity;
@@ -309,7 +307,8 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
 
 void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, Vec3 worldLoc2, Vec3 worldLoc3, 
                     float w1, float w2, float w3,
-                    const Vec3& cameraLocation, FrameBuffer* pTarget, std::vector<Light>& lights, Texture* texture)
+                    const Vec3& cameraLocation, FrameBuffer* pTarget, std::vector<Light>& lights, 
+                    const Material& mat, Texture* texture)
 {
     std::array<Vertex*, 3> triangleVertices;
     triangleVertices[0] = &vert1;
@@ -323,6 +322,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
     ww[2] = w3;
     #endif
 
+    // TODO : TODELETE : junk
     bool isValid = false;
     bool isInside = false;
 
@@ -336,10 +336,17 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
     const Vec3& v3 = vert3.position;
 
     //getWeight constants
-    unsigned int minX = std::min(std::min(v1.x, v2.x), v3.x);
-    unsigned int maxX = std::max(std::max(v1.x, v2.x), v3.x);
-    unsigned int minY = std::min(std::min(v1.y, v2.y), v3.y);
-    unsigned int maxY = std::max(std::max(v1.y, v2.y), v3.y);
+
+    //BECAREFUL
+    //clipping in rasterization
+    unsigned int minX = std::min(std::max(0.f, std::min(std::min(v1.x, v2.x), v3.x)), float(pTarget->width));
+    unsigned int maxX = std::min(std::max(0.f, std::max(std::max(v1.x, v2.x), v3.x)), float(pTarget->width));
+    unsigned int minY = std::min(std::max(0.f, std::min(std::min(v1.y, v2.y), v3.y)), float(pTarget->height));
+    unsigned int maxY = std::min(std::max(0.f, std::max(std::max(v1.y, v2.y), v3.y)), float(pTarget->height));
+
+    // BECAREFUL : not necessary, since loops already do the job
+    // if (maxX < minX || maxY < minY)
+    //     return;
 
     //float weight[3];
 
@@ -350,17 +357,6 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
 
     float uP[3] = {vert1.u,vert2.u,vert3.u};
     float vP[3] = {vert1.v,vert2.v,vert3.v};
-
-    //BECAREFUL
-    //clipping in rasterization
-    if (minY < 0)
-        minY = 0;
-    if (minX < 0)
-        minX = 0;
-    if (maxY > pTarget->height)
-        maxY = pTarget->height;
-    if (maxX > pTarget->width)
-        maxX = pTarget->width;
 
     #ifdef __MULTI_SAMPLING__
     // every pixel respecting (x % 2 == 0 && y % 2 == 0)) 
@@ -390,7 +386,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                             v1, v2, v3, 
                             triangleVertices,
                             ww, uP, vP, cameraLocation, 
-                            worldLoc, pTarget, lights, texture);
+                            worldLoc, pTarget, lights, texture, mat);
         }
     }
     
@@ -417,7 +413,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                                         v1, v2, v3, 
                                         triangleVertices,
                                         ww, uP, vP, cameraLocation, 
-                                        worldLoc, pTarget, lights, texture))
+                                        worldLoc, pTarget, lights, texture, mat))
                         {
                             if (pTarget->GetDepth(currentX, currentY) >= depthMax)
                             {
@@ -442,7 +438,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                                         v1, v2, v3, 
                                         triangleVertices,
                                         ww, uP, vP, cameraLocation, 
-                                        worldLoc, pTarget, lights, texture))
+                                        worldLoc, pTarget, lights, texture, mat))
                         {
                             if (pTarget->GetDepth(currentX, currentY) >= depthMax)
                             {
@@ -478,7 +474,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                                         v1, v2, v3, 
                                         triangleVertices,
                                         ww, uP, vP, cameraLocation, 
-                                        worldLoc, pTarget, lights, texture))
+                                        worldLoc, pTarget, lights, texture, mat))
                         {
                             if (pTarget->GetDepth(currentX, currentY) >= depthMax)
                             {
@@ -505,7 +501,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                                             v1, v2, v3, 
                                             triangleVertices,
                                             ww, uP, vP, cameraLocation, 
-                                            worldLoc, pTarget, lights, texture))
+                                            worldLoc, pTarget, lights, texture, mat))
                             {
                                 if (pTarget->GetDepth(currentX, currentY) >= depthMax)
                                 {

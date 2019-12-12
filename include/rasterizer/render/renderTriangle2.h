@@ -7,6 +7,8 @@
 #include "vertex.h"
 #include "vec4.h"
 
+#include "material.h"
+
 class FrameBuffer;
 class Light;
 class Texture;
@@ -53,7 +55,8 @@ public:
     void drawWireframe(FrameBuffer* pTarget);
 
     __inline
-    void drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& w, const Vec3& cameraLocation, std::vector<Light>& lights, Texture* pTexture);
+    void drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& w, const Vec3& cameraLocation, 
+                        std::vector<Light>& lights, Texture* pTexture, const Material& mat);
 };
 
 #include "renderTriangle2.inl"

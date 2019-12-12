@@ -1,0 +1,819 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 25.34      0.19     0.19      120     1.58     5.34  drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*)
+ 12.00      0.28     0.09 17376520     0.00     0.00  Vec3::Normalize()
+ 10.67      0.36     0.08  4344130     0.00     0.00  FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&)
+  5.33      0.40     0.04  4344130     0.00     0.00  RenderTriangle::getPixelLight(RasterizingVertex const&, std::vector<Light, std::allocator<Light> > const&, Vec3 const&, Material const&)
+  4.00      0.43     0.03 17389847     0.00     0.00  Vec3::Vec3(float, float, float)
+  4.00      0.46     0.03 17382006     0.00     0.00  Vec3::Vec3(Vec3 const&)
+  4.00      0.49     0.03  8688260     0.00     0.00  DepthBuffer::getDepth(unsigned int, unsigned int) const
+  4.00      0.52     0.03       39     0.77     1.63  Texture::FillBlack()
+  3.33      0.55     0.03 27347266     0.00     0.00  Color::Color(float, float, float, float)
+  2.67      0.57     0.02  8688728     0.00     0.00  dotProduct(Vec3, Vec3)
+  2.67      0.59     0.02  4344130     0.00     0.00  Texture::SetPixelColor(unsigned int, unsigned int, Color)
+  2.67      0.61     0.02  4344130     0.00     0.00  std::_Function_handler<void (Color&, Vec3&), Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}>::_M_invoke(std::_Any_data const&, Color&, Vec3&)
+  2.00      0.62     0.02 27348694     0.00     0.00  Color::operator=(Color)
+  1.33      0.63     0.01 13051110     0.00     0.00  Vec3::operator+=(Vec3 const&)
+  1.33      0.64     0.01 13036290     0.00     0.00  Color::Color(Color const&)
+  1.33      0.65     0.01  8978703     0.00     0.00  Vec2::Vec2(float, float)
+  1.33      0.66     0.01  8689664     0.00     0.00  Vec3::operator-(Vec3 const&) const
+  1.33      0.67     0.01  8688260     0.00     0.00  Color::operator*(float) const
+  1.33      0.68     0.01  4344130     0.00     0.00  RasterizingVertex::RasterizingVertex()
+  1.33      0.69     0.01  4344130     0.00     0.00  Color::operator+(Color const&) const
+  1.33      0.70     0.01  4344130     0.00     0.00  Texture::GetPixelColor(unsigned int, unsigned int) const
+  1.33      0.71     0.01       48     0.21     0.21  Color::Color(float, float, float)
+  1.33      0.72     0.01       39     0.26     0.26  DepthBuffer::resetDepth()
+  1.33      0.73     0.01        1    10.00    10.00  Vec3::Vec3()
+  1.33      0.74     0.01                             operator*(Vec3 const&, float)
+  0.67      0.75     0.01 26064780     0.00     0.00  Color::getTransparence() const
+  0.67      0.75     0.01                             Color::operator+=(Color const&)
+  0.00      0.75     0.00 13032390     0.00     0.00  operator*(float, Vec3 const&)
+  0.00      0.75     0.00  4999740     0.00     0.00  Color::Color()
+  0.00      0.75     0.00  4344130     0.00     0.00  DepthBuffer::setDepth(unsigned int, unsigned int, float)
+  0.00      0.75     0.00  4344130     0.00     0.00  operator+(Vec3 const&, Vec3 const&)
+  0.00      0.75     0.00    47232     0.00     0.00  Vec4::operator[](unsigned int)
+  0.00      0.75     0.00    47232     0.00     0.00  Vec4::operator[](unsigned int) const
+  0.00      0.75     0.00     4356     0.00     0.00  Vec4::Vec4(Vec3 const&, float)
+  0.00      0.75     0.00     2952     0.00     0.00  Vec3::Vec3(Vec4 const&)
+  0.00      0.75     0.00     2952     0.00     0.00  Vec4::Vec4(float, float, float, float)
+  0.00      0.75     0.00     2952     0.00     0.00  Mat4::operator*(Vec4 const&) const
+  0.00      0.75     0.00     2496     0.00     0.00  Vertex::Vertex(Vertex const&)
+  0.00      0.75     0.00     1404     0.00     0.00  Vertex::operator=(Vertex const&)
+  0.00      0.75     0.00      936     0.00     0.00  Vertex::changeRef(Mat4 const&)
+  0.00      0.75     0.00      624     0.00     0.00  Mat4::determinant() const
+  0.00      0.75     0.00      468     0.00     0.00  crossProduct(Vec3, Vec3)
+  0.00      0.75     0.00      360     0.00     0.00  Vec4::getHomogenizedVec() const
+  0.00      0.75     0.00      234     0.00     0.00  Vertex::Vertex()
+  0.00      0.75     0.00       78     0.00     8.22  renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode)
+  0.00      0.75     0.00       78     0.00     0.00  Mat4::CreateScreenConversionMatrix()
+  0.00      0.75     0.00       40     0.00     0.00  Mat4::CreateTranslationMatrix(Vec3 const&)
+  0.00      0.75     0.00       39     0.00    18.33  Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode)
+  0.00      0.75     0.00       39     0.00     1.63  FrameBuffer::ResetPixels()
+  0.00      0.75     0.00       39     0.00     0.00  Mat4::CreateRotationMatrix(Vec3 const&)
+  0.00      0.75     0.00       39     0.00     0.00  Mat4::CreatePerspectiveProjectionMatrix(int, int, float, float, float)
+  0.00      0.75     0.00       39     0.00     0.00  Mat4::operator=(Mat4 const&)
+  0.00      0.75     0.00       39     0.00     0.00  Vec3::operator/=(float)
+  0.00      0.75     0.00       39     0.00     0.00  Camera::inputs(float, GLFWwindow*)
+  0.00      0.75     0.00       39     0.00     0.00  Camera::actualize()
+  0.00      0.75     0.00       39     0.00     0.00  DoOnce::input(bool)
+  0.00      0.75     0.00       39     0.00     0.00  Entity::computeCenter()
+  0.00      0.75     0.00       39     0.00     0.00  Mat4::GetInverse() const
+  0.00      0.75     0.00       39     0.00     0.00  Mat4::CoMatrix() const
+  0.00      0.75     0.00       39     0.00     0.00  Mat4::operator*(Mat4 const&) const
+  0.00      0.75     0.00       39     0.00     0.00  std::_Function_base::_Base_manager<Events::run()::{lambda(bool)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<Events::run()::{lambda(bool)#1}> const&, std::_Manager_operation)
+  0.00      0.75     0.00       39     0.00     0.00  void std::vector<Entity const*, std::allocator<Entity const*> >::_M_emplace_back_aux<Entity const*>(Entity const*&&)
+  0.00      0.75     0.00       24     0.00     0.00  Vertex::Vertex(Vec3 const&, Vec3 const&)
+  0.00      0.75     0.00       24     0.00     0.00  Vec3::getNormalized() const
+  0.00      0.75     0.00        6     0.00     0.00  Mesh::addQuad(int, int, int, int)
+  0.00      0.75     0.00        6     0.00     0.00  void std::vector<Vertex, std::allocator<Vertex> >::_M_emplace_back_aux<Vertex const&>(Vertex const&)
+  0.00      0.75     0.00        5     0.00     0.00  Texture::~Texture()
+  0.00      0.75     0.00        3     0.00     0.00  _GLOBAL__sub_I__ZN6CameraC2Ev
+  0.00      0.75     0.00        3     0.00     0.00  std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}> const&, std::_Manager_operation)
+  0.00      0.75     0.00        2     0.00     0.00  _GLOBAL__sub_I__ZN11FrameBufferD2Ev
+  0.00      0.75     0.00        2     0.00     0.00  Mat4::IdentityInArray()
+  0.00      0.75     0.00        2     0.00     0.00  Mat4::operator*=(Mat4 const&)
+  0.00      0.75     0.00        2     0.00     0.00  Texture::Texture(char const*)
+  0.00      0.75     0.00        2     0.00     0.00  Texture::Texture(Texture&&)
+  0.00      0.75     0.00        2     0.00     0.00  void std::vector<Vertex, std::allocator<Vertex> >::_M_emplace_back_aux<Vertex>(Vertex&&)
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__Z8getpixelP11SDL_Surfaceii
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN10Rasterizer23antiAliasingCompressionERK11FrameBufferR7Texture
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN13SDL_UtilitiesC2ERb
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN14RenderTriangle13getPixelLightERK17RasterizingVertexRKSt6vectorI5LightSaIS4_EERK4Vec3RK8Material
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN16RessourceManagerC2Ev
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN17RasterizingVertexC2Ev
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN4Mat415IdentityInArrayEv
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN4Mesh11addTriangleEjjj
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN4Vec2C2Ev
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN4Vec3C2Ev
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN4Vec4C2ERKS_
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN5ColorC2Ev
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN5SceneC2Ev
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN6Entity13computeCenterEv
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN6Events10lightsInitERSt6vectorI5LightSaIS1_EE
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN6VertexC2Ev
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN7Vertex2C2Ev
+  0.00      0.75     0.00        1     0.00     0.00  _GLOBAL__sub_I_main
+  0.00      0.75     0.00        1     0.00     0.00  DepthBuffer::DepthBuffer(unsigned int, unsigned int)
+  0.00      0.75     0.00        1     0.00     0.00  DepthBuffer::~DepthBuffer()
+  0.00      0.75     0.00        1     0.00     0.00  FrameBuffer::FrameBuffer(unsigned int, unsigned int)
+  0.00      0.75     0.00        1     0.00     0.00  FrameBuffer::~FrameBuffer()
+  0.00      0.75     0.00        1     0.00     0.00  RessourceManager::RessourceManager()
+  0.00      0.75     0.00        1     0.00     0.00  RessourceManager::~RessourceManager()
+  0.00      0.75     0.00        1     0.00     0.00  Mat4::CreateScaleMatrix(Vec3 const&)
+  0.00      0.75     0.00        1     0.00     5.00  Mesh::CreateCube()
+  0.00      0.75     0.00        1     0.00     0.00  Scene::Scene()
+  0.00      0.75     0.00        1     0.00     0.00  Scene::~Scene()
+  0.00      0.75     0.00        1     0.00     0.00  Camera::Camera()
+  0.00      0.75     0.00        1     0.00    20.00  Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)
+  0.00      0.75     0.00        1     0.00     0.00  Texture::Texture(unsigned int, unsigned int)
+  0.00      0.75     0.00        1     0.00     0.00  std::_Function_base::_Base_manager<DoOnce::onSwitch::{lambda(bool)#1}>::_M_manager(std::_Any_data&, DoOnce::onSwitch::{lambda(bool)#1} const&, std::_Manager_operation)
+  0.00      0.75     0.00        1     0.00     0.00  std::_Function_base::_Base_manager<Material::additionalShaders::{lambda(Color&, Vec3&)#1}>::_M_manager(std::_Any_data&, Material::additionalShaders::{lambda(Color&, Vec3&)#1} const&, std::_Manager_operation)
+  0.00      0.75     0.00        1     0.00     0.00  void std::vector<Light, std::allocator<Light> >::_M_emplace_back_aux<Light>(Light&&)
+  0.00      0.75     0.00        1     0.00     0.00  void std::vector<Entity, std::allocator<Entity> >::_M_emplace_back_aux<Entity>(Entity&&)
+  0.00      0.75     0.00        1     0.00     0.00  std::vector<Vertex, std::allocator<Vertex> >::reserve(unsigned long)
+  0.00      0.75     0.00        1     0.00     0.00  std::_Rb_tree<Mesh*, Mesh*, std::_Identity<Mesh*>, std::less<Mesh*>, std::allocator<Mesh*> >::_M_erase(std::_Rb_tree_node<Mesh*>*)
+  0.00      0.75     0.00        1     0.00     0.00  find_coreGL
+  0.00      0.75     0.00        1     0.00     0.00  get_proc
+  0.00      0.75     0.00        1     0.00     0.00  gladLoadGL
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 1.33% of 0.75 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     98.0    0.00    0.74                 Events::run() [1]
+                0.00    0.72      39/39          Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+                0.00    0.02       1/1           Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+                0.00    0.00       1/1           void std::vector<Light, std::allocator<Light> >::_M_emplace_back_aux<Light>(Light&&) [44]
+                0.00    0.00       1/17389847     Vec3::Vec3(float, float, float) [11]
+                0.00    0.00      39/39          Camera::inputs(float, GLFWwindow*) [76]
+                0.00    0.00      39/39          DoOnce::input(bool) [78]
+                0.00    0.00      39/39          Camera::actualize() [77]
+                0.00    0.00      39/39          Mat4::GetInverse() const [79]
+                0.00    0.00      39/39          Mat4::CreatePerspectiveProjectionMatrix(int, int, float, float, float) [73]
+                0.00    0.00      38/39          std::_Function_base::_Base_manager<Events::run()::{lambda(bool)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<Events::run()::{lambda(bool)#1}> const&, std::_Manager_operation) [82]
+                0.00    0.00       1/1           FrameBuffer::FrameBuffer(unsigned int, unsigned int) [114]
+                0.00    0.00       1/5           Texture::~Texture() [86]
+                0.00    0.00       1/1           FrameBuffer::~FrameBuffer() [115]
+                0.00    0.00       1/1           std::_Function_base::_Base_manager<DoOnce::onSwitch::{lambda(bool)#1}>::_M_manager(std::_Any_data&, DoOnce::onSwitch::{lambda(bool)#1} const&, std::_Manager_operation) [122]
+-----------------------------------------------
+                0.00    0.72      39/39          Events::run() [1]
+[2]     95.3    0.00    0.72      39         Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+                0.00    0.64      78/78          renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+                0.00    0.06      39/39          FrameBuffer::ResetPixels() [8]
+                0.01    0.00      39/39          DepthBuffer::resetDepth() [28]
+                0.00    0.00      39/39          Entity::computeCenter() [34]
+                0.00    0.00       6/6           void std::vector<Vertex, std::allocator<Vertex> >::_M_emplace_back_aux<Vertex const&>(Vertex const&) [36]
+                0.00    0.00     930/2496        Vertex::Vertex(Vertex const&) [35]
+                0.00    0.00     936/936         Vertex::changeRef(Mat4 const&) [67]
+                0.00    0.00      39/39          Vec3::operator/=(float) [75]
+                0.00    0.00      39/39          void std::vector<Entity const*, std::allocator<Entity const*> >::_M_emplace_back_aux<Entity const*>(Entity const*&&) [83]
+-----------------------------------------------
+                0.00    0.64      78/78          Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+[3]     85.5    0.00    0.64      78         renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+                0.19    0.45     120/120         drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+                0.00    0.00    1404/1404        Vertex::operator=(Vertex const&) [37]
+                0.00    0.00    1404/8689664     Vec3::operator-(Vec3 const&) const [24]
+                0.00    0.00     468/8688728     dotProduct(Vec3, Vec3) [17]
+                0.00    0.00     468/17382006     Vec3::Vec3(Vec3 const&) [12]
+                0.00    0.00     234/234         Vertex::Vertex() [38]
+                0.00    0.00     360/360         Vec4::getHomogenizedVec() const [39]
+                0.00    0.00    2484/4356        Vec4::Vec4(Vec3 const&, float) [63]
+                0.00    0.00    1080/2952        Mat4::operator*(Vec4 const&) const [66]
+                0.00    0.00    1080/2952        Vec3::Vec3(Vec4 const&) [64]
+                0.00    0.00     468/468         crossProduct(Vec3, Vec3) [69]
+                0.00    0.00     234/4999740     Color::Color() [58]
+                0.00    0.00      78/78          Mat4::CreateScreenConversionMatrix() [70]
+-----------------------------------------------
+                0.19    0.45     120/120         renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+[4]     85.5    0.19    0.45     120         drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+                0.04    0.13 4344130/4344130     RenderTriangle::getPixelLight(RasterizingVertex const&, std::vector<Light, std::allocator<Light> > const&, Vec3 const&, Material const&) [5]
+                0.08    0.08 4344130/4344130     FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [6]
+                0.01    0.02 4344130/4344130     RasterizingVertex::RasterizingVertex() [10]
+                0.02    0.00 4344130/17376520     Vec3::Normalize() [7]
+                0.02    0.00 4344130/4344130     std::_Function_handler<void (Color&, Vec3&), Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}>::_M_invoke(std::_Any_data const&, Color&, Vec3&) [18]
+                0.02    0.00 4344130/8688260     DepthBuffer::getDepth(unsigned int, unsigned int) const [13]
+                0.01    0.00 8978703/8978703     Vec2::Vec2(float, float) [23]
+                0.01    0.00 13032390/13051110     Vec3::operator+=(Vec3 const&) [21]
+                0.01    0.00 4356575/17389847     Vec3::Vec3(float, float, float) [11]
+                0.00    0.00 4344130/27347266     Color::Color(float, float, float, float) [15]
+                0.00    0.00 13032390/13032390     operator*(float, Vec3 const&) [57]
+                0.00    0.00 4344130/4999740     Color::Color() [58]
+-----------------------------------------------
+                0.04    0.13 4344130/4344130     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+[5]     22.3    0.04    0.13 4344130         RenderTriangle::getPixelLight(RasterizingVertex const&, std::vector<Light, std::allocator<Light> > const&, Vec3 const&, Material const&) [5]
+                0.07    0.00 13032390/17376520     Vec3::Normalize() [7]
+                0.03    0.00 17376520/17382006     Vec3::Vec3(Vec3 const&) [12]
+                0.02    0.00 8688260/8688728     dotProduct(Vec3, Vec3) [17]
+                0.01    0.00 8688260/8689664     Vec3::operator-(Vec3 const&) const [24]
+                0.00    0.00 4344130/4344130     operator+(Vec3 const&, Vec3 const&) [60]
+-----------------------------------------------
+                0.08    0.08 4344130/4344130     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+[6]     21.7    0.08    0.08 4344130         FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [6]
+                0.02    0.01 4344130/4344130     Texture::SetPixelColor(unsigned int, unsigned int, Color) [14]
+                0.02    0.00 4344130/8688260     DepthBuffer::getDepth(unsigned int, unsigned int) const [13]
+                0.01    0.00 4344130/4344130     Texture::GetPixelColor(unsigned int, unsigned int) const [20]
+                0.01    0.00 8688260/8688260     Color::operator*(float) const [25]
+                0.01    0.00 4344130/4344130     Color::operator+(Color const&) const [26]
+                0.01    0.00 26064780/26064780     Color::getTransparence() const [32]
+                0.00    0.00 4344130/13036290     Color::Color(Color const&) [22]
+                0.00    0.00 4344130/4344130     DepthBuffer::setDepth(unsigned int, unsigned int, float) [59]
+-----------------------------------------------
+                0.02    0.00 4344130/17376520     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+                0.07    0.00 13032390/17376520     RenderTriangle::getPixelLight(RasterizingVertex const&, std::vector<Light, std::allocator<Light> > const&, Vec3 const&, Material const&) [5]
+[7]     12.0    0.09    0.00 17376520         Vec3::Normalize() [7]
+-----------------------------------------------
+                0.00    0.06      39/39          Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+[8]      8.5    0.00    0.06      39         FrameBuffer::ResetPixels() [8]
+                0.03    0.03      39/39          Texture::FillBlack() [9]
+-----------------------------------------------
+                0.03    0.03      39/39          FrameBuffer::ResetPixels() [8]
+[9]      8.5    0.03    0.03      39         Texture::FillBlack() [9]
+                0.02    0.00 23003136/27347266     Color::Color(float, float, float, float) [15]
+                0.01    0.00 23003136/27348694     Color::operator=(Color) [19]
+-----------------------------------------------
+                0.01    0.02 4344130/4344130     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+[10]     4.3    0.01    0.02 4344130         RasterizingVertex::RasterizingVertex() [10]
+                0.02    0.00 13032390/17389847     Vec3::Vec3(float, float, float) [11]
+-----------------------------------------------
+                0.00    0.00       1/17389847     Events::Events() [42]
+                0.00    0.00       1/17389847     Events::run() [1]
+                0.00    0.00       2/17389847     Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+                0.00    0.00       2/17389847     Camera::Camera() [43]
+                0.00    0.00      48/17389847     Mesh::CreateCube() [31]
+                0.00    0.00     360/17389847     Vec4::getHomogenizedVec() const [39]
+                0.00    0.00     468/17389847     Vertex::Vertex() [38]
+                0.01    0.00 4356575/17389847     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+                0.02    0.00 13032390/17389847     RasterizingVertex::RasterizingVertex() [10]
+[11]     4.0    0.03    0.00 17389847         Vec3::Vec3(float, float, float) [11]
+-----------------------------------------------
+                0.00    0.00       1/17382006     void std::vector<Light, std::allocator<Light> >::_M_emplace_back_aux<Light>(Light&&) [44]
+                0.00    0.00       1/17382006     void std::vector<Entity, std::allocator<Entity> >::_M_emplace_back_aux<Entity>(Entity&&) [45]
+                0.00    0.00      24/17382006     Vertex::Vertex(Vec3 const&, Vec3 const&) [41]
+                0.00    0.00     468/17382006     renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+                0.00    0.00    4992/17382006     Vertex::Vertex(Vertex const&) [35]
+                0.03    0.00 17376520/17382006     RenderTriangle::getPixelLight(RasterizingVertex const&, std::vector<Light, std::allocator<Light> > const&, Vec3 const&, Material const&) [5]
+[12]     4.0    0.03    0.00 17382006         Vec3::Vec3(Vec3 const&) [12]
+-----------------------------------------------
+                0.02    0.00 4344130/8688260     FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [6]
+                0.02    0.00 4344130/8688260     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+[13]     4.0    0.03    0.00 8688260         DepthBuffer::getDepth(unsigned int, unsigned int) const [13]
+-----------------------------------------------
+                0.02    0.01 4344130/4344130     FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [6]
+[14]     3.4    0.02    0.01 4344130         Texture::SetPixelColor(unsigned int, unsigned int, Color) [14]
+                0.00    0.00 4344130/13036290     Color::Color(Color const&) [22]
+                0.00    0.00 4344130/27348694     Color::operator=(Color) [19]
+-----------------------------------------------
+                0.00    0.00 4344130/27347266     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+                0.02    0.00 23003136/27347266     Texture::FillBlack() [9]
+[15]     3.3    0.03    0.00 27347266         Color::Color(float, float, float, float) [15]
+-----------------------------------------------
+                0.00    0.02       1/1           Events::run() [1]
+[16]     2.7    0.00    0.02       1         Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+                0.01    0.00       1/1           Vec3::Vec3() [29]
+                0.00    0.01       1/1           Mesh::CreateCube() [31]
+                0.01    0.00      24/48          Color::Color(float, float, float) [27]
+                0.00    0.00      24/27348694     Color::operator=(Color) [19]
+                0.00    0.00       2/17389847     Vec3::Vec3(float, float, float) [11]
+                0.00    0.00       1/1           void std::vector<Entity, std::allocator<Entity> >::_M_emplace_back_aux<Entity>(Entity&&) [45]
+                0.00    0.00       2/2           Mat4::operator*=(Mat4 const&) [91]
+                0.00    0.00       1/2           Mat4::IdentityInArray() [90]
+                0.00    0.00       1/40          Mat4::CreateTranslationMatrix(Vec3 const&) [71]
+                0.00    0.00       1/1           Mat4::CreateScaleMatrix(Vec3 const&) [118]
+                0.00    0.00       1/1           std::_Function_base::_Base_manager<Material::additionalShaders::{lambda(Color&, Vec3&)#1}>::_M_manager(std::_Any_data&, Material::additionalShaders::{lambda(Color&, Vec3&)#1} const&, std::_Manager_operation) [123]
+                0.00    0.00       1/3           std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}> const&, std::_Manager_operation) [88]
+-----------------------------------------------
+                0.00    0.00     468/8688728     renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+                0.02    0.00 8688260/8688728     RenderTriangle::getPixelLight(RasterizingVertex const&, std::vector<Light, std::allocator<Light> > const&, Vec3 const&, Material const&) [5]
+[17]     2.7    0.02    0.00 8688728         dotProduct(Vec3, Vec3) [17]
+-----------------------------------------------
+                0.02    0.00 4344130/4344130     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+[18]     2.7    0.02    0.00 4344130         std::_Function_handler<void (Color&, Vec3&), Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}>::_M_invoke(std::_Any_data const&, Color&, Vec3&) [18]
+-----------------------------------------------
+                0.00    0.00      24/27348694     Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+                0.00    0.00    1404/27348694     Vertex::operator=(Vertex const&) [37]
+                0.00    0.00 4344130/27348694     Texture::SetPixelColor(unsigned int, unsigned int, Color) [14]
+                0.01    0.00 23003136/27348694     Texture::FillBlack() [9]
+[19]     2.0    0.02    0.00 27348694         Color::operator=(Color) [19]
+-----------------------------------------------
+                0.01    0.00 4344130/4344130     FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [6]
+[20]     1.8    0.01    0.00 4344130         Texture::GetPixelColor(unsigned int, unsigned int) const [20]
+                0.00    0.00 4344130/13036290     Color::Color(Color const&) [22]
+-----------------------------------------------
+                0.00    0.00   18720/13051110     Entity::computeCenter() [34]
+                0.01    0.00 13032390/13051110     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+[21]     1.3    0.01    0.00 13051110         Vec3::operator+=(Vec3 const&) [21]
+-----------------------------------------------
+                0.00    0.00    1404/13036290     Vertex::operator=(Vertex const&) [37]
+                0.00    0.00    2496/13036290     Vertex::Vertex(Vertex const&) [35]
+                0.00    0.00 4344130/13036290     FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [6]
+                0.00    0.00 4344130/13036290     Texture::SetPixelColor(unsigned int, unsigned int, Color) [14]
+                0.00    0.00 4344130/13036290     Texture::GetPixelColor(unsigned int, unsigned int) const [20]
+[22]     1.3    0.01    0.00 13036290         Color::Color(Color const&) [22]
+-----------------------------------------------
+                0.01    0.00 8978703/8978703     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+[23]     1.3    0.01    0.00 8978703         Vec2::Vec2(float, float) [23]
+-----------------------------------------------
+                0.00    0.00    1404/8689664     renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+                0.01    0.00 8688260/8689664     RenderTriangle::getPixelLight(RasterizingVertex const&, std::vector<Light, std::allocator<Light> > const&, Vec3 const&, Material const&) [5]
+[24]     1.3    0.01    0.00 8689664         Vec3::operator-(Vec3 const&) const [24]
+-----------------------------------------------
+                0.01    0.00 8688260/8688260     FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [6]
+[25]     1.3    0.01    0.00 8688260         Color::operator*(float) const [25]
+-----------------------------------------------
+                0.01    0.00 4344130/4344130     FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [6]
+[26]     1.3    0.01    0.00 4344130         Color::operator+(Color const&) const [26]
+-----------------------------------------------
+                0.01    0.00      24/48          Mesh::CreateCube() [31]
+                0.01    0.00      24/48          Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+[27]     1.3    0.01    0.00      48         Color::Color(float, float, float) [27]
+-----------------------------------------------
+                0.01    0.00      39/39          Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+[28]     1.3    0.01    0.00      39         DepthBuffer::resetDepth() [28]
+-----------------------------------------------
+                0.01    0.00       1/1           Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+[29]     1.3    0.01    0.00       1         Vec3::Vec3() [29]
+-----------------------------------------------
+                                                 <spontaneous>
+[30]     1.3    0.01    0.00                 operator*(Vec3 const&, float) [30]
+-----------------------------------------------
+                0.00    0.01       1/1           Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+[31]     0.7    0.00    0.01       1         Mesh::CreateCube() [31]
+                0.01    0.00      24/48          Color::Color(float, float, float) [27]
+                0.00    0.00       2/2           void std::vector<Vertex, std::allocator<Vertex> >::_M_emplace_back_aux<Vertex>(Vertex&&) [40]
+                0.00    0.00      22/2496        Vertex::Vertex(Vertex const&) [35]
+                0.00    0.00      48/17389847     Vec3::Vec3(float, float, float) [11]
+                0.00    0.00      24/24          Vertex::Vertex(Vec3 const&, Vec3 const&) [41]
+                0.00    0.00       6/6           Mesh::addQuad(int, int, int, int) [85]
+                0.00    0.00       1/1           std::vector<Vertex, std::allocator<Vertex> >::reserve(unsigned long) [124]
+-----------------------------------------------
+                0.01    0.00 26064780/26064780     FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [6]
+[32]     0.7    0.01    0.00 26064780         Color::getTransparence() const [32]
+-----------------------------------------------
+                                                 <spontaneous>
+[33]     0.7    0.01    0.00                 Color::operator+=(Color const&) [33]
+-----------------------------------------------
+                0.00    0.00      39/39          Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+[34]     0.0    0.00    0.00      39         Entity::computeCenter() [34]
+                0.00    0.00   18720/13051110     Vec3::operator+=(Vec3 const&) [21]
+-----------------------------------------------
+                0.00    0.00      22/2496        Mesh::CreateCube() [31]
+                0.00    0.00      26/2496        void std::vector<Vertex, std::allocator<Vertex> >::_M_emplace_back_aux<Vertex>(Vertex&&) [40]
+                0.00    0.00     930/2496        Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+                0.00    0.00    1518/2496        void std::vector<Vertex, std::allocator<Vertex> >::_M_emplace_back_aux<Vertex const&>(Vertex const&) [36]
+[35]     0.0    0.00    0.00    2496         Vertex::Vertex(Vertex const&) [35]
+                0.00    0.00    4992/17382006     Vec3::Vec3(Vec3 const&) [12]
+                0.00    0.00    2496/13036290     Color::Color(Color const&) [22]
+-----------------------------------------------
+                0.00    0.00       6/6           Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+[36]     0.0    0.00    0.00       6         void std::vector<Vertex, std::allocator<Vertex> >::_M_emplace_back_aux<Vertex const&>(Vertex const&) [36]
+                0.00    0.00    1518/2496        Vertex::Vertex(Vertex const&) [35]
+-----------------------------------------------
+                0.00    0.00    1404/1404        renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+[37]     0.0    0.00    0.00    1404         Vertex::operator=(Vertex const&) [37]
+                0.00    0.00    1404/13036290     Color::Color(Color const&) [22]
+                0.00    0.00    1404/27348694     Color::operator=(Color) [19]
+-----------------------------------------------
+                0.00    0.00     234/234         renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+[38]     0.0    0.00    0.00     234         Vertex::Vertex() [38]
+                0.00    0.00     468/17389847     Vec3::Vec3(float, float, float) [11]
+-----------------------------------------------
+                0.00    0.00     360/360         renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+[39]     0.0    0.00    0.00     360         Vec4::getHomogenizedVec() const [39]
+                0.00    0.00     360/17389847     Vec3::Vec3(float, float, float) [11]
+-----------------------------------------------
+                0.00    0.00       2/2           Mesh::CreateCube() [31]
+[40]     0.0    0.00    0.00       2         void std::vector<Vertex, std::allocator<Vertex> >::_M_emplace_back_aux<Vertex>(Vertex&&) [40]
+                0.00    0.00      26/2496        Vertex::Vertex(Vertex const&) [35]
+-----------------------------------------------
+                0.00    0.00      24/24          Mesh::CreateCube() [31]
+[41]     0.0    0.00    0.00      24         Vertex::Vertex(Vec3 const&, Vec3 const&) [41]
+                0.00    0.00      24/17382006     Vec3::Vec3(Vec3 const&) [12]
+                0.00    0.00      24/24          Vec3::getNormalized() const [84]
+-----------------------------------------------
+                                                 <spontaneous>
+[42]     0.0    0.00    0.00                 Events::Events() [42]
+                0.00    0.00       1/1           Camera::Camera() [43]
+                0.00    0.00       1/17389847     Vec3::Vec3(float, float, float) [11]
+                0.00    0.00       1/1           Scene::Scene() [119]
+                0.00    0.00       1/1           RessourceManager::RessourceManager() [116]
+                0.00    0.00       1/1           gladLoadGL [48]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::Events() [42]
+[43]     0.0    0.00    0.00       1         Camera::Camera() [43]
+                0.00    0.00       2/17389847     Vec3::Vec3(float, float, float) [11]
+                0.00    0.00       1/2           Mat4::IdentityInArray() [90]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::run() [1]
+[44]     0.0    0.00    0.00       1         void std::vector<Light, std::allocator<Light> >::_M_emplace_back_aux<Light>(Light&&) [44]
+                0.00    0.00       1/17382006     Vec3::Vec3(Vec3 const&) [12]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+[45]     0.0    0.00    0.00       1         void std::vector<Entity, std::allocator<Entity> >::_M_emplace_back_aux<Entity>(Entity&&) [45]
+                0.00    0.00       1/17382006     Vec3::Vec3(Vec3 const&) [12]
+                0.00    0.00       1/3           std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}> const&, std::_Manager_operation) [88]
+-----------------------------------------------
+                0.00    0.00       1/1           get_proc [47]
+[46]     0.0    0.00    0.00       1         find_coreGL [46]
+-----------------------------------------------
+                                 271             get_proc [47]
+                0.00    0.00       1/1           gladLoadGL [48]
+[47]     0.0    0.00    0.00       1+271     get_proc [47]
+                0.00    0.00       1/1           find_coreGL [46]
+                                 271             get_proc [47]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::Events() [42]
+[48]     0.0    0.00    0.00       1         gladLoadGL [48]
+                0.00    0.00       1/1           get_proc [47]
+-----------------------------------------------
+                0.00    0.00 13032390/13032390     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+[57]     0.0    0.00    0.00 13032390         operator*(float, Vec3 const&) [57]
+-----------------------------------------------
+                0.00    0.00     234/4999740     renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+                0.00    0.00   65552/4999740     Texture::Texture(char const*) [92]
+                0.00    0.00  589824/4999740     Texture::Texture(unsigned int, unsigned int) [121]
+                0.00    0.00 4344130/4999740     drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [4]
+[58]     0.0    0.00    0.00 4999740         Color::Color() [58]
+-----------------------------------------------
+                0.00    0.00 4344130/4344130     FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [6]
+[59]     0.0    0.00    0.00 4344130         DepthBuffer::setDepth(unsigned int, unsigned int, float) [59]
+-----------------------------------------------
+                0.00    0.00 4344130/4344130     RenderTriangle::getPixelLight(RasterizingVertex const&, std::vector<Light, std::allocator<Light> > const&, Vec3 const&, Material const&) [5]
+[60]     0.0    0.00    0.00 4344130         operator+(Vec3 const&, Vec3 const&) [60]
+-----------------------------------------------
+                0.00    0.00   47232/47232       Mat4::operator*(Vec4 const&) const [66]
+[61]     0.0    0.00    0.00   47232         Vec4::operator[](unsigned int) [61]
+-----------------------------------------------
+                0.00    0.00   47232/47232       Mat4::operator*(Vec4 const&) const [66]
+[62]     0.0    0.00    0.00   47232         Vec4::operator[](unsigned int) const [62]
+-----------------------------------------------
+                0.00    0.00    1872/4356        Vertex::changeRef(Mat4 const&) [67]
+                0.00    0.00    2484/4356        renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+[63]     0.0    0.00    0.00    4356         Vec4::Vec4(Vec3 const&, float) [63]
+-----------------------------------------------
+                0.00    0.00    1080/2952        renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+                0.00    0.00    1872/2952        Vertex::changeRef(Mat4 const&) [67]
+[64]     0.0    0.00    0.00    2952         Vec3::Vec3(Vec4 const&) [64]
+-----------------------------------------------
+                0.00    0.00    2952/2952        Mat4::operator*(Vec4 const&) const [66]
+[65]     0.0    0.00    0.00    2952         Vec4::Vec4(float, float, float, float) [65]
+-----------------------------------------------
+                0.00    0.00    1080/2952        renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+                0.00    0.00    1872/2952        Vertex::changeRef(Mat4 const&) [67]
+[66]     0.0    0.00    0.00    2952         Mat4::operator*(Vec4 const&) const [66]
+                0.00    0.00   47232/47232       Vec4::operator[](unsigned int) const [62]
+                0.00    0.00   47232/47232       Vec4::operator[](unsigned int) [61]
+                0.00    0.00    2952/2952        Vec4::Vec4(float, float, float, float) [65]
+-----------------------------------------------
+                0.00    0.00     936/936         Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+[67]     0.0    0.00    0.00     936         Vertex::changeRef(Mat4 const&) [67]
+                0.00    0.00    1872/4356        Vec4::Vec4(Vec3 const&, float) [63]
+                0.00    0.00    1872/2952        Mat4::operator*(Vec4 const&) const [66]
+                0.00    0.00    1872/2952        Vec3::Vec3(Vec4 const&) [64]
+-----------------------------------------------
+                0.00    0.00     624/624         Mat4::GetInverse() const [79]
+[68]     0.0    0.00    0.00     624         Mat4::determinant() const [68]
+-----------------------------------------------
+                0.00    0.00     468/468         renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+[69]     0.0    0.00    0.00     468         crossProduct(Vec3, Vec3) [69]
+-----------------------------------------------
+                0.00    0.00      78/78          renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [3]
+[70]     0.0    0.00    0.00      78         Mat4::CreateScreenConversionMatrix() [70]
+-----------------------------------------------
+                0.00    0.00       1/40          Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+                0.00    0.00      39/40          Camera::actualize() [77]
+[71]     0.0    0.00    0.00      40         Mat4::CreateTranslationMatrix(Vec3 const&) [71]
+-----------------------------------------------
+                0.00    0.00      39/39          Camera::actualize() [77]
+[72]     0.0    0.00    0.00      39         Mat4::CreateRotationMatrix(Vec3 const&) [72]
+-----------------------------------------------
+                0.00    0.00      39/39          Events::run() [1]
+[73]     0.0    0.00    0.00      39         Mat4::CreatePerspectiveProjectionMatrix(int, int, float, float, float) [73]
+-----------------------------------------------
+                0.00    0.00      39/39          Camera::actualize() [77]
+[74]     0.0    0.00    0.00      39         Mat4::operator=(Mat4 const&) [74]
+-----------------------------------------------
+                0.00    0.00      39/39          Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+[75]     0.0    0.00    0.00      39         Vec3::operator/=(float) [75]
+-----------------------------------------------
+                0.00    0.00      39/39          Events::run() [1]
+[76]     0.0    0.00    0.00      39         Camera::inputs(float, GLFWwindow*) [76]
+-----------------------------------------------
+                0.00    0.00      39/39          Events::run() [1]
+[77]     0.0    0.00    0.00      39         Camera::actualize() [77]
+                0.00    0.00      39/39          Mat4::CreateRotationMatrix(Vec3 const&) [72]
+                0.00    0.00      39/40          Mat4::CreateTranslationMatrix(Vec3 const&) [71]
+                0.00    0.00      39/39          Mat4::operator*(Mat4 const&) const [81]
+                0.00    0.00      39/39          Mat4::operator=(Mat4 const&) [74]
+-----------------------------------------------
+                0.00    0.00      39/39          Events::run() [1]
+[78]     0.0    0.00    0.00      39         DoOnce::input(bool) [78]
+-----------------------------------------------
+                0.00    0.00      39/39          Events::run() [1]
+[79]     0.0    0.00    0.00      39         Mat4::GetInverse() const [79]
+                0.00    0.00     624/624         Mat4::determinant() const [68]
+                0.00    0.00      39/39          Mat4::CoMatrix() const [80]
+-----------------------------------------------
+                0.00    0.00      39/39          Mat4::GetInverse() const [79]
+[80]     0.0    0.00    0.00      39         Mat4::CoMatrix() const [80]
+-----------------------------------------------
+                0.00    0.00      39/39          Camera::actualize() [77]
+[81]     0.0    0.00    0.00      39         Mat4::operator*(Mat4 const&) const [81]
+-----------------------------------------------
+                0.00    0.00       1/39          Events::~Events() [161]
+                0.00    0.00      38/39          Events::run() [1]
+[82]     0.0    0.00    0.00      39         std::_Function_base::_Base_manager<Events::run()::{lambda(bool)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<Events::run()::{lambda(bool)#1}> const&, std::_Manager_operation) [82]
+-----------------------------------------------
+                0.00    0.00      39/39          Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [2]
+[83]     0.0    0.00    0.00      39         void std::vector<Entity const*, std::allocator<Entity const*> >::_M_emplace_back_aux<Entity const*>(Entity const*&&) [83]
+-----------------------------------------------
+                0.00    0.00      24/24          Vertex::Vertex(Vec3 const&, Vec3 const&) [41]
+[84]     0.0    0.00    0.00      24         Vec3::getNormalized() const [84]
+-----------------------------------------------
+                0.00    0.00       6/6           Mesh::CreateCube() [31]
+[85]     0.0    0.00    0.00       6         Mesh::addQuad(int, int, int, int) [85]
+-----------------------------------------------
+                0.00    0.00       1/5           Events::run() [1]
+                0.00    0.00       2/5           RessourceManager::~RessourceManager() [117]
+                0.00    0.00       2/5           RessourceManager::RessourceManager() [116]
+[86]     0.0    0.00    0.00       5         Texture::~Texture() [86]
+-----------------------------------------------
+                0.00    0.00       3/3           __libc_csu_init [207]
+[87]     0.0    0.00    0.00       3         _GLOBAL__sub_I__ZN6CameraC2Ev [87]
+-----------------------------------------------
+                0.00    0.00       1/3           Scene::~Scene() [120]
+                0.00    0.00       1/3           Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+                0.00    0.00       1/3           void std::vector<Entity, std::allocator<Entity> >::_M_emplace_back_aux<Entity>(Entity&&) [45]
+[88]     0.0    0.00    0.00       3         std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}> const&, std::_Manager_operation) [88]
+-----------------------------------------------
+                0.00    0.00       2/2           __libc_csu_init [207]
+[89]     0.0    0.00    0.00       2         _GLOBAL__sub_I__ZN11FrameBufferD2Ev [89]
+-----------------------------------------------
+                0.00    0.00       1/2           Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+                0.00    0.00       1/2           Camera::Camera() [43]
+[90]     0.0    0.00    0.00       2         Mat4::IdentityInArray() [90]
+-----------------------------------------------
+                0.00    0.00       2/2           Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+[91]     0.0    0.00    0.00       2         Mat4::operator*=(Mat4 const&) [91]
+-----------------------------------------------
+                0.00    0.00       2/2           RessourceManager::RessourceManager() [116]
+[92]     0.0    0.00    0.00       2         Texture::Texture(char const*) [92]
+                0.00    0.00   65552/4999740     Color::Color() [58]
+-----------------------------------------------
+                0.00    0.00       2/2           RessourceManager::RessourceManager() [116]
+[93]     0.0    0.00    0.00       2         Texture::Texture(Texture&&) [93]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[94]     0.0    0.00    0.00       1         _GLOBAL__sub_I__Z8getpixelP11SDL_Surfaceii [94]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[95]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN10Rasterizer23antiAliasingCompressionERK11FrameBufferR7Texture [95]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[96]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN13SDL_UtilitiesC2ERb [96]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[97]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN14RenderTriangle13getPixelLightERK17RasterizingVertexRKSt6vectorI5LightSaIS4_EERK4Vec3RK8Material [97]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[98]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN16RessourceManagerC2Ev [98]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[99]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN17RasterizingVertexC2Ev [99]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[100]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN4Mat415IdentityInArrayEv [100]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[101]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN4Mesh11addTriangleEjjj [101]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[102]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN4Vec2C2Ev [102]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[103]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN4Vec3C2Ev [103]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[104]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN4Vec4C2ERKS_ [104]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[105]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN5ColorC2Ev [105]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[106]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN5SceneC2Ev [106]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[107]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN6Entity13computeCenterEv [107]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[108]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN6Events10lightsInitERSt6vectorI5LightSaIS1_EE [108]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[109]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN6VertexC2Ev [109]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[110]    0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN7Vertex2C2Ev [110]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [207]
+[111]    0.0    0.00    0.00       1         _GLOBAL__sub_I_main [111]
+-----------------------------------------------
+                0.00    0.00       1/1           FrameBuffer::FrameBuffer(unsigned int, unsigned int) [114]
+[112]    0.0    0.00    0.00       1         DepthBuffer::DepthBuffer(unsigned int, unsigned int) [112]
+-----------------------------------------------
+                0.00    0.00       1/1           FrameBuffer::~FrameBuffer() [115]
+[113]    0.0    0.00    0.00       1         DepthBuffer::~DepthBuffer() [113]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::run() [1]
+[114]    0.0    0.00    0.00       1         FrameBuffer::FrameBuffer(unsigned int, unsigned int) [114]
+                0.00    0.00       1/1           Texture::Texture(unsigned int, unsigned int) [121]
+                0.00    0.00       1/1           DepthBuffer::DepthBuffer(unsigned int, unsigned int) [112]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::run() [1]
+[115]    0.0    0.00    0.00       1         FrameBuffer::~FrameBuffer() [115]
+                0.00    0.00       1/1           DepthBuffer::~DepthBuffer() [113]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::Events() [42]
+[116]    0.0    0.00    0.00       1         RessourceManager::RessourceManager() [116]
+                0.00    0.00       2/2           Texture::Texture(char const*) [92]
+                0.00    0.00       2/2           Texture::Texture(Texture&&) [93]
+                0.00    0.00       2/5           Texture::~Texture() [86]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::~Events() [161]
+[117]    0.0    0.00    0.00       1         RessourceManager::~RessourceManager() [117]
+                0.00    0.00       2/5           Texture::~Texture() [86]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+[118]    0.0    0.00    0.00       1         Mat4::CreateScaleMatrix(Vec3 const&) [118]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::Events() [42]
+[119]    0.0    0.00    0.00       1         Scene::Scene() [119]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::~Events() [161]
+[120]    0.0    0.00    0.00       1         Scene::~Scene() [120]
+                0.00    0.00       1/1           std::_Rb_tree<Mesh*, Mesh*, std::_Identity<Mesh*>, std::less<Mesh*>, std::allocator<Mesh*> >::_M_erase(std::_Rb_tree_node<Mesh*>*) [125]
+                0.00    0.00       1/3           std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}> const&, std::_Manager_operation) [88]
+-----------------------------------------------
+                0.00    0.00       1/1           FrameBuffer::FrameBuffer(unsigned int, unsigned int) [114]
+[121]    0.0    0.00    0.00       1         Texture::Texture(unsigned int, unsigned int) [121]
+                0.00    0.00  589824/4999740     Color::Color() [58]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::run() [1]
+[122]    0.0    0.00    0.00       1         std::_Function_base::_Base_manager<DoOnce::onSwitch::{lambda(bool)#1}>::_M_manager(std::_Any_data&, DoOnce::onSwitch::{lambda(bool)#1} const&, std::_Manager_operation) [122]
+-----------------------------------------------
+                0.00    0.00       1/1           Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [16]
+[123]    0.0    0.00    0.00       1         std::_Function_base::_Base_manager<Material::additionalShaders::{lambda(Color&, Vec3&)#1}>::_M_manager(std::_Any_data&, Material::additionalShaders::{lambda(Color&, Vec3&)#1} const&, std::_Manager_operation) [123]
+-----------------------------------------------
+                0.00    0.00       1/1           Mesh::CreateCube() [31]
+[124]    0.0    0.00    0.00       1         std::vector<Vertex, std::allocator<Vertex> >::reserve(unsigned long) [124]
+-----------------------------------------------
+                0.00    0.00       1/1           Scene::~Scene() [120]
+[125]    0.0    0.00    0.00       1         std::_Rb_tree<Mesh*, Mesh*, std::_Identity<Mesh*>, std::less<Mesh*>, std::allocator<Mesh*> >::_M_erase(std::_Rb_tree_node<Mesh*>*) [125]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [94] _GLOBAL__sub_I__Z8getpixelP11SDL_Surfaceii (texture.cpp) [72] Mat4::CreateRotationMatrix(Vec3 const&) [9] Texture::FillBlack()
+  [95] _GLOBAL__sub_I__ZN10Rasterizer23antiAliasingCompressionERK11FrameBufferR7Texture (rasterizer.cpp) [71] Mat4::CreateTranslationMatrix(Vec3 const&) [92] Texture::Texture(char const*)
+  [89] _GLOBAL__sub_I__ZN11FrameBufferD2Ev (frameBuffer.cpp) [70] Mat4::CreateScreenConversionMatrix() [121] Texture::Texture(unsigned int, unsigned int)
+  [96] _GLOBAL__sub_I__ZN13SDL_UtilitiesC2ERb (sdlUtilities.cpp) [73] Mat4::CreatePerspectiveProjectionMatrix(int, int, float, float, float) [93] Texture::Texture(Texture&&)
+  [97] _GLOBAL__sub_I__ZN14RenderTriangle13getPixelLightERK17RasterizingVertexRKSt6vectorI5LightSaIS4_EERK4Vec3RK8Material (renderTriangle.cpp) [74] Mat4::operator=(Mat4 const&) [86] Texture::~Texture()
+  [98] _GLOBAL__sub_I__ZN16RessourceManagerC2Ev (ressourceManager.cpp) [91] Mat4::operator*=(Mat4 const&) [13] DepthBuffer::getDepth(unsigned int, unsigned int) const
+  [99] _GLOBAL__sub_I__ZN17RasterizingVertexC2Ev (rasterizingVertex.cpp) [31] Mesh::CreateCube() [79] Mat4::GetInverse() const
+ [100] _GLOBAL__sub_I__ZN4Mat415IdentityInArrayEv (mat4.cpp) [85] Mesh::addQuad(int, int, int, int) [68] Mat4::determinant() const
+ [101] _GLOBAL__sub_I__ZN4Mesh11addTriangleEjjj (mesh.cpp) [23] Vec2::Vec2(float, float) [80] Mat4::CoMatrix() const
+ [102] _GLOBAL__sub_I__ZN4Vec2C2Ev (vec2.cpp) [7] Vec3::Normalize() [66] Mat4::operator*(Vec4 const&) const
+ [103] _GLOBAL__sub_I__ZN4Vec3C2Ev (vec3.cpp) [64] Vec3::Vec3(Vec4 const&) [81] Mat4::operator*(Mat4 const&) const
+ [104] _GLOBAL__sub_I__ZN4Vec4C2ERKS_ (vec4.cpp) [12] Vec3::Vec3(Vec3 const&) [84] Vec3::getNormalized() const
+ [105] _GLOBAL__sub_I__ZN5ColorC2Ev (color.cpp) [11] Vec3::Vec3(float, float, float) [24] Vec3::operator-(Vec3 const&) const
+ [106] _GLOBAL__sub_I__ZN5SceneC2Ev (scene.cpp) [29] Vec3::Vec3() [39] Vec4::getHomogenizedVec() const
+  [87] _GLOBAL__sub_I__ZN6CameraC2Ev (camera.cpp) [75] Vec3::operator/=(float) [62] Vec4::operator[](unsigned int) const
+ [107] _GLOBAL__sub_I__ZN6Entity13computeCenterEv (entity.cpp) [21] Vec3::operator+=(Vec3 const&) [32] Color::getTransparence() const
+ [108] _GLOBAL__sub_I__ZN6Events10lightsInitERSt6vectorI5LightSaIS1_EE (event.cpp) [65] Vec4::Vec4(float, float, float, float) [25] Color::operator*(float) const
+ [109] _GLOBAL__sub_I__ZN6VertexC2Ev (vertex.cpp) [63] Vec4::Vec4(Vec3 const&, float) [26] Color::operator+(Color const&) const
+ [110] _GLOBAL__sub_I__ZN7Vertex2C2Ev (vertex2.cpp) [61] Vec4::operator[](unsigned int) [20] Texture::GetPixelColor(unsigned int, unsigned int) const
+ [111] _GLOBAL__sub_I_main (main.cpp) [27] Color::Color(float, float, float) [122] std::_Function_base::_Base_manager<DoOnce::onSwitch::{lambda(bool)#1}>::_M_manager(std::_Any_data&, DoOnce::onSwitch::{lambda(bool)#1} const&, std::_Manager_operation)
+  [17] dotProduct(Vec3, Vec3) [22] Color::Color(Color const&) [123] std::_Function_base::_Base_manager<Material::additionalShaders::{lambda(Color&, Vec3&)#1}>::_M_manager(std::_Any_data&, Material::additionalShaders::{lambda(Color&, Vec3&)#1} const&, std::_Manager_operation)
+  [69] crossProduct(Vec3, Vec3) [15] Color::Color(float, float, float, float) [88] std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}> const&, std::_Manager_operation) (functional)
+   [4] drawTriangle(Vertex&, Vertex&, Vertex&, Vec3, Vec3, Vec3, float, float, float, Vec3 const&, FrameBuffer*, std::vector<Light, std::allocator<Light> >&, Material const&, Texture*) [58] Color::Color() [82] std::_Function_base::_Base_manager<Events::run()::{lambda(bool)#1}>::_M_manager(std::_Any_data&, std::_Function_base::_Base_manager<Events::run()::{lambda(bool)#1}> const&, std::_Manager_operation) (functional)
+   [3] renderEntities(std::vector<Entity const*, std::allocator<Entity const*> >&, std::vector<Light, std::allocator<Light> >&, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [19] Color::operator=(Color) [18] std::_Function_handler<void (Color&, Vec3&), Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&)::{lambda(Color&, Vec3&)#1}>::_M_invoke(std::_Any_data const&, Color&, Vec3&) (functional)
+   [2] Rasterizer::RenderScene(Scene*, FrameBuffer*, Mat4 const&, Mat4 const&, Camera&, E_RasterizerMode) [33] Color::operator+=(Color const&) [44] void std::vector<Light, std::allocator<Light> >::_M_emplace_back_aux<Light>(Light&&)
+  [28] DepthBuffer::resetDepth() [119] Scene::Scene()     [45] void std::vector<Entity, std::allocator<Entity> >::_M_emplace_back_aux<Entity>(Entity&&)
+  [59] DepthBuffer::setDepth(unsigned int, unsigned int, float) [120] Scene::~Scene() [36] void std::vector<Vertex, std::allocator<Vertex> >::_M_emplace_back_aux<Vertex const&>(Vertex const&)
+ [112] DepthBuffer::DepthBuffer(unsigned int, unsigned int) [76] Camera::inputs(float, GLFWwindow*) [40] void std::vector<Vertex, std::allocator<Vertex> >::_M_emplace_back_aux<Vertex>(Vertex&&)
+ [113] DepthBuffer::~DepthBuffer() [77] Camera::actualize() [124] std::vector<Vertex, std::allocator<Vertex> >::reserve(unsigned long)
+   [8] FrameBuffer::ResetPixels() [43] Camera::Camera()   [83] void std::vector<Entity const*, std::allocator<Entity const*> >::_M_emplace_back_aux<Entity const*>(Entity const*&&)
+   [6] FrameBuffer::SetPixel(unsigned int, unsigned int, float, Color const&) [78] DoOnce::input(bool) [125] std::_Rb_tree<Mesh*, Mesh*, std::_Identity<Mesh*>, std::less<Mesh*>, std::allocator<Mesh*> >::_M_erase(std::_Rb_tree_node<Mesh*>*)
+ [114] FrameBuffer::FrameBuffer(unsigned int, unsigned int) [34] Entity::computeCenter() [30] operator*(Vec3 const&, float)
+ [115] FrameBuffer::~FrameBuffer() [16] Events::entitiesInit(std::vector<Entity, std::allocator<Entity> >&) [57] operator*(float, Vec3 const&)
+   [5] RenderTriangle::getPixelLight(RasterizingVertex const&, std::vector<Light, std::allocator<Light> > const&, Vec3 const&, Material const&) [67] Vertex::changeRef(Mat4 const&) [60] operator+(Vec3 const&, Vec3 const&)
+ [116] RessourceManager::RessourceManager() [41] Vertex::Vertex(Vec3 const&, Vec3 const&) [46] find_coreGL (glad.c)
+ [117] RessourceManager::~RessourceManager() [35] Vertex::Vertex(Vertex const&) [47] get_proc (glad.c)
+  [10] RasterizingVertex::RasterizingVertex() [38] Vertex::Vertex() [48] gladLoadGL
+  [90] Mat4::IdentityInArray() [37] Vertex::operator=(Vertex const&)
+ [118] Mat4::CreateScaleMatrix(Vec3 const&) [14] Texture::SetPixelColor(unsigned int, unsigned int, Color)

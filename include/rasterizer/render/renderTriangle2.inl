@@ -144,7 +144,9 @@ void RenderTriangle2::drawWireframe(FrameBuffer* pTarget)
 
 
 __inline
-void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& w, const Vec3& cameraLocation, std::vector<Light>& lights, Texture* pTexture)
+void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& w, 
+                                    const Vec3& cameraLocation, std::vector<Light>& lights, 
+                                    Texture* pTexture, const Material& mat)
 {
     // std::cout << w[0] << '\n';
     // std::cout << w[1] << '\n';
@@ -153,5 +155,5 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
                     worldVertices[0], worldVertices[1], worldVertices[2], 
                     w[0], w[1], w[2],
                     cameraLocation,
-                    pTarget, lights, pTexture);
+                    pTarget, lights, mat, pTexture);
 }

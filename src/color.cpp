@@ -280,6 +280,13 @@ float Color::getTransparence() const noexcept
 //   a = std::max(0.f, a);
 // }
 
+void Color::copyRGB(const Color& rhs) noexcept
+{
+  r = rhs.r;
+  g = rhs.g;
+  b = rhs.b;
+}
+
 std::ostream& operator<<(std::ostream& stream, const Color& c)
 {
   stream << c.r << ' ' << c.g << ' ' << c.b << ' ' << c.a << '\n';
