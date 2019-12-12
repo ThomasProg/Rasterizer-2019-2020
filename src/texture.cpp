@@ -72,11 +72,11 @@ Texture::Texture(const char* filename)
         for (unsigned int x = 0; x < width; x++)
         { 
             Uint32 color = getpixel(surface, x, y);
-            char* colors = (char*) &color;
-            pixels[y * width + x].colors[0] = colors[0];
-            pixels[y * width + x].colors[1] = colors[1];
-            pixels[y * width + x].colors[2] = colors[2];
-            pixels[y * width + x].colors[3] = colors[3];
+            unsigned char* colors = (unsigned char*) &color;
+            pixels[y * width + x].colors[0] = static_cast<float> (colors[0]) / 255.f;
+            pixels[y * width + x].colors[1] = static_cast<float> (colors[1]) / 255.f;
+            pixels[y * width + x].colors[2] = static_cast<float> (colors[2]) / 255.f;
+            pixels[y * width + x].colors[3] = static_cast<float> (colors[3]) / 255.f;
         }
     }
 

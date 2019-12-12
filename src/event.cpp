@@ -314,11 +314,11 @@ int Events::run()
         
         #ifdef __GLFW__
         #ifndef __ANTI_ALIASING__
-        glDrawPixels(windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, target.texture.pixels);
+        glDrawPixels(windowWidth, windowHeight, GL_RGBA, GL_FLOAT, target.texture.pixels);
         #else
         Texture renderedTexture(windowWidth, windowHeight);
         Rasterizer::antiAliasingCompression(target, renderedTexture);
-        glDrawPixels(windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, renderedTexture.pixels);
+        glDrawPixels(windowWidth, windowHeight, GL_RGBA, GL_FLOAT, renderedTexture.pixels);
         #endif
         glfwSwapBuffers(window);
         #endif

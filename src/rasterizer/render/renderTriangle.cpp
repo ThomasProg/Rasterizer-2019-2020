@@ -175,11 +175,11 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
             v += weight[i] * vP[i];
         }
 
-        //unprecision of interpolation of char
-        if (triangleVertices[0]->color.a == 255 
-            && triangleVertices[1]->color.a == 255 
-            && triangleVertices[2]->color.a == 255)
-            c.a = 255;
+        // //unprecision of interpolation of char
+        // if (triangleVertices[0]->color.a == 255 
+        //     && triangleVertices[1]->color.a == 255 
+        //     && triangleVertices[2]->color.a == 255)
+        //     c.a = 255;
         
         vert.normal.Normalize();
 

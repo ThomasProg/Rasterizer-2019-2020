@@ -132,14 +132,9 @@
 // }
 
 inline
-unsigned int getNbMixedColors(const int x, const int y, const FrameBuffer& highResolutionFB)
+unsigned int getNbMixedColors(const int x, const int y, const FrameBuffer& highResolutionFB, const float curDepth)
 {
     unsigned int nbMixedColors = 0;
-
-    unsigned int firstElemID = x * antiAliasingX + 
-                            (y * antiAliasingY) * highResolutionFB.texture.width;
-
-    float curDepth = highResolutionFB.depthBuffer.depth[firstElemID];
 
     for (unsigned int i = 0; i < antiAliasingY; i++)
     {
@@ -169,7 +164,12 @@ void Rasterizer::antiAliasingCompression(const FrameBuffer& highResolutionFB, Te
             Color finalColor (0, 0, 0, 0);
 
             #ifdef __MULTI_SAMPLING__
-            unsigned int nbMixedColors = getNbMixedColors(x, y, highResolutionFB);
+            unsigned int firstElemID = x * antiAliasingX + 
+                                    (y * antiAliasingY) * highResolutionFB.texture.width;
+
+            float curDepth = highResolutionFB.depthBuffer.depth[firstElemID];
+            
+            unsigned int nbMixedColors = getNbMixedColors(x, y, highResolutionFB, curDepth);
 
             if (nbMixedColors == 0)
                 continue;
