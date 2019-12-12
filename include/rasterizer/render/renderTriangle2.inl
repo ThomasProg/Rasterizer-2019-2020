@@ -11,13 +11,13 @@ void RenderTriangle2::setupForTriangle(const Vertex& v1, const Vertex& v2, const
     this->v3 = v3;
 }
 
-__inline
-void RenderTriangle2::setLocalToWorld(const Mat4& transform)
-{
-    v1.changeRef(transform);
-    v2.changeRef(transform);
-    v3.changeRef(transform);
-}
+// __inline
+// void RenderTriangle2::setLocalToWorld(const Mat4& transform)
+// {
+//     v1.changeRef(transform);
+//     v2.changeRef(transform);
+//     v3.changeRef(transform);
+// }
 
 __inline
 bool RenderTriangle2::isBackFaceCulled(const Vec3& cameraLocation)

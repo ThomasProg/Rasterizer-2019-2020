@@ -19,6 +19,8 @@ public:
     std::vector<Vertex> vertices; //vertex buffer
     //should not change when the objects is transformed
 
+    std::vector<Vertex> worldVertices;
+
     std::vector<unsigned int> indices; //index buffer
     //goes by triplets to draw triangles
 

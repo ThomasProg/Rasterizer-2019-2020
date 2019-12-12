@@ -80,6 +80,57 @@ void Events::entitiesInit(std::vector<Entity>& entities)
         // }
     }
 
+    {
+        unsigned int i = 0;
+        for (unsigned int j = 0; j < 1; j++)
+        {
+            Entity cube;
+            cube.mesh = Mesh::CreateCube();
+            i = 0;
+            for (Vertex& vertex : cube.mesh->vertices)
+            {
+                //if (i % 2 == 0)
+                    vertex.color = Color(1.f, 0, 0);
+                // else
+                //     vertex.color = Color(0, 1.f, 0);
+                i++;
+            }
+            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
+            //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(10, 0, j*2));
+            cube.transformation *= Mat4::CreateRotationMatrix(Vec3(0, 0.1, 0.1));
+            //cube.mesh->pTexture = &textureManager.textures[0];
+            cube.alpha = 1.0f;
+            //cube.mesh->pTexture = new Texture("media/crate.png");
+            entities.push_back(std::move(cube));
+        }
+    }
+
+    {
+        unsigned int i = 0;
+        for (unsigned int j = 0; j < 1; j++)
+        {
+            Entity cube;
+            cube.mesh = Mesh::CreateCube();
+            i = 0;
+            for (Vertex& vertex : cube.mesh->vertices)
+            {
+                //if (i % 2 == 0)
+                    vertex.color = Color(0.f, 1.f, 0.f);
+                // else
+                //     vertex.color = Color(0, 1.f, 0);
+                i++;
+            }
+            cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
+            //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
+            cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(10, 0, 3));
+            cube.transformation *= Mat4::CreateRotationMatrix(Vec3(0, 0.1, 0.1));
+            //cube.mesh->pTexture = &textureManager.textures[0];
+            cube.alpha = 0.5f;
+            //cube.mesh->pTexture = new Texture("media/crate.png");
+            entities.push_back(std::move(cube));
+        }
+    }
     // // sphere
     // for (unsigned int j = 0; j < 1; j++)
     // {

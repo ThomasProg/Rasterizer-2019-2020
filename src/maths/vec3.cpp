@@ -71,6 +71,11 @@ Vec3 Vec3::getNormalized() const
     return *this * (1 / this->GetMagnitude());
 }
 
+float Vec3::getLengthSquared() const
+{
+    return pow(x, 2) + pow(y, 2) + pow(z, 2);
+}
+
 Vec3 operator+(const Vec3& a, const Vec3& b)
 {
     return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);

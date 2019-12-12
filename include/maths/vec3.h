@@ -23,6 +23,8 @@ public:
     Vec3& operator/=(float f);
 
     Vec3 getNormalized() const;
+
+    float getLengthSquared() const;
 };
 
 Vec3 operator+(const Vec3&, const Vec3&);

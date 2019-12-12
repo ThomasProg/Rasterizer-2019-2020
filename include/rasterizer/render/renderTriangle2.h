@@ -25,8 +25,8 @@ public:
     __inline
     void setupForTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3);
 
-    __inline
-    void setLocalToWorld(const Mat4& transform);
+    // __inline
+    // void setLocalToWorld(const Mat4& transform);
 
     __inline
     bool isBackFaceCulled(const Vec3& cameraLocation);

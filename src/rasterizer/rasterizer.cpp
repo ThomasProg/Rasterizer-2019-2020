@@ -4,6 +4,7 @@
 #include <functional>
 #include <array>
 #include <vector>
+#include <set>
 #include <cassert>
 
 #include "dynamicAsStaticArray.h"
@@ -359,39 +360,20 @@ bool compareEntitiesToDisplay(const Entity* lhs, const Entity* rhs)
     return lhs->alpha < rhs->alpha;
 }
 
-#include <set>
 
-void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, Camera& camera, E_RasterizerMode mode)
+void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& lights, 
+                    FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, 
+                    Camera& camera, E_RasterizerMode mode)
 {
-    assert(pScene != nullptr && pTarget != nullptr);
-
-    //init render texture
-    pTarget->ResetPixels();
-
-    #ifdef __ENABLE_TRANSPARENCY__
-    std::set<const Entity*, bool(*)(const Entity* lhs, const Entity* rhs)> sortedEntities (&compareEntitiesToDisplay);
-
-    for (const Entity& entity : pScene->entities)
-    {
-        sortedEntities.insert(&entity);
-    }
-    #endif
-
     const Mat4 screenConversionMatrix = Mat4::CreateScreenConversionMatrix();
     std::array<float, 3> w;
 
     RenderTriangle2 rendering;
 
-    #ifdef __ENABLE_TRANSPARENCY__
-    for (const Entity* entityPtr : sortedEntities)
+    for (const Entity* entity : entities)
     {
-        const Entity& entity = *entityPtr;
-    #else
-    for (const Entity& entity : pScene->entities)
-    {
-    #endif
-        const std::vector<Vertex>& vertices = entity.mesh->vertices;
-        const std::vector<unsigned int>& indices = entity.mesh->indices;
+        const std::vector<Vertex>& vertices = entity->mesh->worldVertices;
+        const std::vector<unsigned int>& indices = entity->mesh->indices;
 
         //#pragma omp parallel for
         for (unsigned int indicesIndex = 0; indicesIndex < indices.size(); indicesIndex += 3)
@@ -400,7 +382,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
                                         vertices[indices[indicesIndex + 1]], 
                                         vertices[indices[indicesIndex + 2]]);
 
-            rendering.setLocalToWorld(entity.transformation);
+            // rendering.setLocalToWorld(entity->transformation);
 
             if (!rendering.isBackFaceCulled(camera.cartesianLocation))
             {
@@ -412,7 +394,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
 
                 //rendering.setDefaultColor();
 
-                rendering.addTransparency(entity.alpha);
+                rendering.addTransparency(entity->alpha);
             
                 // //rendering.drawWireframe(pTarget);
 
@@ -422,8 +404,71 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
                 // rendering.v3.color = Color(250,250,100);
 
 
-                rendering.drawTriangleX(pTarget, w, camera.cartesianLocation, pScene->lights, entity.mesh->pTexture);    
+                rendering.drawTriangleX(pTarget, w, camera.cartesianLocation, lights, entity->mesh->pTexture);    
             }
         }
     }
+}
+#include <algorithm>
+void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, 
+                            const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, 
+                            Camera& camera, E_RasterizerMode mode)
+{
+    assert(pScene != nullptr && pTarget != nullptr);
+
+    //init render texture
+    pTarget->ResetPixels();
+
+    #ifdef __ENABLE_TRANSPARENCY__
+    // std::set<const Entity*, bool(*)(const Entity* lhs, const Entity* rhs)> sortedEntities (&compareEntitiesToDisplay);
+
+    std::vector<const Entity*> opaqueEntities;
+    std::vector<const Entity*> transparentEntities;
+
+    for (const Entity& entity : pScene->entities)
+    {
+        if (entity.mesh != nullptr)
+        {
+            entity.mesh->worldVertices.reserve(entity.mesh->vertices.size());
+            for (const Vertex& vert : entity.mesh->vertices)
+            {
+                entity.mesh->worldVertices.emplace_back(vert);
+                entity.mesh->worldVertices[entity.mesh->worldVertices.size() - 1].changeRef(entity.transformation);
+            }
+        }
+    }
+
+    for (Entity& entity : pScene->entities)
+    {
+        entity.computeCenter();
+    }
+
+    for (const Entity& entity : pScene->entities)
+    {
+        if (entity.alpha == 1)
+            opaqueEntities.emplace_back(&entity);
+        else 
+            transparentEntities.emplace_back(&entity);
+    }
+
+    std::sort(transparentEntities.begin(), transparentEntities.end(), 
+        [&camera] (const Entity* a, const Entity* b)
+        {
+            // return true if center of a is closer
+            // sqrt is not used to calcul the distance because we don't need it to compare them
+            const Vec3 dist1 = a->center - camera.cartesianLocation;
+            const Vec3 dist2 = b->center - camera.cartesianLocation;
+
+            float f1 = dist1.getLengthSquared(), f2 = dist2.getLengthSquared();
+            return (a->center - camera.cartesianLocation).getLengthSquared() 
+                    > (b->center - camera.cartesianLocation).getLengthSquared();
+        }  
+    );
+
+    renderEntities(opaqueEntities, pScene->lights, pTarget, projectionMatrix, inverseCameraMatrix, camera, mode);
+
+    renderEntities(transparentEntities, pScene->lights, pTarget, projectionMatrix, inverseCameraMatrix, camera, mode);
+    #else
+    //renderEntities(pScene->entities, pScene->lights, pTarget, projectionMatrix, inverseCameraMtrix, camera, mode);
+    #endif
 }
