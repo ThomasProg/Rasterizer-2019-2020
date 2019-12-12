@@ -8,27 +8,22 @@
 
 #define __PERSPECTIVE_FIX__
 
-// #define __NEAREST_INTERPOLATION__
-#define __BILINEAR_INTERPOLATION__
+#define __NEAREST_INTERPOLATION__
+// #define __BILINEAR_INTERPOLATION__
 
 
 // by enable the __ANTI_ALIASING__, 
 // there must be __ANTI_ALIASING__ or __MULTI_SAMPLING__ anti aliasing modes defined only.
-#define __ANTI_ALIASING__
+// #define __ANTI_ALIASING__
 // #define __SUPER_SAMPLING__
-#define __MULTI_SAMPLING__
+// #define __MULTI_SAMPLING__
 
 // #define __ANTI_ALIASING_DEBUG__
 
-//#define __ENABLE_TRANSPARENCY__
+#define __ENABLE_TRANSPARENCY__
 
 //#define __SDL__
 #define __GLFW__
-
-#define __FORCE_UNTEXTURED_TRIANGLE_COLOR__ \
-        vert1.color = Color(250,250,250);   \
-        vert2.color = Color(250,100,250);   \
-        vert3.color = Color(250,250,100);
 
 constexpr float PI = 3.14159265359f;
 constexpr float epsilon = 0.01;
@@ -38,8 +33,12 @@ constexpr unsigned int windowHeight = 768;
 
 constexpr float depthMax = 255;
 
-constexpr unsigned int antiAliasingX = 2;
-constexpr unsigned int antiAliasingY = 2;
+constexpr unsigned int antiAliasingX = 1;
+constexpr unsigned int antiAliasingY = 1;
+
+
+
+
 
 constexpr float textureResolutionX = windowWidth  * antiAliasingX;
 constexpr float textureResolutionY = windowHeight * antiAliasingY;

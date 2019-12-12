@@ -51,6 +51,7 @@ void Events::entitiesInit(std::vector<Entity>& entities)
             cube.transformation *= Mat4::CreateRotationMatrix(Vec3(0, 0.1, 0.1));
             cube.mesh->pTexture = &textureManager.textures[0];
             cube.alpha = 1.f - float(j) / 2.f;
+            cube.alpha = 0.5f;
             //cube.mesh->pTexture = new Texture("media/crate.png");
             entities.push_back(std::move(cube));
         }
@@ -221,7 +222,7 @@ int Events::run()
         fps = 1.f/(deltaTime);
         nbFps++;
         totalFps += fps;
-        std::cout << 1.f/(deltaTime) << std::endl;
+        // std::cout << 1.f/(deltaTime) << std::endl;
         lastTime = time;
         //std::cout << totalFps / nbFps << std::endl;
 

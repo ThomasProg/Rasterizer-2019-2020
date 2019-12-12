@@ -173,14 +173,14 @@ void Texture::FillBlack()
 {
     // 4 * sizeof(unsigned char)
     //memset(pixels, 0, 4 * sizeof(unsigned char) * width * height);
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (unsigned int i = 0; i < width * height; i++)
     {
         // pixels[i].r = 0;
         // pixels[i].g = 0;
         // pixels[i].b = 0;
         // pixels[i].a = 255;
-        pixels[i] = {0, 0, 0, 255};
+        pixels[i] = {0, 0, 0, 1};
     }
 }
 

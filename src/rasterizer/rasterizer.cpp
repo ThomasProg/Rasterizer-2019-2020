@@ -353,6 +353,14 @@ void Rasterizer::antiAliasingCompression(const FrameBuffer& highResolutionFB, Te
 
 #include "renderTriangle2.h"
 
+inline
+bool compareEntitiesToDisplay(const Entity* lhs, const Entity* rhs)
+{
+    return lhs->alpha < rhs->alpha;
+}
+
+#include <set>
+
 void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, Camera& camera, E_RasterizerMode mode)
 {
     assert(pScene != nullptr && pTarget != nullptr);
@@ -360,13 +368,28 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
     //init render texture
     pTarget->ResetPixels();
 
+    #ifdef __ENABLE_TRANSPARENCY__
+    std::set<const Entity*, bool(*)(const Entity* lhs, const Entity* rhs)> sortedEntities (&compareEntitiesToDisplay);
+
+    for (const Entity& entity : pScene->entities)
+    {
+        sortedEntities.insert(&entity);
+    }
+    #endif
+
     const Mat4 screenConversionMatrix = Mat4::CreateScreenConversionMatrix();
     std::array<float, 3> w;
 
     RenderTriangle2 rendering;
 
+    #ifdef __ENABLE_TRANSPARENCY__
+    for (const Entity* entityPtr : sortedEntities)
+    {
+        const Entity& entity = *entityPtr;
+    #else
     for (const Entity& entity : pScene->entities)
     {
+    #endif
         const std::vector<Vertex>& vertices = entity.mesh->vertices;
         const std::vector<unsigned int>& indices = entity.mesh->indices;
 
@@ -387,7 +410,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& pr
 
                 rendering.setVerticesToScreenResolution(screenConversionMatrix);
 
-                rendering.setDefaultColor();
+                //rendering.setDefaultColor();
 
                 rendering.addTransparency(entity.alpha);
             

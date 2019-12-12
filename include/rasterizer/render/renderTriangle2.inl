@@ -79,6 +79,7 @@ void RenderTriangle2::addTransparency(const float transparency)
     v1.color.a *= transparency;
     v2.color.a *= transparency;
     v3.color.a *= transparency;
+
     //std::cout << (unsigned int) (v1.color.a) << "  " << transparency << '\n';
 }
 #include "color.h"

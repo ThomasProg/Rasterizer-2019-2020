@@ -229,7 +229,7 @@ Color& Color::operator*=(float scalar) noexcept
   return *this;
 }
 
-Color  Color::operator*(float scalar) noexcept
+Color  Color::operator*(float scalar) const noexcept
 {
   if (scalar <= 0)
   {
@@ -239,12 +239,12 @@ Color  Color::operator*(float scalar) noexcept
     return Color(r*scalar, g*scalar, b*scalar, a*scalar);
 }
 
-Color  Color::operator+(const Color& rhs) noexcept
+Color  Color::operator+(const Color& rhs) const noexcept
 {
   return Color(r+rhs.r, g+rhs.g, b+rhs.b, a+rhs.a);
 }
 
-Color  Color::operator/(unsigned char f) noexcept
+Color  Color::operator/(unsigned char f) const noexcept
 {
   assert(f != 0);
   return Color(r/f, g/f, b/f, a/f);
@@ -288,12 +288,14 @@ std::ostream& operator<<(std::ostream& stream, const Color& c)
 
 Color getAverageColor(Color lhs, Color rhs, float lhsRatio) noexcept
 {
-  Color newColor = lhs * lhsRatio + rhs * (1 - lhsRatio);
+  // Color newColor = lhs * lhsRatio + rhs * (1 - lhsRatio);
 
-  // newColor.r = getAverageChar(lhs.r, lhs.r);
-  // newColor.g = getAverageChar(lhs.g, lhs.g);
-  // newColor.b = getAverageChar(lhs.b, lhs.b);
-  // newColor.a = getAverageChar(lhs.a, lhs.a);
+  // // newColor.r = getAverageChar(lhs.r, lhs.r);
+  // // newColor.g = getAverageChar(lhs.g, lhs.g);
+  // // newColor.b = getAverageChar(lhs.b, lhs.b);
+  // // newColor.a = getAverageChar(lhs.a, lhs.a);
 
-  return newColor;
+  // return newColor;
+
+  return lhs * lhsRatio + rhs * (1 - lhsRatio);
 }

@@ -18,7 +18,7 @@ public:
     FrameBuffer(unsigned int width, unsigned int height);
     ~FrameBuffer();
 
-    void SetPixel(unsigned int x, unsigned int y, float newDepth, Color c);
+    void SetPixel(unsigned int x, unsigned int y, float newDepth, const Color& c);
 
     Color GetPixelColor(unsigned int x, unsigned int y) const;
     float GetDepth(unsigned int x, unsigned int y) const;

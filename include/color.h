@@ -54,9 +54,9 @@ struct Color
     //so we use less memory copying by copy instead of reference (using 4 more bytes)
     Color& operator=(Color setColor) noexcept;
     Color& operator*=(float scalar) noexcept;
-    Color operator*(float scalar) noexcept;
-    Color operator+(const Color& rhs) noexcept;
-    Color operator/(unsigned char f) noexcept;
+    Color operator*(float scalar) const noexcept;
+    Color operator+(const Color& rhs) const noexcept;
+    Color operator/(unsigned char f) const noexcept;
     Color& operator+=(const Color& rhs) noexcept;
     //float& operator[](unsigned int index) noexcept;
 

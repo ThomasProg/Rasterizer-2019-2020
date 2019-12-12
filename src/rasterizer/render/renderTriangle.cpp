@@ -133,8 +133,6 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
 
     if (isValid)
     {   
-        Color c(0, 0, 0, 0);
-
         float intensity = 0.f;
 
         Vec3 p(0,0,0);
@@ -157,6 +155,7 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
 
         RasterizingVertex vert;
         vert.position3D = std::move(p);
+        Color c(0, 0, 0, 0);
 
         float u = 0;
         float v = 0;
@@ -191,12 +190,13 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
 
             #ifdef __NEAREST_INTERPOLATION__
             {
-                char alpha = c.a;
+                float alpha = c.a;
                 assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
                 //nearest interpolation
                 //max uv is 1, 1 * width = width, width isn't a valid index, so we substract by 1
                 c = texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width) - 1)), 
                                             static_cast<unsigned int>(v * (float(texture->height) - 1)));
+    
                 c.a = alpha;
             }
             #endif
@@ -214,7 +214,7 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
                 // x1,y2--------x2,y2
                 //               ceil
 
-                char alpha = c.a;
+                float alpha = c.a;
 
                 //TODO : assert ?
                 //if not in range, due to float imprecision
@@ -262,11 +262,16 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
             #endif
         }
 
-        c *= intensity;
+        //c *= intensity;
+        c.r *= intensity;
+        c.g *= intensity;
+        c.b *= intensity;
 
         //calcul z
         float z = (v1.z) * weight[0] + (v2.z) * weight[1] + (v3.z) * weight[2];
-
+        //std::cout << c.getTransparence() << '\n';
+        // if (c.a == 0)
+        //     std::cout << c << '\n';
         pTarget->SetPixel(x, y, z, c);
 
         //isInside = true;
@@ -418,7 +423,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                             {
                                 pTarget->depthBuffer.setDepth(currentX, currentY, depthMax - 1);
                                 #ifdef __ANTI_ALIASING_DEBUG__
-                                pTarget->SetPixel(currentX, currentY, 0, Color(255, 0, 0, 255));
+                                pTarget->SetPixel(currentX, currentY, 0, Color(1, 0, 0, 1));
                                 #endif
                             }
                         }
@@ -443,7 +448,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                             {
                                 pTarget->depthBuffer.setDepth(currentX, currentY, depthMax - 1);
                                 #ifdef __ANTI_ALIASING_DEBUG__
-                                pTarget->SetPixel(currentX, currentY, 0, Color(0, 255, 0, 255));
+                                pTarget->SetPixel(currentX, currentY, 0, Color(0, 1, 0, 1));
                                 #endif
                             }
                         }
@@ -479,7 +484,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                             {
                                 pTarget->depthBuffer.setDepth(currentX, currentY, depthMax - 1);
                                 #ifdef __ANTI_ALIASING_DEBUG__
-                                pTarget->SetPixel(currentX, currentY, 0, Color(0, 0, 255, 255));
+                                pTarget->SetPixel(currentX, currentY, 0, Color(0, 0, 1, 1));
                                 #endif
                             }
                         }
@@ -506,7 +511,7 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                                 {
                                     pTarget->depthBuffer.setDepth(currentX, currentY, depthMax - 1);
                                     #ifdef __ANTI_ALIASING_DEBUG__
-                                    pTarget->SetPixel(currentX, currentY, 0, Color(255, 255, 0, 255));
+                                    pTarget->SetPixel(currentX, currentY, 0, Color(1, 1, 0, 1));
                                     #endif
                                 }
                             }
