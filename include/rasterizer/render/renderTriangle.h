@@ -5,12 +5,13 @@
 #include <vector>
 
 #include "vec2.h"
+#include "color.h"
 
 class FrameBuffer;
 
 class Vertex;
 class RasterizingVertex;
-class Color;
+//class Color;
 class Light;
 class Texture;
 

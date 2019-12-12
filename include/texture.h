@@ -2,7 +2,9 @@
 #define _TEXTURE_H_
 
 struct SDL_Texture;
-struct Color;
+//struct Color;
+
+#include "color.h"
 
 class Texture
 {

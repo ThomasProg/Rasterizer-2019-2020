@@ -14,11 +14,11 @@
 
 // by enable the __ANTI_ALIASING__, 
 // there must be __ANTI_ALIASING__ or __MULTI_SAMPLING__ anti aliasing modes defined only.
-#define __ANTI_ALIASING__
-//#define __SUPER_SAMPLING__
-#define __MULTI_SAMPLING__
+// #define __ANTI_ALIASING__
+// #define __SUPER_SAMPLING__
+// #define __MULTI_SAMPLING__
 
-//#define __ANTI_ALIASING_DEBUG__
+// #define __ANTI_ALIASING_DEBUG__
 
 //#define __ENABLE_TRANSPARENCY__
 
@@ -38,15 +38,16 @@ constexpr unsigned int windowHeight = 768;
 
 constexpr float depthMax = 255;
 
-constexpr unsigned int antiAliasingX = 2;
-constexpr unsigned int antiAliasingY = 2;
+constexpr unsigned int antiAliasingX = 1;
+constexpr unsigned int antiAliasingY = 1;
 
 constexpr float textureResolutionX = windowWidth  * antiAliasingX;
 constexpr float textureResolutionY = windowHeight * antiAliasingY;
 
 
 
-//ERRORS : 
+// ERRORS : 
+// DO NOT EDIT
 #if defined(__ANTI_ALIASING__) && defined(__SUPER_SAMPLING__) && defined(__MULTI_SAMPLING__)
 #error Multiple anti aliasing modes running at the same time : undef __SUPER_SAMPLING__ or __MULTI_SAMPLING__
 #endif

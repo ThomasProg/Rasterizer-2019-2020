@@ -121,6 +121,10 @@ mesh->vertices[mesh->vertices.size() - 1].v = b;
 
 Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount)
 {
+#define ADDING_UV(a, b)\
+mesh->vertices[mesh->vertices.size() - 1].u = a;\
+mesh->vertices[mesh->vertices.size() - 1].v = b;
+
     Mesh* mesh = new Mesh;
     mesh->vertices.reserve(2 + latitudeCount * (longitudeCount - 1)); 
     mesh->indices.reserve(2 * (latitudeCount + 1) * (longitudeCount - 1));
@@ -136,6 +140,7 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
     }
 
     mesh->vertices.emplace_back(Vec3(0.0f, 1.f/2, 0.0f), Vec3(0.0f, 1.f/2, 0.0f));
+    ADDING_UV(0.5, 0);
 
     for (unsigned int j = 0; j < longitudeCount - 1; ++j)
     {
@@ -159,6 +164,7 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
             //add vertice location
             //divide by 2 to put the sphere coordinates between -0.5 and 1
             mesh->vertices.emplace_back(Vertex(Vec3(x/2, y/2, z/2), Vec3(x/2, y/2, z/2))); 
+            ADDING_UV(x*z+0.5, y*z+0.5);
             //mesh->normals.emplace_back(Vec3(x/2, y/2, z/2));
 
             if (j < longitudeCount - 2)
@@ -174,6 +180,7 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
     }
 
     mesh->vertices.emplace_back(Vec3(0.0f, -1.f/2, 0.0f), Vec3(0.0f, -1.f/2, 0.0f));
+    ADDING_UV(0.5, 1);
 
     //sphere poles triangle indices
     for (unsigned int i = 0; i < latitudeCount; ++i)
@@ -187,6 +194,7 @@ Mesh* Mesh::CreateSphere(unsigned int latitudeCount, unsigned int longitudeCount
     }
 
     return mesh;
+#undef ADDING_UV
 }
 
 Mesh* Mesh::CreateTriangle(Vec3 point1, Vec3 point2, Vec3 point3)

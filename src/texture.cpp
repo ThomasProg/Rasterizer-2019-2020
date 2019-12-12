@@ -73,10 +73,10 @@ Texture::Texture(const char* filename)
         { 
             Uint32 color = getpixel(surface, x, y);
             char* colors = (char*) &color;
-            pixels[y * width + x][0] = colors[0];
-            pixels[y * width + x][1] = colors[1];
-            pixels[y * width + x][2] = colors[2];
-            pixels[y * width + x][3] = colors[3];
+            pixels[y * width + x].colors[0] = colors[0];
+            pixels[y * width + x].colors[1] = colors[1];
+            pixels[y * width + x].colors[2] = colors[2];
+            pixels[y * width + x].colors[3] = colors[3];
         }
     }
 
@@ -153,6 +153,7 @@ Texture::~Texture()
 
 void Texture::SetPixelColor(unsigned int x, unsigned int y, Color c)
 {
+    //c.clamp();
     if (x > 0 && x < width && y > 0 && y < height)
         pixels[x + y * width] = c;
 }
@@ -172,12 +173,14 @@ void Texture::FillBlack()
 {
     // 4 * sizeof(unsigned char)
     //memset(pixels, 0, 4 * sizeof(unsigned char) * width * height);
+    #pragma omp parallel for
     for (unsigned int i = 0; i < width * height; i++)
     {
-        pixels[i].r = 0;
-        pixels[i].g = 0;
-        pixels[i].b = 0;
-        pixels[i].a = 255;
+        // pixels[i].r = 0;
+        // pixels[i].g = 0;
+        // pixels[i].b = 0;
+        // pixels[i].a = 255;
+        pixels[i] = {0, 0, 0, 255};
     }
 }
 

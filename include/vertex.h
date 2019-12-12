@@ -21,6 +21,8 @@ struct Vertex
     //Vertex(const Vec3&, Color/*, const Vec3& copiedNormal*/);
     Vertex(const Vec3&, const Vec3& copiedNormal, Color);
 
+    void changeRef(const Mat4& transformMatrix);
+
     Vertex& operator=(const Vertex& vertex);
 };
 

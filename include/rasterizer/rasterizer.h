@@ -31,35 +31,35 @@ class Rasterizer
 private:
 
 public:
-    static Vec3 projection(const Vec3& vec);
+    // static Vec3 projection(const Vec3& vec);
 
-    // static void RenderPoints(FrameBuffer* pTarget, std::vector<Light>& lights,
+    // // static void RenderPoints(FrameBuffer* pTarget, std::vector<Light>& lights,
+    // //                          std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
+    // static void RenderPoints(FrameBuffer* pTarget, 
+    //                             const std::vector<Light>& lights,
+    //                             const std::vector<Vec3>&  screenVertices, 
+    //                             const std::vector<Vertex>& worldVertices, 
+    //                             Texture* texture);
+
+    // static void RenderLines(FrameBuffer* pTarget, std::vector<Light>& lights,
     //                          std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
-    static void RenderPoints(FrameBuffer* pTarget, 
-                                const std::vector<Light>& lights,
-                                const std::vector<Vec3>&  screenVertices, 
-                                const std::vector<Vertex>& worldVertices, 
-                                Texture* texture);
 
-    static void RenderLines(FrameBuffer* pTarget, std::vector<Light>& lights,
-                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
+    // // static void RenderTriangles(FrameBuffer* pTarget, std::vector<Light>& lights,
+    // //                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
 
-    // static void RenderTriangles(FrameBuffer* pTarget, std::vector<Light>& lights,
-    //                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
+    // static void RenderTriangles(FrameBuffer* pTarget, 
+    //                             const std::vector<Light>& lights,
+    //                             const std::vector<Vec3>&  screenVertices, 
+    //                             const std::vector<Vertex>& worldVertices,
+    //                             Texture* texture);
 
-    static void RenderTriangles(FrameBuffer* pTarget, 
-                                const std::vector<Light>& lights,
-                                const std::vector<Vec3>&  screenVertices, 
-                                const std::vector<Vertex>& worldVertices,
-                                Texture* texture);
-
-    // static void RenderWireframe(FrameBuffer* pTarget, std::vector<Light>& lights,
-    //                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
-    static void RenderWireframe(FrameBuffer* pTarget, 
-                                const std::vector<Light>& lights,
-                                const std::vector<Vec3>&  screenVertices, 
-                                const std::vector<Vertex>& worldVertices,
-                                Texture* texture);
+    // // static void RenderWireframe(FrameBuffer* pTarget, std::vector<Light>& lights,
+    // //                             std::vector<Vertex>& vertices, std::vector<unsigned int>::iterator& it);
+    // static void RenderWireframe(FrameBuffer* pTarget, 
+    //                             const std::vector<Light>& lights,
+    //                             const std::vector<Vec3>&  screenVertices, 
+    //                             const std::vector<Vertex>& worldVertices,
+    //                             Texture* texture);
 
 
     // static void ClipTriangles(const Entity& entity, FrameBuffer* pTarget, 

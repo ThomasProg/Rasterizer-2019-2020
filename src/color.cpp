@@ -1,3 +1,4 @@
+#include <cassert>
 #include "color.h"
 
 Color::Color()
@@ -69,7 +70,7 @@ Color& Color::operator*=(float scalar) noexcept
   return *this;
 }
 
-Color Color::operator/(unsigned int f) noexcept
+Color Color::operator/(unsigned char f) noexcept
 {
   return Color(r / f, g / f, b / f, a / f);
 }
@@ -82,31 +83,31 @@ Color& Color::operator+=(const Color& rhs) noexcept
     return *this;
 }
 
-unsigned char& Color::operator[](unsigned int index) noexcept
-{
-  switch (index)
-  {
-  case 0:
-    return r;
-    break;
+// unsigned char& Color::operator[](unsigned int index) noexcept
+// {
+//   switch (index)
+//   {
+//   case 0:
+//     return r;
+//     break;
 
-  case 1:
-    return g;
-    break;
+//   case 1:
+//     return g;
+//     break;
   
-  case 2:
-    return b;
-    break;
+//   case 2:
+//     return b;
+//     break;
 
-  case 3:
-    return a;
-    break;
+//   case 3:
+//     return a;
+//     break;
 
-  default:
-    return r;
-    break;
-  }
-}
+//   default:
+//     return r;
+//     break;
+//   }
+// }
 
 Color Color::operator*(float scalar) noexcept
 {
@@ -171,10 +172,95 @@ Color Color::operator+(const Color& rhs) noexcept
   return c;
 }
 
+// Color::Color()
+// {
+
+// }
+
+// Color::Color(float r, float g, float b)
+//   : r(r), g(g), b(b), a(1.f)
+// {
+
+// }
+
+// Color::Color(float r, float g, float b, float a)
+//   : r(r), g(g), b(b), a(a)
+// {
+
+// }
+
+// Color::Color(const Color& setColor)
+//   : r(setColor.r), g(setColor.g), b(setColor.b), a(setColor.a)
+// {
+
+// }
+
+// //sizeof(Color) == 4, 
+// //so we use less memory copying by copy instead of reference (using 4 more bytes)
+// Color& Color::operator=(Color setColor) noexcept
+// {
+//   r = setColor.r;
+//   g = setColor.g;
+//   b = setColor.b;
+//   a = setColor.a;
+//   return *this;
+// }
+
+// Color& Color::operator*=(float scalar) noexcept
+// {
+//   r *= scalar;
+//   g *= scalar;
+//   b *= scalar;
+//   a *= scalar;
+
+//   return *this;
+// }
+
+// Color  Color::operator*(float scalar) noexcept
+// {
+//   return Color(r*scalar, g*scalar, b*scalar, a*scalar);
+// }
+
+// Color  Color::operator+(const Color& rhs) noexcept
+// {
+//   return Color(r+rhs.r, g+rhs.g, b+rhs.b, a+rhs.a);
+// }
+
+// Color  Color::operator/(unsigned char f) noexcept
+// {
+//   assert(f != 0);
+//   return Color(r/f, g/f, b/f, a/f);
+// }
+
+// Color& Color::operator+=(const Color& rhs) noexcept
+// {
+//   r += rhs.r;
+//   g += rhs.g;
+//   b += rhs.b;
+//   a += rhs.a;
+
+//   return *this;
+// }
+
+//float& operator[](unsigned int index) noexcept;
+
 float Color::getTransparence() const noexcept
 {
-  return float(this->a) / 255.f;
+  return this->a;
 }
+// #include <iostream>
+// void Color::clamp()
+// {
+//   r = std::min(1.f, r);
+//   g = std::min(1.f, g);
+//   b = std::min(1.f, b);
+//   a = std::min(1.f, a);
+
+//   r = std::max(0.f, r);
+//   g = std::max(0.f, g);
+//   b = std::max(0.f, b);
+//   a = std::max(0.f, a);
+// }
 
 Color getAverageColor(Color lhs, Color rhs, float lhsRatio) noexcept
 {

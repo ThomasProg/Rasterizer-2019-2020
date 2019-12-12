@@ -13,6 +13,7 @@ public:
     Vec3();
     Vec3(float x, float y, float z);
     Vec3(const Vec4&);
+    Vec3(const Vec3&);
 
     float GetMagnitude() const;
     void  Normalize();

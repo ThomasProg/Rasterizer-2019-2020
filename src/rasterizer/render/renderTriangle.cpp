@@ -269,8 +269,8 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
 
         pTarget->SetPixel(x, y, z, c);
 
-        isInside = true;
-        isValid = false;
+        //isInside = true;
+        //isValid = false;
     }
     return true;
     // else 
@@ -358,17 +358,12 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
         maxX = pTarget->width;
 
     #ifdef __MULTI_SAMPLING__
-    if (minX % 2 == 1)
-        minX--;
-
-    if (minY % 2 == 1)
-        minY--;
-
-    if (maxX % 2 == 1)
-        maxX--;
-
-    if (maxY % 2 == 1)
-        maxY--;
+    // every pixel respecting (x % 2 == 0 && y % 2 == 0)) 
+    // construct the base texture.
+    minX -= minX % 2;
+    minY -= minY % 2;
+    maxX -= maxX % 2;
+    maxY -= maxY % 2;
     #endif
 
     //TODO : set WeightVar outside of the loops

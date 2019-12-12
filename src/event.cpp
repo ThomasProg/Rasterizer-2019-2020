@@ -40,15 +40,15 @@ void Events::entitiesInit(std::vector<Entity>& entities)
             for (Vertex& vertex : cube.mesh->vertices)
             {
                 if (i % 2 == 0)
-                    vertex.color = Color(i*(255/6), 2, 2);
+                    vertex.color = Color(i*(1/6), 2, 2);
                 else
-                    vertex.color = Color(2, i*(255/6), 2);
+                    vertex.color = Color(2, i*(1/6), 2);
                 i++;
             }
             cube.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 1.0, 1.0));
             //cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.9, 0, float(j)/ 1.f));
             cube.transformation *= Mat4::CreateTranslationMatrix(Vec3(0, 0, j*2));
-            //cube.transformation *= Mat4::CreateRotationMatrix(Vec3(0.1, 0.5, 0.5));
+            cube.transformation *= Mat4::CreateRotationMatrix(Vec3(0, 0.1, 0.1));
             cube.mesh->pTexture = &textureManager.textures[0];
             cube.alpha = 1.f - float(j) / 2.f;
             //cube.mesh->pTexture = new Texture("media/crate.png");
@@ -90,8 +90,9 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     //         vertex.color = Color(0, 10, 255);
     //         //ii += 255.f / 20*20;
     //     }
-    //     //sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
+    //     sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(3.0, 0.0, 0.0));
     //     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(0.5, 0.5, 0.5));
+    //     //sphere.mesh->pTexture = &textureManager.textures[0];
     //     entities.push_back(std::move(sphere));
     // }
 
@@ -220,7 +221,7 @@ int Events::run()
         fps = 1.f/(deltaTime);
         nbFps++;
         totalFps += fps;
-        //std::cout << 1.f/(deltaTime) << std::endl;
+        std::cout << 1.f/(deltaTime) << std::endl;
         lastTime = time;
         //std::cout << totalFps / nbFps << std::endl;
 
@@ -306,7 +307,7 @@ int Events::run()
         //     E_RasterizerMode::E_TRIANGLES);
         //Rasterizer::RenderScene(&scene, &target, Mat4::CreateOrthogonalProjectionMatrix(), camera.GetInverse(), renderMode);
         Rasterizer::RenderScene(&scene, &target, 
-            Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 120), 
+            Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 90), 
             camera.getTransform().GetInverse(), camera, renderMode);
 
         // render.SDL_RenderTexture(target.texture);

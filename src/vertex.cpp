@@ -1,4 +1,6 @@
 #include "vertex.h"
+#include "mat4.h"
+#include "vec4.h"
 
 Vertex::Vertex()
 {
@@ -51,5 +53,13 @@ Vertex& Vertex::operator=(const Vertex& vertex)
   position = vertex.position;
   normal = vertex.normal;
   color = vertex.color;
+  u = vertex.u;
+  v = vertex.v;
   return *this;
+}
+
+void Vertex::changeRef(const Mat4& transformMatrix)
+{
+  position = transformMatrix * Vec4(position, 1);
+  normal   = transformMatrix * Vec4(normal, 0);
 }

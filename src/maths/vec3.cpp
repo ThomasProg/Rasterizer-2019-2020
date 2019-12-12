@@ -17,6 +17,14 @@ Vec3::Vec3(float x, float y, float z)
 
 }
 
+Vec3::Vec3(const Vec3& rhs)
+    : x(rhs.x), 
+      y(rhs.y),
+      z(rhs.z)
+{
+    
+}
+
 Vec3::Vec3(const Vec4& copiedV4)
     : x(copiedV4.x),
       y(copiedV4.y),
