@@ -60,7 +60,7 @@ public:
 //#pragma region color interpolation
 
 __inline
-void getUntexturedPixelColor(const std::array<Vertex*, 3>& triangleVertices, 
+void getUntexturedPixelColor(const std::array<Vertex, 3>& triangleVertices, 
                             const std::array<float, 3>& weight, 
                             Color& colorOutput);
 
@@ -82,6 +82,14 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
                     float w1, float w2, float w3,
                     const Vec3& cameraLocation,
                     FrameBuffer* pTarget, std::vector<Light>& lights, const Material& mat, Texture* texture = nullptr);
+
+
+// bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isInside,
+//                     const Vec3& v1, const Vec3& v2, const Vec3& v3,
+//                     std::array<Vertex*, 3>& triangleVertices, 
+//                     std::array<float, 3>&  ww, float* uP, float* vP, const Vec3& cameraLocation,
+//                     std::array<Vec3, 3>& worldLoc, FrameBuffer* pTarget, std::vector<Light>& lights, 
+//                     Texture* texture, const Material& mat, bool bShouldRecur = true);
 
 #include "renderTriangle.inl"
 

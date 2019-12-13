@@ -24,6 +24,8 @@ public:
     __inline
     Vec3();
     __inline
+    Vec3(float f);
+    __inline
     Vec3(float x, float y, float z);
     __inline
     Vec3(const Vec4&);

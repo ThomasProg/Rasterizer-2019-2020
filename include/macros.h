@@ -8,9 +8,12 @@
 
 #define __PERSPECTIVE_FIX__
 
-#define __NEAREST_INTERPOLATION__
-// #define __BILINEAR_INTERPOLATION__
+// #define __NEAREST_INTERPOLATION__
+#define __BILINEAR_INTERPOLATION__
 
+
+#define __PHONG_LIGHTING__
+// #define __BLINN_PHONG_LIGHTING__
 
 // By enabling the __ANTI_ALIASING__, 
 // there must be __ANTI_ALIASING__ or __MULTI_SAMPLING__ anti aliasing modes defined only.
@@ -19,9 +22,11 @@
 // #define __SUPER_SAMPLING__
 // #define __MULTI_SAMPLING__
 
-// #define __ANTI_ALIASING_DEBUG__
+// #define __ANTI_ALIASING_DEBUG__  
 
 #define __ENABLE_TRANSPARENCY__
+
+#define __ADDITIONAL_SHADERS__
 
 //#define __SDL__
 #define __GLFW__

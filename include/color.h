@@ -17,6 +17,7 @@ struct Color
         };
     };
 
+    __inline
     Color();
     __inline
     Color(float r, float g, float b);
@@ -27,6 +28,7 @@ struct Color
 
     //sizeof(Color) == 4, 
     //so we use less memory copying by copy instead of reference (using 4 more bytes)
+    __inline
     Color& operator=(const Color& setColor) noexcept;
     __inline
     Color& operator*=(float scalar) noexcept;

@@ -17,9 +17,10 @@ class RenderTriangle2
 {
 //private?
 public:
-    Vertex v1, v2, v3;
+    std::array<Vertex, 3> triangleVertices;
+    // Vertex v1, v2, v3;
 
-    Vec4 worldVertices[3];
+    std::array<Vec3, 3> worldVertices;
 
 public:
     RenderTriangle2() {}
@@ -58,7 +59,7 @@ public:
     void drawWireframe(FrameBuffer* pTarget);
 
     __inline
-    void drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& w, const Vec3& cameraLocation, 
+    void drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& ww, const Vec3& cameraLocation, 
                         std::vector<Light>& lights, Texture* pTexture, const Material& mat);
 };
 

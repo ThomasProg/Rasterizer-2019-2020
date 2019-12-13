@@ -30,7 +30,7 @@ void FrameBuffer::SetPixel(unsigned int x, unsigned int y, float newDepth, const
     // if (currentDepth > newDepth)
     // {
         #ifdef __ENABLE_TRANSPARENCY__
-        if (c.a == 1.f)
+        if (c.a >= 1.f)
         {
             texture.SetPixelColor(x, y, c);
         }

@@ -6,8 +6,20 @@
 
 __inline
 Vec3::Vec3()
+    : x(0),
+      y(0),
+      z(0)
 {
     
+}
+
+__inline
+Vec3::Vec3(float f)
+    : x(f),
+      y(f),
+      z(f)
+{
+
 }
 
 __inline
