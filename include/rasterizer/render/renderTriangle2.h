@@ -37,6 +37,9 @@ public:
     void setRelativeToCamera(const Mat4& transform);
 
     __inline
+    bool isClipped(const Texture* pTarget);
+
+    __inline
     std::array<float, 3> projectVertices(const Mat4& projection);
 
     __inline

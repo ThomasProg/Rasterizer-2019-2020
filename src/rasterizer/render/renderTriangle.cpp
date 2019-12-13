@@ -17,13 +17,15 @@
 #include "macros.h"
 
 template<class T>
-constexpr const T& clamp( const T& v, const T& lo, const T& hi )
+__inline constexpr const T& clamp( const T& v, const T& lo, const T& hi )
 {
     assert( !(hi < lo) );
-    return (v < lo) ? lo : (hi < v) ? hi : v;
+    return (v < lo) ? lo : (v > hi) ? hi : v;
 }
 
-float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, 
+float RenderTriangle::getPixelLight(const Vec3& location3D, 
+                                    const Vec3& normal, 
+                                    const std::vector<Light>& lights, 
                                     const Vec3& cameraLocation, const Material& mat)
 {
     float ambient  = 0.f;
@@ -37,20 +39,20 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::
         ambient = light.ambientComponent * mat.ambient;
 
         //diffuse
-        Vec3 pixelToLightVec = (light.position - vertex.position3D);
+        Vec3 pixelToLightVec = (light.position - location3D);
         pixelToLightVec.Normalize();
         
-        float cosTeta = std::max(0.f, dotProduct(pixelToLightVec, vertex.normal));
+        float cosTeta = std::max(0.f, dotProduct(pixelToLightVec, normal));
 
         diffuse = light.diffuseComponent * mat.diffuse * cosTeta;
 
         //specular
-        Vec3 pixelToEyeVec = cameraLocation - vertex.position3D; //TODO
+        Vec3 pixelToEyeVec = cameraLocation - location3D;
         // pixelToEyeVec.z -= 1;
         pixelToEyeVec.Normalize();
         Vec3 h = pixelToLightVec + pixelToEyeVec;
         h.Normalize();
-        float cosAlpha = dotProduct(vertex.normal, h);
+        float cosAlpha = dotProduct(normal, h);
 
         if (cosAlpha < 0)
             cosAlpha = 0;
@@ -65,7 +67,7 @@ float RenderTriangle::getPixelLight(const RasterizingVertex& vertex, const std::
 
 ////////Get weight of a point in a triangle//////////
 inline
-bool getWeight(const Vec2& p, const Vec3& p1, const Vec3& p2, const Vec3& p3, float* weight)
+bool getWeight(const Vec2& p, const Vec3& p1, const Vec3& p2, const Vec3& p3, std::array<float, 3>& weight)
 {
     float det = (p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y);
     if (det == 0)
@@ -83,8 +85,6 @@ bool getWeight(const Vec2& p, const Vec3& p1, const Vec3& p2, const Vec3& p3, fl
     return weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0;
 }
  
-
- //TODO : remove v1, v2, and v3 : they are the same as worldLoc[i]
 __inline
 bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInside,
                     const Vec3& v1, const Vec3& v2, const Vec3& v3,
@@ -93,216 +93,122 @@ bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isValid, bool& isInsid
                     std::array<Vec3*, 3>& worldLoc, FrameBuffer* pTarget, std::vector<Light>& lights, 
                     Texture* texture, const Material& mat, bool bShouldRecur = true)
 {   
-    float weight[3];
+    //BECAREFUL
+    if (!(x > 0 && x < pTarget->width && y > 0 && y < pTarget->height))
+        return false;
+
+    std::array<float, 3> weight;
     isValid = getWeight(Vec2(x,y), v1, v2, v3, weight);
+
+    Vec3 location3D(0,0,0);
+
+    // could be unrolled
+    for (unsigned int i = 0; i < 3; i++)
+    {
+        location3D.x += weight[i] * worldLoc[i]->x;
+        location3D.y += weight[i] * worldLoc[i]->y;
+        location3D.z += weight[i] * worldLoc[i]->z;
+    }
+
+    //compute z
+    float z = (v1.z) * weight[0] + (v2.z) * weight[1] + (v3.z) * weight[2];
 
     if (!isValid)
         return false;
 
     #ifdef __PERSPECTIVE_FIX__
+    // weight[0] *= ww[0];
+    // weight[1] *= ww[1];
+    // weight[2] *= ww[2];
     weight[0] /= ww[0];
     weight[1] /= ww[1];
     weight[2] /= ww[2];
     float total = weight[0] + weight[1] + weight[2];
+    if (total == 0)
+        return false;
     weight[0] = weight[0] / total;
     weight[1] = weight[1] / total;
     weight[2] = weight[2] / total;
     #endif
 
-    // if (isValid && !isInside)
-    // {
-    //     if (x > 0 && y > 0 && bShouldRecur)
-    //     {
-    //         //isInside = false;
-    //         tryToDrawPixel(x-10, y, isValid, isInside, 
-    //                 v1, v2, v3, 
-    //                 triangleVertices,
-    //                 ww, uP, vP, cameraLocation, 
-    //                 worldLoc, pTarget, lights, texture, false);
-    //         tryToDrawPixel(x, y-10, isValid, isInside, 
-    //                 v1, v2, v3, 
-    //                 triangleVertices,
-    //                 ww, uP, vP, cameraLocation, 
-    //                 worldLoc, pTarget, lights, texture, false);
-    //         tryToDrawPixel(x-10, y-10, isValid, isInside, 
-    //                 v1, v2, v3, 
-    //                 triangleVertices,
-    //                 ww, uP, vP, cameraLocation, 
-    //                 worldLoc, pTarget, lights, texture, false);
+    //BECAREFUL
+    float currentDepth = pTarget->depthBuffer.getDepth(x, y);
 
-    //         pTarget->SetPixel(x-1, y-1, 0, Color(255, 0, 0, 255));
-    //     }
-    // }
+    if (currentDepth <= z)
+        return false;
 
-    if (isValid)
-    {   
-        float intensity = 0.f;
+    float intensity = 0.f;
 
-        Vec3 p(0,0,0);
+    //RasterizingVertex vert;
+    Vec3 normal(0, 0, 0);
+    Color c(0, 0, 0, 0);
 
-        //get color
+    float u = 0;
+    float v = 0;
+
+    // could be unrolled
+    for (unsigned int i = 0; i < 3; i++)
+    {
+        normal += weight[i] * triangleVertices[i]->normal;
+    }
+    
+    normal.Normalize();
+
+    intensity = RenderTriangle::getPixelLight(location3D, normal, lights, cameraLocation, mat);
+
+
+    if (texture != nullptr && texture->pixels != nullptr)
+    {
+        // could be unrolled
         for (unsigned int i = 0; i < 3; i++)
         {
-            p.x += weight[i] * worldLoc[i]->x;
-            p.y += weight[i] * worldLoc[i]->y;
-            p.z += weight[i] * worldLoc[i]->z;
-        }
-
-        //BECAREFUL
-        if (!(x > 0 && x < pTarget->width && y > 0 && y < pTarget->height))
-            return false;
-        //BECAREFUL
-        float currentDepth = pTarget->depthBuffer.getDepth(x, y);
-        if (currentDepth <= p.z)
-            return false;
-
-        RasterizingVertex vert;
-        vert.position3D = std::move(p);
-        Color c(0, 0, 0, 0);
-
-        float u = 0;
-        float v = 0;
-
-        //get color
-        for (unsigned int i = 0; i < 3; i++)
-        {
-            c.r += weight[i] * triangleVertices[i]->color.r;
-            c.g += weight[i] * triangleVertices[i]->color.g;
-            c.b += weight[i] * triangleVertices[i]->color.b;
-            c.a += weight[i] * triangleVertices[i]->color.a;
-
-            vert.normal += weight[i] * triangleVertices[i]->normal;
-
             u += weight[i] * uP[i];
             v += weight[i] * vP[i];
         }
 
-        // //unprecision of interpolation of char
-        // if (triangleVertices[0]->color.a == 255 
-        //     && triangleVertices[1]->color.a == 255 
-        //     && triangleVertices[2]->color.a == 255)
-        //     c.a = 255;
+        //if not in range, due to float imprecision
+        // u = clamp(u, 0.f, 1.f);
+        // v = clamp(v, 0.f, 1.f);
+        u = fmod(u, 1);
+        v = fmod(v, 1);
         
-        vert.normal.Normalize();
+        //TODO : enum for interpolation type
 
-        intensity = RenderTriangle::getPixelLight(vert, lights, cameraLocation, mat);
-
-        if (texture != nullptr && texture->pixels != nullptr)
+        #ifdef __NEAREST_INTERPOLATION__
         {
-            //TODO : enum for interpolation type
-
-            #ifdef __NEAREST_INTERPOLATION__
-            {
-                assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
-                //nearest interpolation
-                //max uv is 1, 1 * width = width, width isn't a valid index, so we substract by 1
-                c.copyRGB(texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width) - 1)), 
-                                            static_cast<unsigned int>(v * (float(texture->height) - 1))));
-            }
-            #endif
-
-            #ifdef __BILINEAR_INTERPOLATION__
-            //bilinear interpolation
-            {
-                // floor
-                // x1,y1--------x2,y1
-                //   |            |
-                //   |            |
-                //   |  x,y       |
-                //   |   #        |
-                //   |            |
-                // x1,y2--------x2,y2
-                //               ceil
-
-                //TODO : assert ?
-                //if not in range, due to float imprecision
-                u = clamp(u, 0.f, 1.f);
-                v = clamp(v, 0.f, 1.f);
-
-                const int x1 = static_cast<int>(floor(u * (float(texture->width)-1)));
-                const int x2 = static_cast<int>(ceil(u * (float(texture->width)-1)));
-
-                const int y1 = static_cast<int>(floor(v * (float(texture->height)-1)));
-                const int y2 = static_cast<int>(ceil(v * (float(texture->height)-1)));
-
-                const float curX = u * (float(texture->width) - 1);
-                const float curY = v * (float(texture->height) - 1);
-
-                if (x2 - x1 == 0)
-                {
-                    Color c1 = texture->GetPixelColor(x1, y1);
-                    Color c2 = texture->GetPixelColor(x1, y2);
-
-                    c.copyRGB(getAverageColor(c2, c1, (curY - y1) / (y2 - y1)));
-                }
-                else if (y2 - y1 == 0)
-                {
-                    Color c1 = texture->GetPixelColor(x1, y1);
-                    Color c2 = texture->GetPixelColor(x2, y1);
-
-                    c.copyRGB(getAverageColor(c2, c1, (curX - x1) / (x2 - x1)));
-                }
-                else 
-                {
-                    Color c11 = texture->GetPixelColor(x1, y1);
-                    Color c21 = texture->GetPixelColor(x2, y1);
-                    Color c12 = texture->GetPixelColor(x1, y2);
-                    Color c22 = texture->GetPixelColor(x2, y2);
-
-                    Color c1 = getAverageColor(c21, c11, (curX - x1 / (x2 - x1)));
-                    Color c2 = getAverageColor(c22, c12, (curX - x1 / (x2 - x1)));
-
-                    c.copyRGB(getAverageColor(c2, c1, (curY - y1) / (y2 - y1)));
-                }
-            }
-            #endif
+            getTexturedColorNearestInterpolation(texture, 
+                                                 u, v, 
+                                                 c);
         }
-        
-        mat.additionalShaders(c, p);
+        #endif
 
-        //c *= intensity;
-        c.r *= intensity;
-        c.g *= intensity;
-        c.b *= intensity;
+        #ifdef __BILINEAR_INTERPOLATION__
+        {
+            getTexturedColorBilinearInterpolation(texture, 
+                                                  u, v, 
+                                                  c);
+        }
+        #endif
 
-        //calcul z
-        float z = (v1.z) * weight[0] + (v2.z) * weight[1] + (v3.z) * weight[2];
-        //std::cout << c.getTransparence() << '\n';
-        // if (c.a == 0)
-        //     std::cout << c << '\n';
-        pTarget->SetPixel(x, y, z, c);
-
-        //isInside = true;
-        //isValid = false;
+        c.a += weight[0] * triangleVertices[0]->color.a
+             + weight[1] * triangleVertices[1]->color.a
+             + weight[2] * triangleVertices[2]->color.a;
     }
+    #if defined(__NEAREST_INTERPOLATION__) || defined(__BILINEAR_INTERPOLATION__)
+    else 
+    #endif
+        getUntexturedPixelColor(triangleVertices, weight, c);
+
+    mat.additionalShaders(c, location3D);
+
+    //c *= intensity;
+    c.r *= intensity;
+    c.g *= intensity;
+    c.b *= intensity;
+
+    pTarget->SetPixel(x, y, z, c);
+
     return true;
-    // else 
-    // {
-    //     // end of the triangle
-
-    //     if (isInside && bShouldRecur)
-    //     {
-    //         isInside = false;
-    //         tryToDrawPixel(x+1, y, isValid, isInside, 
-    //                 v1, v2, v3, 
-    //                 triangleVertices,
-    //                 ww, uP, vP, cameraLocation, 
-    //                 worldLoc, pTarget, lights, texture, false);
-    //         tryToDrawPixel(x, y+1, isValid, isInside, 
-    //                 v1, v2, v3, 
-    //                 triangleVertices,
-    //                 ww, uP, vP, cameraLocation, 
-    //                 worldLoc, pTarget, lights, texture, false);
-    //         tryToDrawPixel(x+1, y+1, isValid, isInside, 
-    //                 v1, v2, v3, 
-    //                 triangleVertices,
-    //                 ww, uP, vP, cameraLocation, 
-    //                 worldLoc, pTarget, lights, texture, false);
-
-    //         //pTarget->SetPixel(x+1, y+1, 0, Color(255, 0, 0, 255));
-    //     }
-    //     //     break;
-    // }
 }
 
 void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, Vec3 worldLoc2, Vec3 worldLoc3, 
@@ -316,7 +222,17 @@ void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, V
     triangleVertices[2] = &vert3;
 
     #ifdef __PERSPECTIVE_FIX__
+    // TODO: assert?
+    if (w1 == 0 || w2 == 0 || w3 == 0)
+        return;
+    // For a large amount of operations,
+    // multiplication is faster than divison on most processors,
+    // even though it is architecture dependant.
+    // http://ithare.com/infographics-operation-costs-in-cpu-clock-cycles/
     float ww[3];
+    // ww[0] = 1 / w1;
+    // ww[1] = 1 / w2;
+    // ww[2] = 1 / w3;
     ww[0] = w1;
     ww[1] = w2;
     ww[2] = w3;

@@ -19,9 +19,9 @@ public:
     Vec3 cartesianLocation = Vec3(0, 0, 30);
     Vec3 cartesianRotation = Vec3(0, 0, 0);
 
-    //spherical coordinates
-    float spherialRadius = 30.f;
-    Vec3  sphericalRotation = Vec3(0, 0, 0);
+    // //spherical coordinates
+    // float spherialRadius = 30.f;
+    // Vec3  sphericalRotation = Vec3(0, 0, 0);
 
     static constexpr float rotationSpeed = 0.08;
     static constexpr float translationSpeed = 10;

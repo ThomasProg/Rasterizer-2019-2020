@@ -1,3 +1,4 @@
+#include <cassert>
 #include "frameBuffer.h"
 #include "color.h"
 
@@ -20,28 +21,36 @@ FrameBuffer::FrameBuffer(unsigned int width, unsigned int height)
 void FrameBuffer::SetPixel(unsigned int x, unsigned int y, float newDepth, const Color& c)
 {
     //std::cout << c.getTransparence() << '\n';
-    float currentDepth = depthBuffer.getDepth(x, y);
-    if (!(x > 0 && x < width && y > 0 && y < height))
-        return;
+    // float currentDepth = depthBuffer.getDepth(x, y);
+    // if (!(x > 0 && x < width && y > 0 && y < height))
+    //     return;
 
-    if (currentDepth > newDepth)
-    {
+    assert(x >= 0 && x < width && y >= 0 && y < height);
+
+    // if (currentDepth > newDepth)
+    // {
         #ifdef __ENABLE_TRANSPARENCY__
-            
-        Color oldColor = GetPixelColor(x, y);
-        float div = (c.getTransparence() + oldColor.getTransparence() * (1 - c.getTransparence()));
+        if (c.a == 1.f)
+        {
+            texture.SetPixelColor(x, y, c);
+        }
+        else 
+        {
+            Color oldColor = GetPixelColor(x, y);
+            float div = (c.getTransparence() + oldColor.getTransparence() * (1 - c.getTransparence()));
 
-        Color newColor = c * (c.getTransparence() / div) + oldColor * (oldColor.getTransparence() * (1 - c.getTransparence()) / div);
-        newColor.a = (c.a + oldColor.a * (1 - c.a));
-        // if (newColor.r == 0)
-        //         std::cout << c.getTransparence() << '\n';
-        texture.SetPixelColor(x, y, newColor);
+            Color newColor = c * (c.getTransparence() / div) + oldColor * (oldColor.getTransparence() * (1 - c.getTransparence()) / div);
+            newColor.a = (c.a + oldColor.a * (1 - c.a));
+            // if (newColor.r == 0)
+            //         std::cout << c.getTransparence() << '\n';
+            texture.SetPixelColor(x, y, newColor);
+        }
         #else
         texture.SetPixelColor(x, y, c);
         #endif
 
         depthBuffer.setDepth(x, y, newDepth);
-    }
+    //}
 }
 
 Color FrameBuffer::GetPixelColor(unsigned int x, unsigned int y) const

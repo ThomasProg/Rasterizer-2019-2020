@@ -48,13 +48,41 @@ public:
     //bool getWeight(const Vec2& p, float* weight) const;
     Color getColorAtPixel(Vec2 p, bool& isValid, float* weight) const;
 
-    static float getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, 
-                                const Vec3& cameraLocation, const Material& mat);
+    // static float getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, 
+    //                             const Vec3& cameraLocation, const Material& mat);
+
+    static float getPixelLight(const Vec3& location3D, 
+                               const Vec3& normal, 
+                               const std::vector<Light>& lights, 
+                               const Vec3& cameraLocation, const Material& mat);
 };
+
+//#pragma region color interpolation
+
+__inline
+void getUntexturedPixelColor(const std::array<Vertex*, 3>& triangleVertices, 
+                            const std::array<float, 3>& weight, 
+                            Color& colorOutput);
+
+__inline
+void getTexturedColorNearestInterpolation(const Texture*, 
+                                          const float u,
+                                          const float v, 
+                                          Color& colorOutput);
+
+__inline
+void getTexturedColorBilinearInterpolation(const Texture*, 
+                                           const float u,
+                                           const float v, 
+                                           Color& colorOutput);
+
+//#pragma endregion
 
 void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, Vec3 worldLoc2, Vec3 worldLoc3,
                     float w1, float w2, float w3,
                     const Vec3& cameraLocation,
                     FrameBuffer* pTarget, std::vector<Light>& lights, const Material& mat, Texture* texture = nullptr);
+
+#include "renderTriangle.inl"
 
 #endif

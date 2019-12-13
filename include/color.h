@@ -5,19 +5,6 @@
 
 struct Color
 {
-    // union 
-    // {
-    //     struct 
-    //     {
-    //         unsigned char r, g, b, a;
-    //     };
-    //     struct 
-    //     {
-    //         unsigned char colors[4];
-    //     };
-    // };
-
-
     union 
     {
         struct 
@@ -30,44 +17,44 @@ struct Color
         };
     };
 
-    // Color();
-    // Color(unsigned char r, unsigned char g, unsigned char b);
-    // Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-    // Color(const Color& setColor);
-
-    // //sizeof(Color) == 4, 
-    // //so we use less memory copying by copy instead of reference (using 4 more bytes)
-    // Color& operator=(Color setColor) noexcept;
-    // Color& operator*=(float scalar) noexcept;
-    // Color operator*(float scalar) noexcept;
-    // Color operator+(const Color& rhs) noexcept;
-    // Color operator/(unsigned char f) noexcept;
-    // Color& operator+=(const Color& rhs) noexcept;
-    // //unsigned char& operator[](unsigned int index) noexcept;
-
     Color();
+    __inline
     Color(float r, float g, float b);
+    __inline
     Color(float r, float g, float b, float a);
+    __inline
     Color(const Color& setColor);
 
     //sizeof(Color) == 4, 
     //so we use less memory copying by copy instead of reference (using 4 more bytes)
-    Color& operator=(Color setColor) noexcept;
+    Color& operator=(const Color& setColor) noexcept;
+    __inline
     Color& operator*=(float scalar) noexcept;
+    __inline
     Color operator*(float scalar) const noexcept;
+    __inline
     Color operator+(const Color& rhs) const noexcept;
+    __inline
     Color operator/(unsigned char f) const noexcept;
+    __inline
     Color& operator+=(const Color& rhs) noexcept;
     //float& operator[](unsigned int index) noexcept;
 
     //void clamp();
 
+    __inline
     float getTransparence() const noexcept; //returns transparence 0 < a < 1
+    __inline
     void  copyRGB(const Color& rhs) noexcept;
+    __inline
+    void reset() noexcept;
 };
 
 std::ostream& operator<<(std::ostream& stream, const Color& c);
 
-Color getAverageColor(Color lhs, Color rhs, float lhsRatio) noexcept;
+__inline
+Color getAverageColor(const Color& lhs, const Color& rhs, float lhsRatio) noexcept;
+
+#include "color.inl"
 
 #endif

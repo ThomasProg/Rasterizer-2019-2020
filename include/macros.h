@@ -12,8 +12,9 @@
 // #define __BILINEAR_INTERPOLATION__
 
 
-// by enable the __ANTI_ALIASING__, 
+// By enabling the __ANTI_ALIASING__, 
 // there must be __ANTI_ALIASING__ or __MULTI_SAMPLING__ anti aliasing modes defined only.
+// For the anti aliasing to be working, be sure to assign antiAliasingX or antiAliasingY to a value higher than 1.
 // #define __ANTI_ALIASING__
 // #define __SUPER_SAMPLING__
 // #define __MULTI_SAMPLING__
@@ -35,10 +36,6 @@ constexpr float depthMax = 255;
 
 constexpr unsigned int antiAliasingX = 1;
 constexpr unsigned int antiAliasingY = 1;
-
-
-
-
 
 constexpr float textureResolutionX = windowWidth  * antiAliasingX;
 constexpr float textureResolutionY = windowHeight * antiAliasingY;

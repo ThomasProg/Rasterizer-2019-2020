@@ -5,8 +5,8 @@
 
 struct Light
 {
-    Vec3 position = Vec3(0.0, 10, 0.0); //y is opposite of window
-    //Vec3 playerRelativeLocation;
+    Vec3 position = Vec3(1.0, 10, 0.0); //y is opposite of window
+
     float ambientComponent  = 1.0f;
     float diffuseComponent  = 1.0f;
     float specularComponent = 1.f;
