@@ -210,22 +210,23 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     //         entities.push_back(std::move(cube));
     //     }
     // }
-    // // sphere
-    // for (unsigned int j = 0; j < 1; j++)
-    // {
-    //     Entity sphere;
-    //     sphere.mesh = Mesh::CreateSphere(15, 15);
-    //     // float ii = 0;
-    //     for (Vertex& vertex : sphere.mesh->vertices)
-    //     {
-    //         vertex.color = Color(0, 0, 1);
-    //         //ii += 255.f / 20*20;
-    //     }
-    //     sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(3.0, 0.0, 0.0));
-    //     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(0.5, 0.5, 0.5));
-    //     //sphere.mesh->pTexture = &textureManager.textures[0];
-    //     sphere.alpha = 1.f;
-    //     entities.push_back(std::move(sphere));
+    // sphere
+    for (unsigned int j = 0; j < 1; j++)
+    {
+        Entity sphere;
+        sphere.mesh = Mesh::CreateSphere(15, 15);
+        // float ii = 0;
+        for (Vertex& vertex : sphere.mesh->vertices)
+        {
+            vertex.color = Color(1, 1, 1);
+            //ii += 255.f / 20*20;
+        }
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(3.0, 0.0, 0.0));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
+        //sphere.mesh->pTexture = &textureManager.textures[0];
+        sphere.alpha = 1.f;
+        entities.push_back(std::move(sphere));
+    }
     }
 
     // {

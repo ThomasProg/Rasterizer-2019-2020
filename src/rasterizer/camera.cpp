@@ -58,8 +58,20 @@ void Camera::inputs(float deltaTime, GLFWwindow* window)
         //cartesianLocation.x -= translationSpeed * deltaTime;
     }
 
-    cartesianRotation.y -= (mouseX - prevMouseLocX) * rotationSpeed * deltaTime;
-    cartesianRotation.x -= (mouseY - prevMouseLocY) * rotationSpeed * deltaTime;   
+    float deltaMouseX = prevMouseLocX - mouseX;
+    float deltaMouseY = prevMouseLocY - mouseY; 
+
+    if (glfwGetKey(window, GLFW_KEY_I))
+        deltaMouseY = 1;
+    if (glfwGetKey(window, GLFW_KEY_J))
+        deltaMouseX = 1;
+    if (glfwGetKey(window, GLFW_KEY_K))
+        deltaMouseY = -1;
+    if (glfwGetKey(window, GLFW_KEY_L))
+        deltaMouseX = -1;
+
+    cartesianRotation.y += deltaMouseX * rotationSpeed * deltaTime;
+    cartesianRotation.x += deltaMouseY * rotationSpeed * deltaTime;   
 
     prevMouseLocX = mouseX;
     prevMouseLocY = mouseY;

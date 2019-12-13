@@ -8,8 +8,8 @@
 
 #define __PERSPECTIVE_FIX__
 
-// #define __NEAREST_INTERPOLATION__
-#define __BILINEAR_INTERPOLATION__
+#define __NEAREST_INTERPOLATION__
+// #define __BILINEAR_INTERPOLATION__
 
 
 #define __PHONG_LIGHTING__
@@ -24,7 +24,7 @@
 
 // #define __ANTI_ALIASING_DEBUG__  
 
-#define __ENABLE_TRANSPARENCY__
+// #define __ENABLE_TRANSPARENCY__
 
 #define __ADDITIONAL_SHADERS__
 

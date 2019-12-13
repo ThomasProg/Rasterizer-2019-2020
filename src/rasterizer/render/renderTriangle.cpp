@@ -52,7 +52,7 @@ float RenderTriangle::getPixelLight(const Vec3& location3D,
         pixelToEyeVec.Normalize();
         Vec3 h = pixelToLightVec + pixelToEyeVec;
         h.Normalize();
-        float cosAlpha = dotProduct(normal, h);
+        float cosAlpha = dotProduct(normal.getNormalized(), h);
 
         if (cosAlpha < 0)
             cosAlpha = 0;

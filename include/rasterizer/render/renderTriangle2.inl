@@ -575,7 +575,7 @@ void getTextureColor(Texture const * const pTexture,
     #endif
         getUntexturedPixelColor(triangleVertices, weight, c);
 }
-
+// extern unsigned int GLOBAL_INDEX;
 __inline
 void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& ww, 
                                     const Vec3& cameraLocation, std::vector<Light>& lights, 
@@ -701,7 +701,17 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
 
     std::array<float, 3> intensity;
     for (unsigned int i = 0; i < 3; ++i)
+    {
         intensity[i] = RenderTriangle::getPixelLight(worldVertices[i], triangleVertices[i].normal, lights, cameraLocation, mat);
+        // GLOBAL_INDEX++;
+        // if (GLOBAL_INDEX > 50)
+        // {
+        //     std::cout << worldVertices[i] << '\n';
+        //     std::cout << triangleVertices[i].normal << '\n';
+        //     std::cout << intensity[i] << '\n';
+        //     GLOBAL_INDEX = 0;
+        // }
+    }
 
     // std::array<Color, 3> finalColor; // of the 3 vertices
 
@@ -711,6 +721,22 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
 
         // for (unsigned int i = 0; i < 4; ++i)
         //     c += finalColor[i] * weight[i];
+
+        #ifdef __PERSPECTIVE_FIX__
+        {
+            weight[0] /= ww[0];
+            weight[1] /= ww[1];
+            weight[2] /= ww[2];
+
+            float total = weight[0] + weight[1] + weight[2];
+            if (total == 0)
+                return Color(0, 0, 0, 0);
+                
+            weight[0] = weight[0] / total;
+            weight[1] = weight[1] / total;
+            weight[2] = weight[2] / total;
+        }
+        #endif
 
         getTextureColor(pTexture, 
                         triangleVertices, 
@@ -732,6 +758,9 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
 
         if (finalIntensity > 1)
             finalIntensity = 1;
+
+        else if (finalIntensity < 0)
+            finalIntensity = 0;
 
         c.r *= finalIntensity;
         c.g *= finalIntensity;
@@ -779,7 +808,12 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
             getWeight(x - triangleVertices[2].position.x, y - triangleVertices[2].position.y, weight, weightData);
 
             if (weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0)
-                tryToDrawPixel(x, y, 0, pTarget, getColor);
+            {
+                const float depth = (triangleVertices[0].position.z) * weight[0] 
+                                  + (triangleVertices[1].position.z) * weight[1] 
+                                  + (triangleVertices[2].position.z) * weight[2];
+                tryToDrawPixel(x, y, depth, pTarget, getColor);
+            }
         }
     }
 }
