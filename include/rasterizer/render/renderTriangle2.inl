@@ -762,6 +762,11 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         else if (finalIntensity < 0)
             finalIntensity = 0;
 
+        #ifdef __ADDITIONAL_SHADERS__
+        Vec3 newLoc = weight * worldVertices;
+        mat.additionalShaders(c, newLoc);
+        #endif
+
         c.r *= finalIntensity;
         c.g *= finalIntensity;
         c.b *= finalIntensity;

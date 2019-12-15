@@ -1,6 +1,7 @@
 #include "glad/glad.h"
 #include <GL/glu.h>
 #include <GLFW/glfw3.h>
+#include <queue>
 
 #include "event.h"
 
@@ -118,7 +119,7 @@ void Events::entitiesInit(std::vector<Entity>& entities)
                 //if ((int((worldLocation.x / 1)) + int((worldLocation.y / 1)) + int((worldLocation.z / 1))) % 2 == 0)
                 // if ((int(floor(worldLocation.x / 1)) + int(floor(worldLocation.y / 1)) + int(floor(worldLocation.z / 1))) % 2 == 0)
                 //     color.r -= 0.2;
-
+                color.r *= 2.f;
                 // color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10);
 
                 // if (color.r < 0)
@@ -321,6 +322,12 @@ Events::~Events()
     
 }
 
+__inline
+float lerp(float a, float b, float f)
+{
+    return a + f * (b - a);
+}
+
 int Events::run()
 {
     if (!bRun)
@@ -336,6 +343,13 @@ int Events::run()
     float frame = 0;
     float fps;
     float lastTime = 0.f;
+    constexpr long unsigned int nbDeltaTimeSamples = 10;
+    std::array<float, nbDeltaTimeSamples> deltaTimes;
+    unsigned int deltaTimeIndex = 0;
+    float lowestFPS = 10000;
+    float highestFPS = 0.f;
+    float deltaMedium = 1;
+
     //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.00, 0.00, PI/5));
     #ifdef __SDL__
     while (bRun)
@@ -351,6 +365,23 @@ int Events::run()
 
         float time = float (SDL_GetTicks()) / 1000.f;
         float deltaTime = time - lastTime;
+        deltaTimes[deltaTimeIndex] = deltaTime;
+        deltaTimeIndex++;
+        if (deltaTimeIndex >= nbDeltaTimeSamples)
+        {
+            deltaTimeIndex = 0;
+
+            deltaMedium = 0.f;
+            for (float f : deltaTimes)
+            {
+                deltaMedium += f;
+            }
+            deltaMedium /= deltaTimes.size();
+            lowestFPS = std::min(deltaMedium, lowestFPS);
+            highestFPS = std::max(deltaMedium, highestFPS);
+        }
+        std::cout << deltaMedium << '\n';
+
         fps = 1.f/(deltaTime);
         nbFps++;
         totalFps += fps;
@@ -359,6 +390,7 @@ int Events::run()
         //std::cout << totalFps / nbFps << std::endl;
 
         frame += 1;
+
 
         //scene.entities[1].transformation = Mat4::CreateTranslationMatrix(camera.cartesianLocation / 2);
 
@@ -373,6 +405,29 @@ int Events::run()
 
         // scene.lights[0].position.x = 10 * sin(frame/10);
         // scene.lights[0].position.y = 10 * cos(frame/10);
+
+        scene.entities[0].mat.additionalShaders = [&deltaMedium, &highestFPS, &lowestFPS](Color& color, Vec3& worldLocation)
+        {
+            // color.r /= (sin(worldLocation.x * 10) + PI) * 0.8; 
+            // if (color.r > 1.f)
+            //     color.r = 1.f;
+
+            // const float delta = (sin(worldLocation.x * 10) / PI + 1) * 0.8;
+            // color.r += (sin(worldLocation.x * 10) / PI + 1) * 0.8;
+            // color.g += (cos(worldLocation.y * 10) / PI + 1) * 0.8;
+            // color.b += 0;
+
+            //if ((int((worldLocation.x / 1)) + int((worldLocation.y / 1)) + int((worldLocation.z / 1))) % 2 == 0)
+            // if ((int(floor(worldLocation.x / 1)) + int(floor(worldLocation.y / 1)) + int(floor(worldLocation.z / 1))) % 2 == 0)
+            //     color.r -= 0.2;
+            // color.r = (deltaMedium - lowestFPS) / (highestFPS - lowestFPS) * 1;//sin(frame/10);
+            color.r = 1 - (highestFPS - lowestFPS) / (lerp(lowestFPS, highestFPS, deltaMedium) - lowestFPS);
+            //std::cout << color.r << '\n';
+            // color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10);
+
+            // if (color.r < 0)
+            //     color.r = 0;
+        };
 
         //SDL
         inputs(event);

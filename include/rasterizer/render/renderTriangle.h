@@ -19,34 +19,34 @@ class Texture;
 
 class RenderTriangle
 {
-private:
-    //array of const Vertex& is not possible
-    //array of const pointers to const Vertex
-    std::array<RasterizingVertex const *, 3> triangleVertices;
-    FrameBuffer * const pTarget;
-    const std::vector<Light>& lights;
-    Texture* texture;
+// private:
+//     //array of const Vertex& is not possible
+//     //array of const pointers to const Vertex
+//     std::array<RasterizingVertex const *, 3> triangleVertices;
+//     FrameBuffer * const pTarget;
+//     const std::vector<Light>& lights;
+//     Texture* texture;
 
-private: 
-    float det;
-    float cst[4];
+// private: 
+//     float det;
+//     float cst[4];
 
 public:
 
-    RenderTriangle() = delete;
+    // RenderTriangle() = delete;
 
-    // RenderTriangle(std::array<Vertex const * const, 3> triangleVertices);
-    RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget, const std::vector<Light>& lights, Texture* texture);
-    //RenderTriangle(Vertex const * const v1, Vertex const * const v2, Vertex const * const v3);
+    // // RenderTriangle(std::array<Vertex const * const, 3> triangleVertices);
+    // RenderTriangle(const std::array<RasterizingVertex, 3>& triangleVertices, FrameBuffer* pTarget, const std::vector<Light>& lights, Texture* texture);
+    // //RenderTriangle(Vertex const * const v1, Vertex const * const v2, Vertex const * const v3);
     
-    // void draw();
-    // void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
-    // void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
-    // void drawHorizontalLine(Vec2 p1, Vec2 p2, int height, const std::array<const Vertex*, 3>& triangleVertices) const;
+    // // void draw();
+    // // void fillTopFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
+    // // void fillBottomFlatTriangle(const std::array<const Vertex*, 3>& triangleVertices) const;
+    // // void drawHorizontalLine(Vec2 p1, Vec2 p2, int height, const std::array<const Vertex*, 3>& triangleVertices) const;
 
-    //bool getWeight2D(const Vec2& p, float* weight) const;
-    //bool getWeight(const Vec2& p, float* weight) const;
-    Color getColorAtPixel(Vec2 p, bool& isValid, float* weight) const;
+    // //bool getWeight2D(const Vec2& p, float* weight) const;
+    // //bool getWeight(const Vec2& p, float* weight) const;
+    // Color getColorAtPixel(Vec2 p, bool& isValid, float* weight) const;
 
     // static float getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, 
     //                             const Vec3& cameraLocation, const Material& mat);
@@ -78,10 +78,10 @@ void getTexturedColorBilinearInterpolation(const Texture*,
 
 //#pragma endregion
 
-void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, Vec3 worldLoc2, Vec3 worldLoc3,
-                    float w1, float w2, float w3,
-                    const Vec3& cameraLocation,
-                    FrameBuffer* pTarget, std::vector<Light>& lights, const Material& mat, Texture* texture = nullptr);
+// void drawTriangle(Vertex& vert1, Vertex& vert2, Vertex& vert3, Vec3 worldLoc1, Vec3 worldLoc2, Vec3 worldLoc3,
+//                     float w1, float w2, float w3,
+//                     const Vec3& cameraLocation,
+//                     FrameBuffer* pTarget, std::vector<Light>& lights, const Material& mat, Texture* texture = nullptr);
 
 
 // bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isInside,

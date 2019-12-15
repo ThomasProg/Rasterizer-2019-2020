@@ -65,25 +65,25 @@ float RenderTriangle::getPixelLight(const Vec3& location3D,
     return total;
 }
 
-////////Get weight of a point in a triangle//////////
-inline
-bool getWeight(const Vec2& p, const Vec3& p1, const Vec3& p2, const Vec3& p3, std::array<float, 3>& weight)
-{
-    float det = (p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y);
-    if (det == 0)
-    {
-        weight[0] = 0;
-        weight[1] = 0;
-        weight[2] = 0;
-        return false;
-    }
+// ////////Get weight of a point in a triangle//////////
+// inline
+// bool getWeight(const Vec2& p, const Vec3& p1, const Vec3& p2, const Vec3& p3, std::array<float, 3>& weight)
+// {
+//     float det = (p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y);
+//     if (det == 0)
+//     {
+//         weight[0] = 0;
+//         weight[1] = 0;
+//         weight[2] = 0;
+//         return false;
+//     }
 
-    weight[0] = ((p2.y - p3.y) * (p.x - p3.x) + (p3.x - p2.x) * (p.y - p3.y)) / det;
-    weight[1] = ((p3.y - p1.y) * (p.x - p3.x) + (p1.x - p3.x) * (p.y - p3.y)) / det;
-    weight[2] = 1 - weight[1] - weight[0];
+//     weight[0] = ((p2.y - p3.y) * (p.x - p3.x) + (p3.x - p2.x) * (p.y - p3.y)) / det;
+//     weight[1] = ((p3.y - p1.y) * (p.x - p3.x) + (p1.x - p3.x) * (p.y - p3.y)) / det;
+//     weight[2] = 1 - weight[1] - weight[0];
     
-    return weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0;
-}
+//     return weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0;
+// }
  
 // __inline
 // bool tryToDrawPixel(unsigned int x, unsigned int y, bool& isInside,
