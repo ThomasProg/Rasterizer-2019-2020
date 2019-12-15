@@ -8,10 +8,13 @@
 #include "vec4.h"
 
 #include "material.h"
+#include "rasterizer.h"
 
 class FrameBuffer;
 class Light;
 class Texture;
+class Entity;
+class Camera;
 
 class RenderTriangle2
 {
@@ -38,7 +41,8 @@ public:
     void setRelativeToCamera(const Mat4& transform);
 
     __inline
-    bool isClipped(const Texture* pTarget);
+    bool isClipped(const Texture* pTarget, 
+                   std::vector<RenderTriangle2>& additionalTriangles);
 
     __inline
     std::array<float, 3> projectVertices(const Mat4& projection);
@@ -61,6 +65,11 @@ public:
     __inline
     void drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& ww, const Vec3& cameraLocation, 
                         std::vector<Light>& lights, Texture* pTexture, const Material& mat);
+
+
+    void projectAndDraw(std::vector<Light>& lights, const Entity* entity,
+                        FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& screenConversionMatrix, 
+                        Camera& camera, E_RasterizerMode mode);
 };
 
 #include "renderTriangle2.inl"

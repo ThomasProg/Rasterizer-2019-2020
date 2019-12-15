@@ -2,6 +2,7 @@
 
 #include "vec4.h"
 #include "mat4.h"
+#include "macros.h"
 
 __inline
 void RenderTriangle2::setupForTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3)
@@ -44,11 +45,14 @@ void RenderTriangle2::setRelativeToCamera(const Mat4& transform)
 }
 
 __inline
-bool RenderTriangle2::isClipped(const Texture* pTarget)
+bool RenderTriangle2::isClipped(const Texture* pTarget, 
+                                std::vector<RenderTriangle2>& additionalTriangles)
 {
     return triangleVertices[0].position.z > 0 
         || triangleVertices[1].position.z > 0 
         || triangleVertices[2].position.z > 0;
+    
+    // TODO: add triangles with clipping
 }
 
 __inline

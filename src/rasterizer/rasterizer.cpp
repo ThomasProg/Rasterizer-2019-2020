@@ -124,14 +124,13 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
 {
     const Mat4 screenConversionMatrix = Mat4::CreateScreenConversionMatrix();
     RenderTriangle2 rendering;
-    std::array<float, 3> w;
 
     for (const Entity* entity : entities)
     {
         const std::vector<Vertex>& vertices = entity->mesh->worldVertices;
         const std::vector<unsigned int>& indices = entity->mesh->indices;
 
-        #pragma omp parallel for private(rendering), private(w)
+        #pragma omp parallel for private(rendering)
         for (unsigned int indicesIndex = 0; indicesIndex < indices.size(); indicesIndex += 3)
         {
             rendering.setupForTriangle(vertices[indices[indicesIndex]], 
@@ -144,35 +143,20 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
             {
                 rendering.setRelativeToCamera(inverseCameraMatrix);
 
-                if (rendering.isClipped(&pTarget->texture))
+                std::vector<RenderTriangle2> additionnalTriangles;
+
+                if (rendering.isClipped(&pTarget->texture, additionnalTriangles))
                     continue;
 
-                w = rendering.projectVertices(projectionMatrix);
-
-                rendering.setVerticesToScreenResolution(screenConversionMatrix);
-
-                //rendering.setDefaultColor();
-
-                rendering.addTransparency(entity->alpha);
-            
-                switch (mode)
+                rendering.projectAndDraw(lights, entity, pTarget, 
+                                         projectionMatrix, screenConversionMatrix,
+                                         camera, mode);
+                                         
+                for (RenderTriangle2& triangle : additionnalTriangles)
                 {
-                    case E_RasterizerMode::E_WIREFRAME:
-                    case E_RasterizerMode::E_TRIANGLES_AS_LINES:
-                        rendering.drawWireframe(pTarget);
-                        break;
-
-
-                    // rendering.v1.color = Color(250,250,250);   
-                    // rendering.v2.color = Color(250,100,250);   
-                    // rendering.v3.color = Color(250,250,100);
-
-                    case E_RasterizerMode::E_TRIANGLES:
-                        rendering.drawTriangleX(pTarget, w, camera.cartesianLocation, lights, entity->mesh->pTexture, entity->mat);   
-                        break; 
-
-                    default:
-                        break;
+                    rendering.projectAndDraw(lights, entity, pTarget, 
+                                            projectionMatrix, screenConversionMatrix,
+                                            camera, mode);
                 }
             }
         }
