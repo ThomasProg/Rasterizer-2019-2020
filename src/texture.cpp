@@ -151,7 +151,7 @@ Texture::~Texture()
         delete[] pixels;
 }
 
-void Texture::SetPixelColor(unsigned int x, unsigned int y, Color c)
+void Texture::SetPixelColor(unsigned int x, unsigned int y, const Color& c)
 {
     //c.clamp();
     if (x > 0 && x < width && y > 0 && y < height)
@@ -186,5 +186,14 @@ void Texture::FillBlack()
 
 void Texture::ToTexture(SDL_Texture* sdlTexture) const
 {
-    SDL_UpdateTexture(sdlTexture, nullptr, pixels, sizeof(Color) * width); 
+    unsigned char pix[width * height * 4];
+    for (unsigned int i = 0; i < width * height * 4; i += 4)
+    {
+        //std::cout << this->pixels[i].r << std::endl;
+        pix[i]   =  this->pixels[i].r*255;
+        pix[i+1] =  this->pixels[i].g*255;
+        pix[i+2] =  this->pixels[i].b*255;
+        pix[i+3] =  255;
+    }
+    SDL_UpdateTexture(sdlTexture, nullptr, pix, sizeof(unsigned char) * width); 
 }

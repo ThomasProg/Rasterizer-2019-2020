@@ -5,9 +5,9 @@
 
 struct Light
 {
-    Vec3 position = Vec3(1.0, 10, 0.0); //y is opposite of window
+    Vec3 position = Vec3(10.0, 0, 0.0); //y is opposite of window
 
-    float ambientComponent  = 0.5f;
+    float ambientComponent  = 1.0f;
     float diffuseComponent  = 1.0f;
     float specularComponent = 1.f;
 

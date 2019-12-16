@@ -19,7 +19,7 @@ struct Vertex
     Vertex(const Vec3&);
     Vertex(const Vec3& position, const Vec3& normal);
     //Vertex(const Vec3&, Color/*, const Vec3& copiedNormal*/);
-    Vertex(const Vec3&, const Vec3& copiedNormal, Color);
+    Vertex(const Vec3&, const Vec3& copiedNormal, const Color&);
 
     void changeRef(const Mat4& transformMatrix);
 

@@ -41,7 +41,7 @@ public:
     void setRelativeToCamera(const Mat4& transform);
 
     __inline
-    bool isClipped(const Texture* pTarget, 
+    bool isClipped(const Texture& pTarget, 
                    std::vector<RenderTriangle2>& additionalTriangles);
 
     __inline

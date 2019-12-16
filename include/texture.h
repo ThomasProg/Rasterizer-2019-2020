@@ -21,7 +21,7 @@ public:
     Texture(unsigned int width, unsigned int height);
     ~Texture();
 
-    void SetPixelColor(unsigned int x, unsigned int y, Color c);
+    void SetPixelColor(unsigned int x, unsigned int y, const Color& c);
     Color GetPixelColor(unsigned int x, unsigned int y) const;
 
     void FillBlack();

@@ -65,34 +65,35 @@ void Rasterizer::antiAliasingCompression(const FrameBuffer& highResolutionFB, Te
             //unsigned int id = x * antiAliasingX + y * (target.width) * antiAliasingY;
             Color finalColor (0, 0, 0, 0);
 
-            #ifdef __MULTI_SAMPLING__
-            unsigned int firstElemID = x * antiAliasingX + 
-                                    (y * antiAliasingY) * highResolutionFB.texture.width;
+            // #ifdef __MULTI_SAMPLING_TRIANGLES__
+            // unsigned int firstElemID = x * antiAliasingX + 
+            //                         (y * antiAliasingY) * highResolutionFB.texture.width;
 
-            float curDepth = highResolutionFB.depthBuffer.depth[firstElemID];
+            // float curDepth = highResolutionFB.depthBuffer.depth[firstElemID];
             
-            unsigned int nbMixedColors = getNbMixedColors(x, y, highResolutionFB, curDepth);
+            // unsigned int nbMixedColors = getNbMixedColors(x, y, highResolutionFB, curDepth);
 
-            if (nbMixedColors == 0)
-                continue;
+            // if (nbMixedColors == 0)
+            //     continue;
             
-            //get pixel color
-            for (unsigned int i = 0; i < antiAliasingY; i++)
-            {
-                for (unsigned int j = 0; j < antiAliasingX; j++)
-                {       
-                    unsigned int highResIndex = x * antiAliasingX + j + 
-                                               (i + y * antiAliasingY) * highResolutionTexture.width;
-                    if (highResolutionFB.depthBuffer.depth[highResIndex] < depthMax
-                        && highResolutionFB.depthBuffer.depth[highResIndex] <= curDepth)
-                    {
-                        finalColor += highResolutionTexture.pixels[highResIndex] / nbMixedColors;
-                    }
-                }  
-            }
-            #endif
+            // //get pixel color
+            // for (unsigned int i = 0; i < antiAliasingY; i++)
+            // {
+            //     for (unsigned int j = 0; j < antiAliasingX; j++)
+            //     {       
+            //         unsigned int highResIndex = x * antiAliasingX + j + 
+            //                                    (i + y * antiAliasingY) * highResolutionTexture.width;
+            //         if (highResolutionFB.depthBuffer.depth[highResIndex] < depthMax
+            //             && highResolutionFB.depthBuffer.depth[highResIndex] <= curDepth)
+            //         {
+            //             finalColor += highResolutionTexture.pixels[highResIndex] / nbMixedColors;
+            //         }
+            //     }  
+            // }
+            // #endif
 
-            #ifdef __SUPER_SAMPLING__
+            // #ifdef __SUPER_SAMPLING__
+            #if defined(__SUPER_SAMPLING__) || defined(__MULTI_SAMPLING_LIGHT__)
 
             //get pixel color
             for (unsigned int i = 0; i < antiAliasingY; i++)
@@ -145,7 +146,7 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
 
                 std::vector<RenderTriangle2> additionnalTriangles;
 
-                if (rendering.isClipped(&pTarget->texture, additionnalTriangles))
+                if (rendering.isClipped(pTarget->texture, additionnalTriangles))
                     continue;
 
                 rendering.projectAndDraw(lights, entity, pTarget, 
@@ -154,7 +155,7 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
                                          
                 for (RenderTriangle2& triangle : additionnalTriangles)
                 {
-                    rendering.projectAndDraw(lights, entity, pTarget, 
+                    triangle.projectAndDraw(lights, entity, pTarget, 
                                             projectionMatrix, screenConversionMatrix,
                                             camera, mode);
                 }
@@ -219,7 +220,7 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget,
                     > (b->center - camera.cartesianLocation).getLengthSquared();
         }  
     );
-    
+
     renderEntities(opaqueEntities, pScene->lights, pTarget, projectionMatrix, inverseCameraMatrix, camera, mode);
 
     renderEntities(transparentEntities, pScene->lights, pTarget, projectionMatrix, inverseCameraMatrix, camera, mode);

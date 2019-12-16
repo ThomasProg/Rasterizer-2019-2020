@@ -23,7 +23,7 @@ public:
     // float spherialRadius = 30.f;
     // Vec3  sphericalRotation = Vec3(0, 0, 0);
 
-    static constexpr float rotationSpeed = 0.08;
+    static constexpr float rotationSpeed = 0.05;
     static constexpr float translationSpeed = 10;
 
 public:

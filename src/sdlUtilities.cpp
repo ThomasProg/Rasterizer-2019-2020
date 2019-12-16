@@ -20,7 +20,7 @@ SDL_Utilities::SDL_Utilities(bool& isValid)
     window   = SDL_CreateWindow("window", 0, 0, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
     renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
 
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
 
     isValid = true;
     return;
