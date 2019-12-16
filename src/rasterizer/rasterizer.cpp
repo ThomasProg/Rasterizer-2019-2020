@@ -139,9 +139,10 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
                                         vertices[indices[indicesIndex + 2]]);
 
             // rendering.setLocalToWorld(entity->transformation);
-
+            #ifdef __BACKFACE_CULLING__
             if (!rendering.isBackFaceCulled(camera.cartesianLocation))
-            {
+            #endif
+            { 
                 rendering.setRelativeToCamera(inverseCameraMatrix);
 
                 std::vector<RenderTriangle2> additionnalTriangles;

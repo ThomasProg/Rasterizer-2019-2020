@@ -74,8 +74,8 @@ __inline
 std::array<float, 3> RenderTriangle2::projectVertices(const Mat4& projection)
 {
     std::array<float, 3> w;
-
-    //TODO: opti possible
+    // Mat4 projection = Mat4::CreateOrthogonalProjectionMatrix();
+    //TODO: opti possible 
     Vec4 projectedLoc = projection * triangleVertices[0].position;
     w[0] = projectedLoc.w;
     triangleVertices[0].position = projectedLoc.getHomogenizedVec();
@@ -692,6 +692,13 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         //         + triangleVertices[1].position.z * weight[1] 
         //         + triangleVertices[2].position.z * weight[2];
 
+        Vec3 normal(0, 0, 0);
+        // could be unrolled
+        for (unsigned int i = 0; i < 3; i++)
+        {
+            normal += weight[i] * triangleVertices[i].normal;
+        }
+
         #ifdef __PERSPECTIVE_FIX__
         {
             weight[0] /= ww[0];
@@ -709,14 +716,7 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         #endif
 
         //RasterizingVertex vert;
-        Vec3 normal(0, 0, 0);
         Color c(0, 0, 0, 0);
-
-        // could be unrolled
-        for (unsigned int i = 0; i < 3; i++)
-        {
-            normal += weight[i] * triangleVertices[i].normal;
-        }
         
         // lighting
         float intensity;

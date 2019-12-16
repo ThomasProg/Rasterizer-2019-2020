@@ -205,7 +205,7 @@ Mesh* Mesh::CreateTriangle(Vec3 point1, Vec3 point2, Vec3 point3)
     mesh->indices.reserve(3);
 
 #define ADDING_VERTEX_AND_NORMAL(vec) \
-    mesh->vertices.emplace_back(Vertex(vec, vec));
+    mesh->vertices.emplace_back(Vertex(vec, vec));\
 
     // ADDING_VERTEX_AND_NORMAL(Vec3(min, max, max));
     // ADDING_VERTEX_AND_NORMAL(Vec3(max, max, max));

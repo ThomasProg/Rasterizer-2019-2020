@@ -254,44 +254,82 @@ Mesh* loadMeshFromObj()
 
 void Events::entitiesInit(std::vector<Entity>& entities)
 {
-    // {
-    //     for (unsigned int j = 0; j < 1; j++)
-    //     {
-    //         Entity sphere;
-    //         sphere.mesh = Mesh::CreateCube();
-    //         // float ii = 0;
-    //         for (Vertex& vertex : sphere.mesh->vertices)
-    //         {
-    //             vertex.color = Color(1, 1, 1);
-    //             //ii += 255.f / 20*20;
-    //         }
-    //         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-3.0, 0.0, 0.0));
-    //         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
-    //         sphere.mesh->pTexture = &textureManager.textures[0];
-    //         sphere.alpha = 1.f;
-    //         entities.push_back(std::move(sphere));
-    //     }
-    // }
-
     {
         for (unsigned int j = 0; j < 1; j++)
         {
             Entity sphere;
-            //sphere.mesh = Mesh::CreateSphere(15, 15);
-            sphere.mesh = loadMeshFromObj();
+            sphere.mesh = Mesh::CreateCube();
             // float ii = 0;
             for (Vertex& vertex : sphere.mesh->vertices)
             {
                 vertex.color = Color(1, 1, 1);
                 //ii += 255.f / 20*20;
             }
-            sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, -1.0, 3.0));
-            sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/10.f, 1.f/10, 1.f/10));
-            sphere.mesh->pTexture = &textureManager.textures[0];
+            sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
+            sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
+            sphere.mesh->pTexture = &textureManager.textures[1];
             sphere.alpha = 1.f;
             entities.push_back(std::move(sphere));
         }
     }
+
+    // {
+    //     for (unsigned int j = 0; j < 1; j++)
+    //     {
+    //         Entity sphere;
+    //         //sphere.mesh = Mesh::CreateSphere(15, 15);
+    //         sphere.mesh = loadMeshFromObj();
+    //         // float ii = 0;
+    //         for (Vertex& vertex : sphere.mesh->vertices)
+    //         {
+    //             vertex.color = Color(1, 1, 1);
+    //             //ii += 255.f / 20*20;
+    //         }
+    //         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, -1.0, 3.0));
+    //         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/10.f, 1.f/10, 1.f/10));
+    //         sphere.mesh->pTexture = &textureManager.textures[0];
+    //         sphere.alpha = 1.f;
+    //         entities.push_back(std::move(sphere));
+    //     }
+    // }
+
+    // {
+    //     for (unsigned int j = 0; j < 1; j++)
+    //     {
+    //         Entity sphere;
+    //         sphere.mesh = new Mesh;
+    //         //sphere.mesh = Mesh::CreateSphere(15, 15);
+    //         //sphere.mesh = Mesh::CreateTriangle(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(0, 1, 0));
+    //         // float ii = 0;
+    //         for (Vertex& vertex : sphere.mesh->vertices)
+    //         {
+    //             vertex.color = Color(1, 1, 1);
+    //             //ii += 255.f / 20*20;
+    //         }
+
+    // Vertex vert1 (Vec3(0,0,-10), Vec3(0,0,1), Color(1.f, 1.f, 1.f, 1.f));
+    // vert1.u = 0.f;
+    // vert1.v = 0.f;
+    // sphere.mesh->vertices.emplace_back(vert1);
+    // Vertex vert2 (Vec3(1,1,0), Vec3(0,0,1), Color(1.f, 1.f, 1.f, 1.f));
+    // vert2.u = 1.f;
+    // vert2.v = 1.f;
+    // sphere.mesh->vertices.emplace_back(vert2);
+    // Vertex vert3 (Vec3(0,1,0), Vec3(0,0,1), Color(1.f, 1.f, 1.f, 1.f));
+    // vert3.u = 0.f;
+    // vert3.v = 1.f;
+    // sphere.mesh->vertices.emplace_back(vert3);
+    // sphere.mesh->indices.emplace_back(0);
+    // sphere.mesh->indices.emplace_back(1);
+    // sphere.mesh->indices.emplace_back(2);
+
+    //         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
+    //         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f, 1.f, 1.f));
+    //         sphere.mesh->pTexture = &textureManager.textures[1];
+    //         sphere.alpha = 1.f;
+    //         entities.push_back(std::move(sphere));
+    //     }
+    // }
 
     // {
     //     Entity sphere;

@@ -16,7 +16,7 @@ public:
     float prevMouseLocX = 0, prevMouseLocY = 0;
 
     //cartesian coordinates
-    Vec3 cartesianLocation = Vec3(0, 0, 30);
+    Vec3 cartesianLocation = Vec3(0, 0, 16);
     Vec3 cartesianRotation = Vec3(0, 0, 0);
 
     // //spherical coordinates

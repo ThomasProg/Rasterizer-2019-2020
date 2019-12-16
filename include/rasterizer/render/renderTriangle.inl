@@ -28,12 +28,12 @@ void getTexturedColorNearestInterpolation(const Texture* texture,
 {
     // u and v represents a pixel location in the  texture, and them must be between 0 and 1.
     assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
-
+ 
     // Max uv is 1, 1 * width = width, width isn't a valid index, 
     // so we substract by 1 before the multiplication.
     // since (u, v) >= 0, we can cast them to unsigned int without errors.
-    colorOutput.copyRGB(texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width) - 1)), 
-                                               static_cast<unsigned int>(v * (float(texture->height) - 1))));
+    colorOutput.copyRGB(texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width))), 
+                                               static_cast<unsigned int>(v * (float(texture->height)))));
 }
 
 __inline

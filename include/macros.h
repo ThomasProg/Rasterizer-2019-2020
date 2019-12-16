@@ -12,8 +12,8 @@
 #define __BILINEAR_INTERPOLATION__
 
 
-#define __PHONG_LIGHTING__
-// #define __BLINN_PHONG_LIGHTING__
+// #define __PHONG_LIGHTING__
+#define __BLINN_PHONG_LIGHTING__
 
 // #define __ENABLE_TRANSPARENCY__
 
