@@ -11,6 +11,7 @@ void getUntexturedPixelColor(const std::array<Vertex, 3>& triangleVertices,
                              Color& colorOutput)
 {
     // Could be unrolled for optimization
+    // interpolate 
     for (unsigned int i = 0; i < 3; i++)
     {
         colorOutput.r += weight[i] * triangleVertices[i].color.r;

@@ -135,8 +135,8 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
         for (unsigned int indicesIndex = 0; indicesIndex < indices.size(); indicesIndex += 3)
         {
             rendering.setupForTriangle(vertices[indices[indicesIndex]], 
-                                        vertices[indices[indicesIndex + 1]], 
-                                        vertices[indices[indicesIndex + 2]]);
+                                       vertices[indices[indicesIndex + 1]], 
+                                       vertices[indices[indicesIndex + 2]]);
 
             // rendering.setLocalToWorld(entity->transformation);
             #ifdef __BACKFACE_CULLING__

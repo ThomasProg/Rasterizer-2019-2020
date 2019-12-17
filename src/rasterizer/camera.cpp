@@ -62,13 +62,13 @@ void Camera::inputs(float deltaTime, GLFWwindow* window)
     float deltaMouseY = prevMouseLocY - mouseY; 
 
     if (glfwGetKey(window, GLFW_KEY_I))
-        deltaMouseY = 5;
+        deltaMouseY = rotationSpeedOnKey;
     if (glfwGetKey(window, GLFW_KEY_J))
-        deltaMouseX = 5;
+        deltaMouseX = rotationSpeedOnKey;
     if (glfwGetKey(window, GLFW_KEY_K))
-        deltaMouseY = -5;
+        deltaMouseY = -rotationSpeedOnKey;
     if (glfwGetKey(window, GLFW_KEY_L))
-        deltaMouseX = -5;
+        deltaMouseX = -rotationSpeedOnKey;
 
     cartesianRotation.y += deltaMouseX * rotationSpeed * deltaTime;
     cartesianRotation.x += deltaMouseY * rotationSpeed * deltaTime;   

@@ -7,7 +7,7 @@ RessourceManager::RessourceManager()
 
     textures.reserve(nbLoadedTextures);
     textures.emplace_back(std::move(Texture("media/midna/midona_body.png")));
-    //textures.emplace_back(std::move(Texture("media/crate.png")));
+    textures.emplace_back(std::move(Texture("media/crate.png")));
     textures.emplace_back(std::move(Texture("media/crate2.png")));
 }
 

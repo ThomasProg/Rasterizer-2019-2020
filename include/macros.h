@@ -8,16 +8,16 @@
 
 #define __PERSPECTIVE_FIX__
 
-// #define __NEAREST_INTERPOLATION__
-#define __BILINEAR_INTERPOLATION__
+#define __NEAREST_INTERPOLATION__
+// #define __BILINEAR_INTERPOLATION__
 
 
-// #define __PHONG_LIGHTING__
-#define __BLINN_PHONG_LIGHTING__
+#define __PHONG_LIGHTING__
+// #define __BLINN_PHONG_LIGHTING__
 
-// #define __ENABLE_TRANSPARENCY__
+#define __ENABLE_TRANSPARENCY__
 
-//#define __ADDITIONAL_SHADERS__
+#define __ADDITIONAL_SHADERS__
 
 //#define __SDL__
 #define __GLFW__

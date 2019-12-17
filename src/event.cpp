@@ -151,7 +151,7 @@ void Events::lightsInit(std::vector<Light>& lights)
 // 	}
 // }
 
-Mesh* loadMeshFromObj()
+Mesh* loadMeshFromObj(RessourceManager& textureManager)
 {
     Mesh* meshQ = new Mesh;
 
@@ -163,7 +163,7 @@ Mesh* loadMeshFromObj()
     std::string warn;
     std::string err;
 
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str());
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str(), "media/midna/");
 
     if (!warn.empty()) {
     std::cout << warn << std::endl;
@@ -177,9 +177,25 @@ Mesh* loadMeshFromObj()
     exit(1);
     }
 
+    for (tinyobj::material_t mat : materials)
+    {
+        textureManager.addFromFile(mat.diffuse_texname.c_str());
+    }
+
+    // for (size_t s = 0; s < shapes.size(); s++) 
+    // {
+    //     tinyobj::mesh_t& mesh = shapes[s].mesh;
+    //     for (tinyobj::material_t mat : mesh.material_ids) 
+    //         tinyobj::material_t& material = materials[mesh.material_ids[0]];
+    // }
+
     // Loop over shapes
     for (size_t s = 0; s < shapes.size(); s++) 
     {
+        tinyobj::mesh_t& mesh = shapes[s].mesh;
+        tinyobj::material_t& material = materials[mesh.material_ids[0]];
+        // material.diffuse_texname;
+        // textureManager.textures.emplace_back(std::move(Texture("media/midna/midona_body.png")));
         for (unsigned int i = 0; i < attrib.vertices.size(); i++)
         {
             Vertex vert;
@@ -254,8 +270,69 @@ Mesh* loadMeshFromObj()
 
 void Events::entitiesInit(std::vector<Entity>& entities)
 {
+    float zDepth = -5;
+
     {
-        for (unsigned int j = 0; j < 1; j++)
+        Entity sphere;
+        sphere.mesh = Mesh::CreateCube();
+        for (Vertex& vertex : sphere.mesh->vertices)
+        {
+            vertex.color = Color(vertex.position.x, vertex.position.y, vertex.position.z);
+        }
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-2.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
+        //sphere.mesh->pTexture = &textureManager.textures[1];
+        sphere.alpha = 1.f;
+        entities.push_back(std::move(sphere));
+    }
+
+    {
+        Entity sphere;
+        sphere.mesh = Mesh::CreateSphere(15, 15);
+        for (Vertex& vertex : sphere.mesh->vertices)
+        {
+            vertex.color = Color(vertex.position.x, vertex.position.y, vertex.position.z);
+        }
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(2.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f, 1.f, 1.f));
+        //sphere.mesh->pTexture = &textureManager.textures[1];
+        sphere.alpha = 1.f;
+        entities.push_back(std::move(sphere));
+    }
+
+    zDepth -= 15;
+
+    {
+        Entity sphere;
+        sphere.mesh = Mesh::CreateCube();
+        // float ii = 0;
+        for (Vertex& vertex : sphere.mesh->vertices)
+        {
+            vertex.color = Color(1, 1, 1);
+            //ii += 255.f / 20*20;
+        }
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-2.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
+        sphere.mesh->pTexture = &textureManager.textures[2];
+        sphere.alpha = 1.f;
+        entities.push_back(std::move(sphere));
+    }
+
+    {
+        Entity sphere;
+        sphere.mesh = Mesh::CreateSphere(15, 15);
+
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(2.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f, 1.f, 1.f));
+        sphere.mesh->pTexture = &textureManager.textures[2];
+        sphere.alpha = 1.f;
+        entities.push_back(std::move(sphere));
+    }
+
+    zDepth -= 20;
+
+    {
+        for (unsigned int j = 0; j < 2; j++)
         {
             Entity sphere;
             sphere.mesh = Mesh::CreateCube();
@@ -265,7 +342,8 @@ void Events::entitiesInit(std::vector<Entity>& entities)
                 vertex.color = Color(1, 1, 1);
                 //ii += 255.f / 20*20;
             }
-            sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
+            sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-2.0-j*3, 0.0, zDepth));
+            sphere.transformation *= Mat4::CreateRotationMatrix(Vec3(j, j, j));
             sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
             sphere.mesh->pTexture = &textureManager.textures[1];
             sphere.alpha = 1.f;
@@ -273,63 +351,146 @@ void Events::entitiesInit(std::vector<Entity>& entities)
         }
     }
 
-    // {
-    //     for (unsigned int j = 0; j < 1; j++)
-    //     {
-    //         Entity sphere;
-    //         //sphere.mesh = Mesh::CreateSphere(15, 15);
-    //         sphere.mesh = loadMeshFromObj();
-    //         // float ii = 0;
-    //         for (Vertex& vertex : sphere.mesh->vertices)
-    //         {
-    //             vertex.color = Color(1, 1, 1);
-    //             //ii += 255.f / 20*20;
-    //         }
-    //         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, -1.0, 3.0));
-    //         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/10.f, 1.f/10, 1.f/10));
-    //         sphere.mesh->pTexture = &textureManager.textures[0];
-    //         sphere.alpha = 1.f;
-    //         entities.push_back(std::move(sphere));
-    //     }
-    // }
+    {
+        for (unsigned int j = 0; j < 2; j++)
+        {
+            Entity sphere;
+            sphere.mesh = Mesh::CreateSphere(15, 15);
+
+            sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(2.0+j*3, 0.0, zDepth));
+            sphere.transformation *= Mat4::CreateRotationMatrix(Vec3(j, j, j));
+            sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f, 1.f, 1.f));
+            sphere.mesh->pTexture = &textureManager.textures[1];
+            sphere.alpha = 1.f;
+            entities.push_back(std::move(sphere));
+        }
+    }
+
+    zDepth -= 20;
+    
+    {
+        Entity sphere;
+        sphere.mesh = Mesh::CreateCube();
+        // float ii = 0;
+        for (Vertex& vertex : sphere.mesh->vertices)
+        {
+            vertex.color = Color(1, 1, 1);
+            //ii += 255.f / 20*20;
+        }
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-7.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
+        sphere.mesh->pTexture = &textureManager.textures[2];
+        sphere.alpha = 0.8f;
+        entities.push_back(std::move(sphere));
+    }
+
+    {
+        Entity sphere;
+        sphere.mesh = Mesh::CreateSphere(15, 15);
+
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(7.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f, 1.f, 1.f));
+        sphere.mesh->pTexture = &textureManager.textures[2];
+        sphere.alpha = 0.8f;
+        entities.push_back(std::move(sphere));
+    }
+
+    for (unsigned int i = 0; i < 2; i++)
+    {
+        {
+            Entity wall;
+            wall.mesh = Mesh::CreateCube();
+            for (Vertex& vertex : wall.mesh->vertices)
+            {
+                vertex.color = Color(1, 1, 1);
+            }
+            wall.transformation *= Mat4::CreateTranslationMatrix(Vec3(15.0 * pow((-1), i), 0.0, zDepth));
+            wall.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 5.5, 5.5));
+            wall.mesh->pTexture = &textureManager.textures[1];
+            wall.alpha = 1.0f;
+            entities.push_back(std::move(wall));
+        }
+    }
+
+    zDepth -= 20;
+
+    {
+        Entity sphere;
+        sphere.mesh = Mesh::CreateCube();
+        // float ii = 0;
+        for (Vertex& vertex : sphere.mesh->vertices)
+        {
+            vertex.color = Color(1, 1, 1);
+            //ii += 255.f / 20*20;
+        }
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-7.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
+        sphere.mesh->pTexture = &textureManager.textures[1];
+        sphere.alpha = 0.2f;
+        entities.push_back(std::move(sphere));
+    }
+
+    {
+        Entity sphere;
+        sphere.mesh = Mesh::CreateSphere(15, 15);
+
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(7.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f, 1.f, 1.f));
+        sphere.mesh->pTexture = &textureManager.textures[1];
+        sphere.alpha = 0.2f;
+        entities.push_back(std::move(sphere));
+    }
+
+    for (unsigned int i = 0; i < 2; i++)
+    {
+        {
+            Entity wall;
+            wall.mesh = Mesh::CreateCube();
+            for (Vertex& vertex : wall.mesh->vertices)
+            {
+                vertex.color = Color(1, 1, 1);
+            }
+            wall.transformation *= Mat4::CreateTranslationMatrix(Vec3(15.0 * pow((-1), i), 0.0, zDepth));
+            wall.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 5.5, 5.5));
+            wall.mesh->pTexture = &textureManager.textures[2];
+            wall.alpha = 1.0f;
+            entities.push_back(std::move(wall));
+        }
+    }
+
+    zDepth -= 20;
 
     // {
-    //     for (unsigned int j = 0; j < 1; j++)
+    //     Entity sphere;
+    //     sphere.mesh = Mesh::CreateCube();
+    //     for (Vertex& vertex : sphere.mesh->vertices)
     //     {
-    //         Entity sphere;
-    //         sphere.mesh = new Mesh;
-    //         //sphere.mesh = Mesh::CreateSphere(15, 15);
-    //         //sphere.mesh = Mesh::CreateTriangle(Vec3(0, 0, 0), Vec3(1, 0, 0), Vec3(0, 1, 0));
-    //         // float ii = 0;
-    //         for (Vertex& vertex : sphere.mesh->vertices)
-    //         {
-    //             vertex.color = Color(1, 1, 1);
-    //             //ii += 255.f / 20*20;
-    //         }
-
-    // Vertex vert1 (Vec3(0,0,-10), Vec3(0,0,1), Color(1.f, 1.f, 1.f, 1.f));
-    // vert1.u = 0.f;
-    // vert1.v = 0.f;
-    // sphere.mesh->vertices.emplace_back(vert1);
-    // Vertex vert2 (Vec3(1,1,0), Vec3(0,0,1), Color(1.f, 1.f, 1.f, 1.f));
-    // vert2.u = 1.f;
-    // vert2.v = 1.f;
-    // sphere.mesh->vertices.emplace_back(vert2);
-    // Vertex vert3 (Vec3(0,1,0), Vec3(0,0,1), Color(1.f, 1.f, 1.f, 1.f));
-    // vert3.u = 0.f;
-    // vert3.v = 1.f;
-    // sphere.mesh->vertices.emplace_back(vert3);
-    // sphere.mesh->indices.emplace_back(0);
-    // sphere.mesh->indices.emplace_back(1);
-    // sphere.mesh->indices.emplace_back(2);
-
-    //         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
-    //         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f, 1.f, 1.f));
-    //         sphere.mesh->pTexture = &textureManager.textures[1];
-    //         sphere.alpha = 1.f;
-    //         entities.push_back(std::move(sphere));
+    //         vertex.color = Color(1, 1, 1);
     //     }
+    //     sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, zDepth));
+    //     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(5.5, 5.5, 1.5));
+    //     sphere.alpha = 1.0f;
+    //     entities.push_back(std::move(sphere));
     // }
+    {
+        for (unsigned int j = 0; j < 1; j++)
+        {
+            Entity sphere;
+            //sphere.mesh = Mesh::CreateSphere(15, 15);
+            sphere.mesh = loadMeshFromObj(textureManager);
+            // float ii = 0;
+            for (Vertex& vertex : sphere.mesh->vertices)
+            {
+                vertex.color = Color(1, 1, 1);
+                //ii += 255.f / 20*20;
+            }
+            sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, -1.0, zDepth));
+            sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/10.f, 1.f/10, 1.f/10));
+            sphere.mesh->pTexture = &textureManager.textures[0];
+            sphere.alpha = 1.f;
+            entities.push_back(std::move(sphere));
+        }
+    }
 
     // {
     //     Entity sphere;
@@ -342,6 +503,23 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     //     sphere.alpha = 1.f;
     //     entities.push_back(std::move(sphere));
     // }
+
+
+    {
+        Entity sphere;
+        sphere.mesh = Mesh::CreateCube();
+        // float ii = 0;
+        for (Vertex& vertex : sphere.mesh->vertices)
+        {
+            vertex.color = Color(1, 1, 1);
+            //ii += 255.f / 20*20;
+        }
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, -5.0, 0));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1, 0.1, 20));
+        sphere.mesh->pTexture = &textureManager.textures[1];
+        sphere.alpha = 0.2f;
+        entities.push_back(std::move(sphere));
+    }
 }
 
 void Events::sceneInit(Scene& scene)
@@ -491,7 +669,8 @@ int Events::run()
 
         frame += 1;
 
-
+        scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
+        scene.entities[1].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
         //scene.entities[1].transformation = Mat4::CreateTranslationMatrix(camera.cartesianLocation / 2);
 
         //scene.entities[1].transformation = Mat4::CreateTranslationMatrix(Vec3(camera.cartesianLocation.x, -10, camera.cartesianLocation.z));
@@ -506,7 +685,7 @@ int Events::run()
         // scene.lights[0].position.x = 10 * sin(frame/10);
         // scene.lights[0].position.y = 10 * cos(frame/10);
 
-        // scene.entities[0].mat.additionalShaders = [&deltaMedium, &highestFPS, &lowestFPS](Color& color, Vec3& worldLocation)
+        // scene.entities[1].mat.additionalShaders = [&deltaMedium, &highestFPS, &lowestFPS](Color& color, Vec3& worldLocation)
         // {
         //     // color.r /= (sin(worldLocation.x * 10) + PI) * 0.8; 
         //     // if (color.r > 1.f)
@@ -517,12 +696,12 @@ int Events::run()
         //     // color.g += (cos(worldLocation.y * 10) / PI + 1) * 0.8;
         //     // color.b += 0;
 
-        //     //if ((int((worldLocation.x / 1)) + int((worldLocation.y / 1)) + int((worldLocation.z / 1))) % 2 == 0)
+        //     // if ((int((worldLocation.x / 1)) + int((worldLocation.y / 1)) + int((worldLocation.z / 1))) % 2 == 0)
         //     // if ((int(floor(worldLocation.x / 1)) + int(floor(worldLocation.y / 1)) + int(floor(worldLocation.z / 1))) % 2 == 0)
         //     //     color.r -= 0.2;
         //     // color.r = (deltaMedium - lowestFPS) / (highestFPS - lowestFPS) * 1;//sin(frame/10);
-        //     //color.r = 1 - (highestFPS - lowestFPS) / (lerp(lowestFPS, highestFPS, deltaMedium) - lowestFPS);
-        //     //std::cout << color.r << '\n';
+        //     // color.r = 1 - (highestFPS - lowestFPS) / (lerp(lowestFPS, highestFPS, deltaMedium) - lowestFPS);
+        //     // std::cout << color.r << '\n';
         //     color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10);
 
         //     // if (color.r < 0)
@@ -600,7 +779,7 @@ int Events::run()
         //     E_RasterizerMode::E_TRIANGLES);
         //Rasterizer::RenderScene(&scene, &target, Mat4::CreateOrthogonalProjectionMatrix(), camera.GetInverse(), renderMode);
         Rasterizer::RenderScene(&scene, &target, 
-            Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 60), 
+            Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 90), 
             camera.getTransform().GetInverse(), camera, renderMode);
 
         // render.SDL_RenderTexture(target.texture);
