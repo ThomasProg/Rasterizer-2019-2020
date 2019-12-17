@@ -18,4 +18,6 @@ public:
     float getDepth(unsigned int x, unsigned int y) const;
 };
 
+#include "depthBuffer.inl"
+
 #endif

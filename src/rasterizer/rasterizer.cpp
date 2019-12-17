@@ -7,10 +7,7 @@
 #include <set>
 #include <cassert>
 
-#include "dynamicAsStaticArray.h"
-
 #include "rasterizer.h"
-#include "clipping.h"
 
 #include "light.h"
 
@@ -23,15 +20,11 @@
 #include "camera.h"
 #include "entity.h"
 #include "vertex.h"
-#include "vertex2.h"
-#include "rasterizingVertex.h"
 #include "mesh.h"
 #include "vec2.h"
 #include "vec3.h"
 #include "vec4.h"
 #include "color.h"
-
-#include "renderTriangle.h"
 
 inline
 unsigned int getNbMixedColors(const int x, const int y, const FrameBuffer& highResolutionFB, const float curDepth)

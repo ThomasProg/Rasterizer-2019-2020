@@ -3,7 +3,6 @@
 #include "vec4.h"
 #include "mat4.h"
 #include "macros.h"
-#include "renderTriangle.h"
 #include "light.h"
 #include "texture.h"
 #include "color.h"

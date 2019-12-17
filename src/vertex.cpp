@@ -32,14 +32,6 @@ Vertex::Vertex(const Vec3& position, const Vec3& normal)
 
 }
 
-// Vertex::Vertex(const Vec3& copiedLocation, Color copiedColor/*, const Vec3& copiedNormal*/)
-//     : position(copiedLocation),
-//       //normal(copiedNormal),
-//       color(copiedColor)
-// {
-
-// }
-
 Vertex::Vertex(const Vec3& copiedLocation, const Vec3& copiedNormal, const Color& copiedColor)
     : position(copiedLocation),
       normal(copiedNormal),

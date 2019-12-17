@@ -18,12 +18,17 @@ public:
     FrameBuffer(unsigned int width, unsigned int height);
     ~FrameBuffer();
 
+    __inline
     void SetPixel(unsigned int x, unsigned int y, float newDepth, const Color& c);
 
+    __inline
     Color GetPixelColor(unsigned int x, unsigned int y) const;
+    __inline
     float GetDepth(unsigned int x, unsigned int y) const;
 
     void ResetPixels();
 };
+
+#include "frameBuffer.inl"
 
 #endif

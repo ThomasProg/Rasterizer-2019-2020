@@ -21,14 +21,11 @@ public:
     Texture(unsigned int width, unsigned int height);
     ~Texture();
 
-    void SetPixelColor(unsigned int x, unsigned int y, const Color& c);
-    
+
     __inline
-    Color GetPixelColor(unsigned int x, unsigned int y) const
-    {
-        assert(0 <= x && x < width && 0 <= y && y < height);
-        return pixels[x + y * width];   
-    }
+    void SetPixelColor(unsigned int x, unsigned int y, const Color& c);
+    __inline
+    Color GetPixelColor(unsigned int x, unsigned int y) const;
 
     void FillBlack();
 
@@ -36,5 +33,7 @@ public:
 
     void setDegradee();
 };
+
+#include "texture.inl"
 
 #endif

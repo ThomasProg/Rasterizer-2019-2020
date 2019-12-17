@@ -154,24 +154,6 @@ Texture::~Texture()
         delete[] pixels;
 }
 
-void Texture::SetPixelColor(unsigned int x, unsigned int y, const Color& c)
-{
-    //c.clamp();
-    if (x > 0 && x < width && y > 0 && y < height)
-        pixels[x + y * width] = c;
-}
-
-// Color Texture::GetPixelColor(unsigned int x, unsigned int y) const
-// {
-//     // if (!(0 <= x && x < width && 0 <= y && y < height))
-//     // {
-//     //     std::cout << "y" << std::endl;
-//     // }
-
-//     assert(0 <= x && x < width && 0 <= y && y < height);
-//     return pixels[x + y * width];   
-// }
-
 void Texture::FillBlack()
 {
     // 4 * sizeof(unsigned char)
