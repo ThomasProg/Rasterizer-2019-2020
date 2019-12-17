@@ -1,6 +1,6 @@
 MAKEFLAGS+=--no-builtin-rules --no-builtin-variables
 
-CXXFLAGS=-O3 -g -pg -no-pie -Wall -MMD -Wno-unused-function -fopenmp
+CXXFLAGS=-O3 -Wall -MMD -Wno-unused-function -fopenmp
 CXXFLAGS+=-Iinclude -ItestMains -Iinclude/maths -Iinclude/rasterizer -Iinclude/rasterizer/render -Iinclude/glad -fopenmp
 CFLAGS=$(CXXFLAGS)
 CC=gcc
@@ -24,14 +24,10 @@ all: exe
 	$(CXX) -o $@ -c $< $(CXXFLAGS)
 
 exe: $(OBJS)
-	$(CXX) -o $@ $(LDFLAGS) -pg -no-pie $^ $(LDLIBS)
+	$(CXX) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 
 clean:
 	rm -f $(DEPS) $(OBJS) gmon.out exe
-
-gmon:
-	rm -f output.txt \
-	&& gprof exe gmon.out > output.txt
 
 threading:
 	make -j

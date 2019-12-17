@@ -8,8 +8,6 @@
 
 #include "event.h"
 
-#include "sdlUtilities.h"
-
 #include "vertex.h"
 #include "mesh.h"
 #include "light.h"
@@ -30,125 +28,6 @@ void Events::lightsInit(std::vector<Light>& lights)
 {
     lights.push_back(Light());
 }
-
-// Mesh* loadMeshFromObj()
-// {
-//     Mesh* mesh = new Mesh;
-
-//     // Vertex vert1 (Vec3(0,0,0), Vec3(0,0,1), Color(1.f, 1.f, 1.f, 1.f));
-//     // vert1.u = 0.f;
-//     // vert1.v = 0.f;
-//     // mesh->vertices.emplace_back(vert1);
-//     // Vertex vert2 (Vec3(1,1,0), Vec3(0,0,1), Color(1.f, 1.f, 1.f, 1.f));
-//     // vert2.u = 0.f;
-//     // vert2.v = 1.f;
-//     // mesh->vertices.emplace_back(vert2);
-//     // Vertex vert3 (Vec3(1,0,0), Vec3(0,0,1), Color(1.f, 1.f, 1.f, 1.f));
-//     // vert3.u = 1.f;
-//     // vert3.v = 1.f;
-//     // mesh->vertices.emplace_back(vert3);
-
-//     // mesh->indices.emplace_back(0);
-//     // mesh->indices.emplace_back(1);
-//     // mesh->indices.emplace_back(2);
-
-//     // return mesh;
-
-// 	// Initialize Loader
-// 	objl::Loader Loader;
-
-// 	// Load .obj File
-// 	bool loadout = Loader.LoadFile("media/midna.obj");
-
-// 	// Check to see if it loaded
-
-// 	// If so continue
-// 	if (loadout)
-// 	{
-// 		// Create/Open e1Out.txt
-// 		std::ofstream file("e1Out.txt");
-
-// 		// Go through each loaded mesh and out its contents
-// 		for (int i = 0; i < Loader.LoadedMeshes.size(); i++)
-// 		{
-// 			// Copy one of the loaded meshes to be our current mesh
-// 			objl::Mesh curMesh = Loader.LoadedMeshes[i];
-
-// 			// Print Mesh Name
-// 			file << "Mesh " << i << ": " << curMesh.MeshName << "\n";
-
-// 			// Print Vertices
-// 			file << "Vertices:\n";
-
-// 			// Go through each vertex and print its number,
-// 			//  position, normal, and texture coordinate
-// 			for (int j = 0; j < curMesh.Vertices.size(); j++)
-// 			{
-//                 Vertex v;
-//                 v.position = Vec3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
-//                 v.normal   = Vec3(curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z);
-//                 v.u = curMesh.Vertices[j].TextureCoordinate.X;
-//                 v.v = curMesh.Vertices[j].TextureCoordinate.Y;
-//                 v.color = {1.f, 1.f, 1.f, 1.f};
-
-// 				file << "V" << j << ": " <<
-// 					"P(" << curMesh.Vertices[j].Position.X << ", " << curMesh.Vertices[j].Position.Y << ", " << curMesh.Vertices[j].Position.Z << ") " <<
-// 					"N(" << curMesh.Vertices[j].Normal.X << ", " << curMesh.Vertices[j].Normal.Y << ", " << curMesh.Vertices[j].Normal.Z << ") " <<
-// 					"TC(" << curMesh.Vertices[j].TextureCoordinate.X << ", " << curMesh.Vertices[j].TextureCoordinate.Y << ")\n";
-
-//                 mesh->vertices.emplace_back(v);
-// 			}
-
-// 			// Print Indices
-// 			file << "Indices:\n";
-
-// 			// Go through every 3rd index and print the
-// 			//	triangle that these indices represent
-// 			for (int j = 0; j < curMesh.Indices.size(); j += 3)
-// 			{
-// 				file << "T" << j / 3 << ": " << curMesh.Indices[j] << ", " << curMesh.Indices[j + 1] << ", " << curMesh.Indices[j + 2] << "\n";
-// 			    mesh->indices.emplace_back(curMesh.Indices[j]);
-// 			    mesh->indices.emplace_back(curMesh.Indices[j+1]);
-// 			    mesh->indices.emplace_back(curMesh.Indices[j+2]);
-//             }
-
-// 			// Print Material
-// 			file << "Material: " << curMesh.MeshMaterial.name << "\n";
-// 			file << "Ambient Color: " << curMesh.MeshMaterial.Ka.X << ", " << curMesh.MeshMaterial.Ka.Y << ", " << curMesh.MeshMaterial.Ka.Z << "\n";
-// 			file << "Diffuse Color: " << curMesh.MeshMaterial.Kd.X << ", " << curMesh.MeshMaterial.Kd.Y << ", " << curMesh.MeshMaterial.Kd.Z << "\n";
-// 			file << "Specular Color: " << curMesh.MeshMaterial.Ks.X << ", " << curMesh.MeshMaterial.Ks.Y << ", " << curMesh.MeshMaterial.Ks.Z << "\n";
-// 			file << "Specular Exponent: " << curMesh.MeshMaterial.Ns << "\n";
-// 			file << "Optical Density: " << curMesh.MeshMaterial.Ni << "\n";
-// 			file << "Dissolve: " << curMesh.MeshMaterial.d << "\n";
-// 			file << "Illumination: " << curMesh.MeshMaterial.illum << "\n";
-// 			file << "Ambient Texture Map: " << curMesh.MeshMaterial.map_Ka << "\n";
-// 			file << "Diffuse Texture Map: " << curMesh.MeshMaterial.map_Kd << "\n";
-// 			file << "Specular Texture Map: " << curMesh.MeshMaterial.map_Ks << "\n";
-// 			file << "Alpha Texture Map: " << curMesh.MeshMaterial.map_d << "\n";
-// 			file << "Bump Map: " << curMesh.MeshMaterial.map_bump << "\n";
-
-// 			// Leave a space to separate from the next mesh
-// 			file << "\n";
-// 		}
-
-// 		// Close File
-// 		file.close();
-//         return mesh;
-// 	}
-// 	// If not output an error
-// 	else
-// 	{
-// 		// Create/Open e1Out.txt
-// 		std::ofstream file("e1Out.txt");
-
-// 		// Output Error
-// 		file << "Failed to Load File. May have failed to find it or it was not an .obj file.\n";
-
-// 		// Close File
-// 		file.close();
-//         return nullptr;
-// 	}
-// }
 
 Mesh* loadMeshFromObj(RessourceManager& textureManager)
 {
@@ -195,7 +74,7 @@ Mesh* loadMeshFromObj(RessourceManager& textureManager)
         tinyobj::material_t& material = materials[mesh.material_ids[0]];
         // material.diffuse_texname;
         // textureManager.textures.emplace_back(std::move(Texture("media/midna/midona_body.png")));
-        for (unsigned int i = 0; i < attrib.vertices.size(); i++)
+        for (unsigned int i = 0; i < attrib.vertices.size() / 3; i++)
         {
             Vertex vert;
             vert.position = Vec3(attrib.vertices[3*i], attrib.vertices[3*i+1], attrib.vertices[3*i+2]);
@@ -277,7 +156,6 @@ void Events::entitiesInit(std::vector<Entity>& entities)
         }
         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-2.0, 0.0, zDepth));
         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
-        //sphere.mesh->pTexture = &textureManager.textures[1];
         sphere.alpha = 1.f;
         entities.push_back(std::move(sphere));
     }
@@ -291,7 +169,6 @@ void Events::entitiesInit(std::vector<Entity>& entities)
         }
         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(2.0, 0.0, zDepth));
         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f, 1.f, 1.f));
-        //sphere.mesh->pTexture = &textureManager.textures[1];
         sphere.alpha = 1.f;
         entities.push_back(std::move(sphere));
     }
@@ -301,11 +178,9 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     {
         Entity sphere;
         sphere.mesh = Mesh::CreateCube();
-        // float ii = 0;
         for (Vertex& vertex : sphere.mesh->vertices)
         {
             vertex.color = Color(1, 1, 1);
-            //ii += 255.f / 20*20;
         }
         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-2.0, 0.0, zDepth));
         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
@@ -393,19 +268,17 @@ void Events::entitiesInit(std::vector<Entity>& entities)
 
     for (unsigned int i = 0; i < 2; i++)
     {
+        Entity wall;
+        wall.mesh = Mesh::CreateCube();
+        for (Vertex& vertex : wall.mesh->vertices)
         {
-            Entity wall;
-            wall.mesh = Mesh::CreateCube();
-            for (Vertex& vertex : wall.mesh->vertices)
-            {
-                vertex.color = Color(1, 1, 1);
-            }
-            wall.transformation *= Mat4::CreateTranslationMatrix(Vec3(15.0 * pow((-1), i), 0.0, zDepth));
-            wall.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 5.5, 5.5));
-            wall.mesh->pTexture = &textureManager.textures[1];
-            wall.alpha = 1.0f;
-            entities.push_back(std::move(wall));
+            vertex.color = Color(1, 1, 1);
         }
+        wall.transformation *= Mat4::CreateTranslationMatrix(Vec3(15.0 * pow((-1), i), 0.0, zDepth));
+        wall.transformation *= Mat4::CreateScaleMatrix(Vec3(1.0, 5.5, 5.5));
+        wall.mesh->pTexture = &textureManager.textures[1];
+        wall.alpha = 1.0f;
+        entities.push_back(std::move(wall));
     }
 
     zDepth -= 20;
@@ -413,11 +286,9 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     {
         Entity sphere;
         sphere.mesh = Mesh::CreateCube();
-        // float ii = 0;
         for (Vertex& vertex : sphere.mesh->vertices)
         {
             vertex.color = Color(1, 1, 1);
-            //ii += 255.f / 20*20;
         }
         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-7.0, 0.0, zDepth));
         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
@@ -456,18 +327,6 @@ void Events::entitiesInit(std::vector<Entity>& entities)
 
     zDepth -= 20;
 
-    // {
-    //     Entity sphere;
-    //     sphere.mesh = Mesh::CreateCube();
-    //     for (Vertex& vertex : sphere.mesh->vertices)
-    //     {
-    //         vertex.color = Color(1, 1, 1);
-    //     }
-    //     sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, zDepth));
-    //     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(5.5, 5.5, 1.5));
-    //     sphere.alpha = 1.0f;
-    //     entities.push_back(std::move(sphere));
-    // }
     {
         for (unsigned int j = 0; j < 1; j++)
         {
@@ -478,7 +337,6 @@ void Events::entitiesInit(std::vector<Entity>& entities)
             for (Vertex& vertex : sphere.mesh->vertices)
             {
                 vertex.color = Color(1, 1, 1);
-                //ii += 255.f / 20*20;
             }
             sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, -1.0, zDepth));
             sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/10.f, 1.f/10, 1.f/10));
@@ -487,18 +345,6 @@ void Events::entitiesInit(std::vector<Entity>& entities)
             entities.push_back(std::move(sphere));
         }
     }
-
-    // {
-    //     Entity sphere;
-    //     //sphere.mesh = Mesh::CreateSphere(15, 15);
-    //     sphere.mesh = loadMeshFromObj();
-
-    //     sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, 0.0));
-    //     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));
-    //     sphere.mesh->pTexture = &textureManager.textures[0];
-    //     sphere.alpha = 1.f;
-    //     entities.push_back(std::move(sphere));
-    // }
 }
 
 void Events::sceneInit(Scene& scene)
@@ -507,46 +353,8 @@ void Events::sceneInit(Scene& scene)
     entitiesInit(scene.entities);
 }
 
-void Events::inputs(SDL_Event& event)
-{
-    //inputs
-    while (SDL_PollEvent(&event))
-    {
-        switch(event.type)
-        {
-            case SDL_KEYDOWN:
-                //cameraInputs(event.key.keysym.sym);
-                switch(event.key.keysym.sym)
-                {
-                    case SDLK_ESCAPE :
-                        bRun = false;
-                        break;
-                    case SDLK_F1 :
-                        //F1.input(true);
-                        renderMode = E_RasterizerMode::E_WIREFRAME;
-                        break;
-                    
-                }
-                break;
-
-            default: break;
-        }
-    }
-}
-
 Events::Events()
-#ifdef __SDL__
-    : render(SDL_Utilities(bRun))
-#endif
 {
-    // F1.onSwitch = [&](bool isOn)
-    // {
-    //     if (isOn)
-    //         renderMode = E_RasterizerMode::E_WIREFRAME;
-    //     else
-    //         renderMode = E_RasterizerMode::E_TRIANGLES;
-    // };
-
     #ifdef __GLFW__
     if (!glfwInit())
     {
@@ -571,18 +379,11 @@ Events::Events()
     //hide cursor
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     #endif
-    //camera = Mat4::CreateTranslationMatrix(Vec3(0,0,10));
 }
 
 Events::~Events()
 {
     
-}
-
-__inline
-float lerp(float a, float b, float f)
-{
-    return a + f * (b - a);
 }
 
 int Events::run()
@@ -607,10 +408,6 @@ int Events::run()
     float highestFPS = 0.f;
     float deltaMedium = 1;
 
-    //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.00, 0.00, PI/5));
-    #ifdef __SDL__
-    while (bRun)
-    #endif
     #ifdef __GLFW__
     while (bRun && !glfwWindowShouldClose(window))
     #endif
@@ -620,7 +417,7 @@ int Events::run()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         #endif
 
-        float time = float (SDL_GetTicks()) / 1000.f;
+        float time = glfwGetTime();
         float deltaTime = time - lastTime;
         deltaTimes[deltaTimeIndex] = deltaTime;
         deltaTimeIndex++;
@@ -637,58 +434,22 @@ int Events::run()
             lowestFPS = std::min(deltaMedium, lowestFPS);
             highestFPS = std::max(deltaMedium, highestFPS);
         }
-        // std::cout << deltaMedium << '\n';
 
         fps = 1.f/(deltaTime);
         nbFps++;
         totalFps += fps;
         std::cout << 1.f/(deltaTime) << std::endl;
         lastTime = time;
-        //std::cout << totalFps / nbFps << std::endl;
 
         frame += 1;
 
         scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
         scene.entities[1].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
-        //scene.entities[1].transformation = Mat4::CreateTranslationMatrix(camera.cartesianLocation / 2);
 
-        //scene.entities[1].transformation = Mat4::CreateTranslationMatrix(Vec3(camera.cartesianLocation.x, -10, camera.cartesianLocation.z));
-
-        //scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.03, 0.03, 0.03));
-        // for (Entity& entity : scene.entities)
-        //     scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.03, 0.03, 0.03));
-            //entity.transformation = Mat4::CreateTranslationMatrix(Vec3(100 * sin(frame/50), 0.00, 0));
-
-        //scene.entities[0].transformation = Mat4::CreateTranslationMatrix(Vec3(3.32 * sin(frame/40), 0.00, 0));
-
-        // scene.lights[0].position.x = 10 * sin(frame/10);
-        // scene.lights[0].position.y = 10 * cos(frame/10);
-
-        // scene.entities[1].mat.additionalShaders = [&deltaMedium, &highestFPS, &lowestFPS](Color& color, Vec3& worldLocation)
-        // {
-        //     // color.r /= (sin(worldLocation.x * 10) + PI) * 0.8; 
-        //     // if (color.r > 1.f)
-        //     //     color.r = 1.f;
-
-        //     // const float delta = (sin(worldLocation.x * 10) / PI + 1) * 0.8;
-        //     // color.r += (sin(worldLocation.x * 10) / PI + 1) * 0.8;
-        //     // color.g += (cos(worldLocation.y * 10) / PI + 1) * 0.8;
-        //     // color.b += 0;
-
-        //     // if ((int((worldLocation.x / 1)) + int((worldLocation.y / 1)) + int((worldLocation.z / 1))) % 2 == 0)
-        //     // if ((int(floor(worldLocation.x / 1)) + int(floor(worldLocation.y / 1)) + int(floor(worldLocation.z / 1))) % 2 == 0)
-        //     //     color.r -= 0.2;
-        //     // color.r = (deltaMedium - lowestFPS) / (highestFPS - lowestFPS) * 1;//sin(frame/10);
-        //     // color.r = 1 - (highestFPS - lowestFPS) / (lerp(lowestFPS, highestFPS, deltaMedium) - lowestFPS);
-        //     // std::cout << color.r << '\n';
-        //     color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10);
-
-        //     // if (color.r < 0)
-        //     //     color.r = 0;
-        // };
-
-        //SDL
-        inputs(event);
+        scene.entities[1].mat.additionalShaders = [&deltaMedium, &highestFPS, &lowestFPS](Color& color, Vec3& worldLocation)
+        {
+            color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10);
+        };
 
         //GLFW
         #ifdef __GLFW__
@@ -734,37 +495,13 @@ int Events::run()
         if (glfwGetKey(window, GLFW_KEY_F2))
             scene.lights[0].position = camera.cartesianLocation;
 
-        //double xpos, ypos;
-        //glfwGetCursorPos(window, &xpos, &ypos);
-//
-        //constexpr const double mouseSensibility = 2.f;
-//
-        //if (lastYPos - ypos < - mouseSensibility)
-        //    camera *= Mat4::CreateRotationMatrix(Vec3(-0.1, 0, 0));
-        //if (lastYPos - ypos > mouseSensibility)
-        //    camera *= Mat4::CreateRotationMatrix(Vec3(0.1, 0, 0));
-//
-        //if (lastXPos - xpos < - mouseSensibility)
-        //    camera *= Mat4::CreateRotationMatrix(Vec3(0.0, -0.1, 0));
-        //if (lastXPos - xpos > mouseSensibility)
-        //    camera *= Mat4::CreateRotationMatrix(Vec3(0.0, -0.1, 0));
-//
-        //lastXPos = xpos;
-        //lastYPos = ypos;
         #endif
 
         camera.actualize();
 
-        // rasterizer
-        // Rasterizer::RenderScene(&scene, &target, 
-        //     Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0, 2, 1.4), 
-        //     E_RasterizerMode::E_TRIANGLES);
-        //Rasterizer::RenderScene(&scene, &target, Mat4::CreateOrthogonalProjectionMatrix(), camera.GetInverse(), renderMode);
         Rasterizer::RenderScene(&scene, &target, 
             Mat4::CreatePerspectiveProjectionMatrix(windowWidth, windowHeight, 0.05, 2, 90), 
             camera.getTransform().GetInverse(), camera, renderMode);
-
-        // render.SDL_RenderTexture(target.texture);
         
         #ifdef __GLFW__
         #ifndef __ANTI_ALIASING__
@@ -777,10 +514,6 @@ int Events::run()
 
         glfwSwapBuffers(window);
 
-        #endif
-
-        #ifdef __SDL__
-        render.SDL_RenderTexture(target.texture);
         #endif
     }
 

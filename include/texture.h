@@ -2,7 +2,6 @@
 #define _TEXTURE_H_
 
 struct SDL_Texture;
-//struct Color;
 
 #include "color.h"
 
@@ -29,7 +28,7 @@ public:
 
     void FillBlack();
 
-    void ToTexture(SDL_Texture* sdlTexture) const;
+    // void ToTexture(SDL_Texture* sdlTexture) const;
 
     void setDegradee();
 };

@@ -1,14 +1,12 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
-#include <SDL2/SDL.h>
 #include <vector>
 
 #include <GLFW/glfw3.h>
 
 #include "mat4.h"
 #include "scene.h"
-#include "sdlUtilities.h"
 
 #include "rasterizer.h"
 
@@ -27,15 +25,10 @@ class Events
 private:
 
     //inputs
-    SDL_Event event;
     bool bRun = true;
     Camera camera;
 
     double lastXPos = 0, lastYPos = 0;
-
-    #ifdef __SDL__
-    SDL_Utilities render;
-    #endif
 
     #ifdef __GLFW__
     GLFWwindow* window;
@@ -56,8 +49,6 @@ public:
     void lightsInit(std::vector<Light>& lights);
     void entitiesInit(std::vector<Entity>& entities);
     void sceneInit(Scene& scene);
-
-    void inputs(SDL_Event& event);
 
     int run();
 };

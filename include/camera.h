@@ -11,6 +11,7 @@ class Camera
 {
 private:
     Mat4 transform;
+    bool bFirstInput = true;
 
 public:
     float prevMouseLocX = 0, prevMouseLocY = 0;

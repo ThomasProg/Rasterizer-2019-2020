@@ -19,7 +19,6 @@
 
 #define __ADDITIONAL_SHADERS__
 
-//#define __SDL__
 #define __GLFW__
 
 constexpr float PI = 3.14159265359f;
