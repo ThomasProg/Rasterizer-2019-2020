@@ -107,38 +107,6 @@ Mesh* loadMeshFromObj(RessourceManager& textureManager)
             meshQ->vertices[idx.vertex_index].u = tx;
             meshQ->vertices[idx.vertex_index].v = ty;
         }
-
-
-        // // Loop over faces(polygon)
-        // size_t index_offset = 0;
-        // for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) 
-        // {
-        //     int fv = shapes[s].mesh.num_face_vertices[f];
-
-        //     // Loop over vertices in the face.
-        //     for (size_t v = 0; v < fv; v++) 
-        //     {
-        //         // access to vertex
-        //         tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
-        //         tinyobj::real_t vx = attrib.vertices[3*idx.vertex_index+0];
-        //         tinyobj::real_t vy = attrib.vertices[3*idx.vertex_index+1];
-        //         tinyobj::real_t vz = attrib.vertices[3*idx.vertex_index+2];
-        //         tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
-        //         tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
-        //         tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
-        //         tinyobj::real_t tx = attrib.texcoords[2*idx.texcoord_index+0];
-        //         tinyobj::real_t ty = attrib.texcoords[2*idx.texcoord_index+1];
-
-        //         // Optional: vertex colors
-        //         // tinyobj::real_t red = attrib.colors[3*idx.vertex_index+0];
-        //         // tinyobj::real_t green = attrib.colors[3*idx.vertex_index+1];
-        //         // tinyobj::real_t blue = attrib.colors[3*idx.vertex_index+2];
-        //     }
-        //     index_offset += fv;
-
-        //     // per-face material
-        //     shapes[s].mesh.material_ids[f];
-        // }
     }
     return meshQ;
 }
@@ -376,6 +344,19 @@ Events::Events()
         return;
     }
 
+    // Set F1 key function
+    f1.onSwitch = [&](bool isOn)
+    {
+        if (isOn)
+        {
+            renderMode = E_RasterizerMode::E_WIREFRAME;
+        }
+        else 
+        {
+            renderMode = E_RasterizerMode::E_TRIANGLES;
+        }
+    };
+
     //hide cursor
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     #endif
@@ -383,19 +364,24 @@ Events::Events()
 
 Events::~Events()
 {
-    
+    // clean
+    #ifdef __GLFW__
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    #endif
 }
 
 int Events::run()
 {
+    //============== init scene ==============//
     if (!bRun)
         return EXIT_FAILURE;
 
     sceneInit(scene);
 
     FrameBuffer target(textureResolutionX, textureResolutionY);
-    //Texture target(windowWidth, windowHeight);
 
+    //============== setup fps and deltatime ==============//
     unsigned int nbFps = 0;
     float totalFps = 0.f;
     float frame = 0;
@@ -408,15 +394,19 @@ int Events::run()
     float highestFPS = 0.f;
     float deltaMedium = 1;
 
+    //============== start game loop ==============//
     #ifdef __GLFW__
     while (bRun && !glfwWindowShouldClose(window))
     #endif
     {
         #ifdef __GLFW__
+        //generate inputs
         glfwPollEvents();
+        //clear buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         #endif
 
+        //============== compute deltatime ==============//
         float time = glfwGetTime();
         float deltaTime = time - lastTime;
         deltaTimes[deltaTimeIndex] = deltaTime;
@@ -443,9 +433,12 @@ int Events::run()
 
         frame += 1;
 
+        //============== Add rotation to cube ==============//
+
         scene.entities[0].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
         scene.entities[1].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
 
+        // set additional shaders
         scene.entities[1].mat.additionalShaders = [&deltaMedium, &highestFPS, &lowestFPS](Color& color, Vec3& worldLocation)
         {
             color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10);
@@ -473,20 +466,12 @@ int Events::run()
         //     camera.sphericalRotation += Vec3(0,-camera.rotationSpeed*deltaTime,0);
         #endif
 
+        //============== INPUTS ==============//
+
+        // call camera inputs
         camera.inputs(deltaTime, window);
 
-        f1.onSwitch = [&](bool isOn)
-        {
-            if (isOn)
-            {
-                renderMode = E_RasterizerMode::E_WIREFRAME;
-            }
-            else 
-            {
-                renderMode = E_RasterizerMode::E_TRIANGLES;
-            }
-        };
-
+        // stops loop if ESCAPE key is pressed down
         if (glfwGetKey(window, GLFW_KEY_ESCAPE))
             bRun = false;
 
@@ -496,6 +481,8 @@ int Events::run()
             scene.lights[0].position = camera.cartesianLocation;
 
         #endif
+
+        //============== Add rotation to cube ==============//
 
         camera.actualize();
 
@@ -516,11 +503,6 @@ int Events::run()
 
         #endif
     }
-
-    #ifdef __GLFW__
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    #endif
 
     return EXIT_SUCCESS;
 }
