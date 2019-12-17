@@ -3,7 +3,7 @@
 
 RessourceManager::RessourceManager()
 {
-    constexpr unsigned int nbLoadedTextures = 10;
+    constexpr unsigned int nbLoadedTextures = 3;
 
     textures.reserve(nbLoadedTextures);
     textures.emplace_back(std::move(Texture("media/midna/midona_body.png")));

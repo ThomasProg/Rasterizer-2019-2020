@@ -8,12 +8,12 @@
 
 #define __PERSPECTIVE_FIX__
 
-#define __NEAREST_INTERPOLATION__
-// #define __BILINEAR_INTERPOLATION__
+// #define __NEAREST_INTERPOLATION__
+#define __BILINEAR_INTERPOLATION__
 
 
-#define __PHONG_LIGHTING__
-// #define __BLINN_PHONG_LIGHTING__
+// #define __PHONG_LIGHTING__
+#define __BLINN_PHONG_LIGHTING__
 
 #define __ENABLE_TRANSPARENCY__
 
@@ -25,7 +25,7 @@
 constexpr float PI = 3.14159265359f;
 constexpr float epsilon = 0.01;
 
-constexpr float depthMax = 255;
+constexpr float depthMax = 1000;
 
 
 // By enabling the __ANTI_ALIASING__, 

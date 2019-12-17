@@ -22,7 +22,13 @@ public:
     ~Texture();
 
     void SetPixelColor(unsigned int x, unsigned int y, const Color& c);
-    Color GetPixelColor(unsigned int x, unsigned int y) const;
+    
+    __inline
+    Color GetPixelColor(unsigned int x, unsigned int y) const
+    {
+        assert(0 <= x && x < width && 0 <= y && y < height);
+        return pixels[x + y * width];   
+    }
 
     void FillBlack();
 

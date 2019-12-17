@@ -31,9 +31,6 @@ class Rasterizer
 private:
 
 public:
-    // static float getPixelLight(const RasterizingVertex& vertex, const std::vector<Light>& lights, 
-    //                             const Vec3& cameraLocation, const Material& mat);
-
     static void antiAliasingCompression(const FrameBuffer& highResolutionTexture, Texture& finalTexture);
 
     static void RenderScene(Scene* pScene, FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix,  Camera& camera,

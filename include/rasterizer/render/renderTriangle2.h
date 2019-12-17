@@ -72,6 +72,29 @@ public:
                         Camera& camera, E_RasterizerMode mode);
 };
 
+__inline
+void getUntexturedPixelColor(const std::array<Vertex, 3>& triangleVertices, 
+                            const std::array<float, 3>& weight, 
+                            Color& colorOutput);
+
+__inline
+void getTexturedColorNearestInterpolation(const Texture*, 
+                                          const float u,
+                                          const float v, 
+                                          Color& colorOutput);
+
+__inline
+void getTexturedColorBilinearInterpolation(const Texture*, 
+                                           const float u,
+                                           const float v, 
+                                           Color& colorOutput);
+
+__inline
+float getPixelLight(const Vec3& location3D, 
+                    const Vec3& normal, 
+                    const std::vector<Light>& lights, 
+                    const Vec3& cameraLocation, const Material& mat);
+
 #include "renderTriangle2.inl"
 
 #endif

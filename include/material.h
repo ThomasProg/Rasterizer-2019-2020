@@ -13,9 +13,9 @@ private:
 public:
     Material(){};
     ~Material(){};
-    float ambient = 0.3; // [0, 1]
-    float diffuse = 0.4; // [0, 1]
-    float specular = 0.7; //[0, 1]
+    float ambient = 1.0; // [0, 1]
+    float diffuse = 1.0; // [0, 1]
+    float specular = 1.0; //[0, 1]
     float brillance = 100; // >> 1
 
     std::function<void(Color&, Vec3&)> additionalShaders = [](Color&, Vec3&){};

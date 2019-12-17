@@ -61,9 +61,9 @@ bool RenderTriangle2::isClipped(const Texture& pTarget,
     // if (triangleVertices[0].position.x < 0)
     //     std::cout << "ERROR : Out of box\n";
 
-    return triangleVertices[0].position.z > 0 
-        || triangleVertices[1].position.z > 0 
-        || triangleVertices[2].position.z > 0;
+    return triangleVertices[0].position.z >= 0 
+        || triangleVertices[1].position.z >= 0 
+        || triangleVertices[2].position.z >= 0;
     
     // TODO: add triangles with clipping
 }
@@ -342,7 +342,7 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         if (!bComputed)
         {        
             bComputed = true;
-            currentLuminosity = RenderTriangle::getPixelLight(location3D, normal, lights, cameraLocation, mat);
+            currentLuminosity = getPixelLight(location3D, normal, lights, cameraLocation, mat);
         }
         return currentLuminosity;
     };
@@ -402,7 +402,7 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         intensity = getLight(location3D, normal, lights, cameraLocation, mat);
         #else
         // BLINN PHONG
-        intensity = RenderTriangle::getPixelLight(location3D, normal, lights, cameraLocation, mat);
+        intensity = getPixelLight(location3D, normal, lights, cameraLocation, mat);
         #endif
 
         getTextureColor(pTexture, 
@@ -431,7 +431,7 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
     std::array<float, 3> intensity;
     for (unsigned int i = 0; i < 3; ++i)
     {
-        intensity[i] = RenderTriangle::getPixelLight(worldVertices[i], triangleVertices[i].normal, lights, cameraLocation, mat);
+        intensity[i] = getPixelLight(worldVertices[i], triangleVertices[i].normal, lights, cameraLocation, mat);
         // GLOBAL_INDEX++;
         // if (GLOBAL_INDEX > 50)
         // {
@@ -578,4 +578,146 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
             #endif
         }
     }
+}
+
+
+
+__inline
+void getUntexturedPixelColor(const std::array<Vertex, 3>& triangleVertices, 
+                             const std::array<float, 3>& weight, 
+                             Color& colorOutput)
+{
+    // Could be unrolled for optimization
+    // interpolate 
+    for (unsigned int i = 0; i < 3; i++)
+    {
+        colorOutput.r += weight[i] * triangleVertices[i].color.r;
+        colorOutput.g += weight[i] * triangleVertices[i].color.g;
+        colorOutput.b += weight[i] * triangleVertices[i].color.b;
+        colorOutput.a += weight[i] * triangleVertices[i].color.a;
+    }
+}
+
+__inline
+void getTexturedColorNearestInterpolation(const Texture* texture, 
+                                          const float u,
+                                          const float v, 
+                                          Color& colorOutput)
+{
+    // u and v represents a pixel location in the  texture, and them must be between 0 and 1.
+    assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
+ 
+    // Max uv is 1, 1 * width = width, width isn't a valid index, 
+    // so we substract by 1 before the multiplication.
+    // since (u, v) >= 0, we can cast them to unsigned int without errors.
+    colorOutput.copyRGB(texture->GetPixelColor(static_cast<unsigned int>(u * (float(texture->width))), 
+                                               static_cast<unsigned int>(v * (float(texture->height)))));
+}
+
+__inline
+void getTexturedColorBilinearInterpolation(const Texture* texture, 
+                                           const float u,
+                                           const float v, 
+                                           Color& colorOutput)
+{
+    // floor
+    // x1,y1--------x2,y1
+    //   |            |
+    //   |            |
+    //   |  x,y       |
+    //   |   #        |
+    //   |            |
+    // x1,y2--------x2,y2
+    //               ceil
+
+    // u and v represents a pixel location in the  texture, and them must be between 0 and 1.
+    assert(0 <= u && u <= 1 && 0 <= v && v <= 1);
+
+    const unsigned int x1 = static_cast<unsigned int>(floor(u * (float(texture->width)-1)));
+    const unsigned int x2 = std::min(static_cast<unsigned int>(ceil(u * (float(texture->width)-1))), texture->width - 1);
+
+    const unsigned int y1 = static_cast<unsigned int>(floor(v * (float(texture->height)-1)));
+    const unsigned int y2 = std::min(static_cast<unsigned int>(ceil(v * (float(texture->height)-1))), texture->height - 1);
+
+    const float curX = u * (float(texture->width) - 1);
+    const float curY = v * (float(texture->height) - 1);
+
+    //can't interpolate in case interpolating points are the same
+    if (x2 == x1 && y2 == y1)
+    {
+        colorOutput.reset();
+        return;
+    }
+    //in case the two interpolating points are on the same horizontal line
+    else if (x2 == x1)
+    {
+        const Color c1 = texture->GetPixelColor(x1, y1);
+        const Color c2 = texture->GetPixelColor(x1, y2);
+
+        colorOutput.copyRGB(getAverageColor(c2, c1, (curY - y1) / (y2 - y1)));
+    }
+    //in case the two interpolating points are on the same vertical line
+    else if (y2 == y1)
+    {
+        const Color c1 = texture->GetPixelColor(x1, y1);
+        const Color c2 = texture->GetPixelColor(x2, y1);
+
+        colorOutput.copyRGB(getAverageColor(c2, c1, (curX - x1) / (x2 - x1)));
+    }
+    //general case : 
+    else 
+    {
+        const Color c11 = texture->GetPixelColor(x1, y1);
+        const Color c21 = texture->GetPixelColor(x2, y1);
+        const Color c12 = texture->GetPixelColor(x1, y2);
+        const Color c22 = texture->GetPixelColor(x2, y2);
+
+        const Color c1 = getAverageColor(c21, c11, (curX - x1 / (x2 - x1)));
+        const Color c2 = getAverageColor(c22, c12, (curX - x1 / (x2 - x1)));
+
+        colorOutput.copyRGB(getAverageColor(c2, c1, (curY - y1) / (y2 - y1)));
+    }
+}
+
+__inline
+float getPixelLight(const Vec3& location3D, 
+                                    const Vec3& normal, 
+                                    const std::vector<Light>& lights, 
+                                    const Vec3& cameraLocation, const Material& mat)
+{
+    float ambient  = 0.f;
+    float diffuse  = 0.f;
+    float specular = 0.f;  
+    float total    = 0.f;
+
+    for (const Light& light : lights)
+    {
+        //ambient
+        ambient = light.ambientComponent * mat.ambient;
+
+        //diffuse
+        Vec3 pixelToLightVec = (light.position - location3D);
+        pixelToLightVec.Normalize();
+        
+        float cosTeta = std::max(0.f, dotProduct(pixelToLightVec, normal));
+
+        diffuse = light.diffuseComponent * mat.diffuse * cosTeta;
+
+        //specular
+        Vec3 pixelToEyeVec = cameraLocation - location3D;
+        // pixelToEyeVec.z -= 1;
+        pixelToEyeVec.Normalize();
+        Vec3 h = pixelToLightVec + pixelToEyeVec;
+        h.Normalize();
+        float cosAlpha = dotProduct(normal.getNormalized(), h);
+
+        if (cosAlpha < 0)
+            cosAlpha = 0;
+
+        specular = light.specularComponent * mat.specular * std::pow(cosAlpha, mat.brillance);
+
+        total += ambient + diffuse + specular;
+    }
+
+    return total;
 }

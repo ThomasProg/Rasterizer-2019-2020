@@ -131,7 +131,7 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
         const std::vector<Vertex>& vertices = entity->mesh->worldVertices;
         const std::vector<unsigned int>& indices = entity->mesh->indices;
 
-        #pragma omp parallel for private(rendering)
+        //#pragma omp parallel for private(rendering)
         for (unsigned int indicesIndex = 0; indicesIndex < indices.size(); indicesIndex += 3)
         {
             rendering.setupForTriangle(vertices[indices[indicesIndex]], 

@@ -4,7 +4,6 @@
 #include <queue>
 
 #define TINYOBJLOADER_IMPLEMENTATION 
-#include "OBJ_Loader.h"
 #include "tiny_obj_loader.h"
 
 #include "event.h"
@@ -177,10 +176,10 @@ Mesh* loadMeshFromObj(RessourceManager& textureManager)
     exit(1);
     }
 
-    for (tinyobj::material_t mat : materials)
-    {
-        textureManager.addFromFile(mat.diffuse_texname.c_str());
-    }
+    // for (tinyobj::material_t mat : materials)
+    // {
+    //     textureManager.addFromFile(mat.diffuse_texname.c_str());
+    // }
 
     // for (size_t s = 0; s < shapes.size(); s++) 
     // {
@@ -214,23 +213,20 @@ Mesh* loadMeshFromObj(RessourceManager& textureManager)
             tinyobj::index_t idx = shapes[s].mesh.indices[i];
             meshQ->indices.emplace_back(idx.vertex_index);
 
-            // if (idx.normal_index >= 0)
-            // {
-                // tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
-                // tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
-                // tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
+            if (idx.normal_index >= 0)
+            {
+                tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
+                tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
+                tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
 
-                tinyobj::real_t tx = attrib.texcoords[2*idx.texcoord_index+0];
-                tinyobj::real_t ty = attrib.texcoords[2*idx.texcoord_index+1];
+                meshQ->vertices[idx.vertex_index].normal = Vec3(nx, ny, nz);
+            }
 
-                //std::cout << nx << " ny : " << ny << " nz : " << nz << std::endl;
+            tinyobj::real_t tx = attrib.texcoords[2*idx.texcoord_index+0];
+            tinyobj::real_t ty = attrib.texcoords[2*idx.texcoord_index+1];
 
-                //meshQ->vertices[idx.vertex_index].normal = Vec3(nx, ny, nz);
-                meshQ->vertices[idx.vertex_index].u = tx;
-                meshQ->vertices[idx.vertex_index].v = ty;
-            //}
-            // else 
-            //     std::cout << "erorrs" << std::endl;
+            meshQ->vertices[idx.vertex_index].u = tx;
+            meshQ->vertices[idx.vertex_index].v = ty;
         }
 
 
@@ -503,23 +499,6 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     //     sphere.alpha = 1.f;
     //     entities.push_back(std::move(sphere));
     // }
-
-
-    {
-        Entity sphere;
-        sphere.mesh = Mesh::CreateCube();
-        // float ii = 0;
-        for (Vertex& vertex : sphere.mesh->vertices)
-        {
-            vertex.color = Color(1, 1, 1);
-            //ii += 255.f / 20*20;
-        }
-        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, -5.0, 0));
-        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1, 0.1, 20));
-        sphere.mesh->pTexture = &textureManager.textures[1];
-        sphere.alpha = 0.2f;
-        entities.push_back(std::move(sphere));
-    }
 }
 
 void Events::sceneInit(Scene& scene)
@@ -752,6 +731,9 @@ int Events::run()
 
         f1.input(glfwGetKey(window, GLFW_KEY_F1));
         
+        if (glfwGetKey(window, GLFW_KEY_F2))
+            scene.lights[0].position = camera.cartesianLocation;
+
         //double xpos, ypos;
         //glfwGetCursorPos(window, &xpos, &ypos);
 //
