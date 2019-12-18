@@ -457,16 +457,14 @@ void getTextureColor(Texture const * const pTexture,
         float u = weight * uP;
         float v = weight * vP;
 
-        //if not in range, due to float imprecision
-        // u = clamp(u, 0.f, 1.f);
-        // v = clamp(v, 0.f, 1.f);
+        // make uv range from 0 to 1    
         u = fmod(u, 1);
         if (u < 0)
             u += 1;
         v = fmod(v, 1);
         if (v < 0)
             v += 1;
-        
+
         //TODO : enum for interpolation type
         #ifdef __NEAREST_INTERPOLATION__
         {
@@ -491,7 +489,7 @@ void getTextureColor(Texture const * const pTexture,
     #endif
         getUntexturedPixelColor(triangleVertices, weight, c);
 }
-// extern unsigned int GLOBAL_INDEX;
+
 __inline
 void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& ww, 
                                     const Vec3& cameraLocation, std::vector<Light>& lights, 
@@ -654,25 +652,12 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
     for (unsigned int i = 0; i < 3; ++i)
     {
         intensity[i] = getPixelLight(worldVertices[i], triangleVertices[i].normal, lights, cameraLocation, mat);
-        // GLOBAL_INDEX++;
-        // if (GLOBAL_INDEX > 50)
-        // {
-        //     std::cout << worldVertices[i] << '\n';
-        //     std::cout << triangleVertices[i].normal << '\n';
-        //     std::cout << intensity[i] << '\n';
-        //     GLOBAL_INDEX = 0;
-        // }
     }
-
-    // std::array<Color, 3> finalColor; // of the 3 vertices
 
     // using phong
     getColor = [&](void)
     {
         Color c(0, 0, 0, 0);
-
-        // for (unsigned int i = 0; i < 4; ++i)
-        //     c += finalColor[i] * weight[i];
 
         #ifdef __PERSPECTIVE_FIX__
         {
