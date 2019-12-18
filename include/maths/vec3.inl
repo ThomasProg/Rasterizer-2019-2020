@@ -129,7 +129,7 @@ Vec3& Vec3::operator/=(float f)
 __inline
 float dotProduct(Vec3 vect1, Vec3 vect2)
 {
-    return (vect1.x*vect2.x)+(vect1.y*vect2.y)+(vect1.z*vect2.z);
+    return (vect1.x * vect2.x) + (vect1.y * vect2.y) + (vect1.z * vect2.z);
 }
 
 __inline

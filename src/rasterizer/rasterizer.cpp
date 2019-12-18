@@ -6,9 +6,11 @@
 #include <vector>
 #include <set>
 #include <cassert>
+#include <algorithm>
 
 #include "rasterizer.h"
 
+#include "renderTriangle2.h"
 #include "light.h"
 
 #include "macros.h"
@@ -110,8 +112,6 @@ void Rasterizer::antiAliasingCompression(const FrameBuffer& highResolutionFB, Te
     }
 }
 
-#include "renderTriangle2.h"
-
 void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& lights, 
                     FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, 
                     Camera& camera, E_RasterizerMode mode)
@@ -140,7 +140,7 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
 
                 std::vector<RenderTriangle2> additionnalTriangles;
 
-                if (rendering.isClipped(pTarget->texture, additionnalTriangles))
+                if (rendering.isClipped(pTarget->texture, additionnalTriangles) && additionnalTriangles.size() == 0)
                     continue;
 
                 rendering.projectAndDraw(lights, entity, pTarget, 
@@ -157,7 +157,7 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
         }
     }
 }
-#include <algorithm>
+
 void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget, 
                             const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, 
                             Camera& camera, E_RasterizerMode mode)

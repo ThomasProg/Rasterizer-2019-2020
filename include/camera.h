@@ -25,7 +25,7 @@ public:
     // Vec3  sphericalRotation = Vec3(0, 0, 0);
 
     static constexpr float rotationSpeed = 0.05;
-    static constexpr float translationSpeed = 10;
+    static constexpr float translationSpeed = 30;
     static constexpr float rotationSpeedOnKey = 15.f;
 
 public:

@@ -19,6 +19,11 @@
 
 #define __ADDITIONAL_SHADERS__
 
+//#define __WIREFRAME_ON_TRIANGLES__
+//constexpr float wireframeTriangleSize = 0.05;
+
+#define __CLIP_WIREFRAME_LINES__
+
 #define __GLFW__
 
 constexpr float PI = 3.14159265359f;

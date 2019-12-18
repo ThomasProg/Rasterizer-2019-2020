@@ -63,7 +63,9 @@ bool RenderTriangle2::isClipped(const Texture& pTarget,
     // }
     // additionalTriangles.emplace_back(newTriangle);
 
-
+    // clipHorizontal(triangleVertices[0].position.x, triangleVertices[0].position.y, 
+    //                triangleVertices[1].position.x, triangleVertices[1].position.y, 
+    //                 );
 
     // if (triangleVertices[0].position.x < 0)
     //     std::cout << "ERROR : Out of box\n";
@@ -121,16 +123,87 @@ void RenderTriangle2::setDefaultColor()
     triangleVertices[2].color = Color(0, 0, 1);
 }
 
+namespace lines
+{
+    __inline
+    void clipHorizontal(int& x1, int& y1, int x2, int y2, Vec2& vec2, float& magnitude, float limit)
+    {
+        const float var = -x1 + limit;
+
+        x1 += var;
+        y1 += var * vec2.y / vec2.x;
+
+        vec2 = Vec2(x2-x1, y2-y1);
+        magnitude = vec2.GetMagnitude();
+        vec2.toUnit();
+    }
+
+
+    __inline
+    void clipHorizontalOtherPoint(int x1, int y1, int& x2, int& y2, Vec2& vec2, float& magnitude, float limit)
+    {
+        const float var = -x2 + limit;
+
+        x2 += var;
+        y2 += var * vec2.y / vec2.x;
+        
+        vec2 = Vec2(x2-x1, y2-y1);
+        magnitude = vec2.GetMagnitude();
+        vec2.toUnit();
+    }
+
+
+    __inline
+    void clipVertical(int& x1, int& y1, int x2, int y2, Vec2& vec2, float& magnitude, float limit)
+    {
+        const float var = -y1 + limit;
+
+        y1 += var;
+        x1 += var * vec2.x / vec2.y;
+
+        vec2 = Vec2(x2-x1, y2-y1);
+        magnitude = vec2.GetMagnitude();
+        vec2.toUnit();
+    }
+
+
+    __inline
+    void clipVerticalOtherPoint(int x1, int y1, int& x2, int& y2, Vec2& vec2, float& magnitude, float limit)
+    {
+        const float var = -y2 + limit;
+
+        y2 += var;
+        x2 += var * vec2.x / vec2.y;
+        
+        vec2 = Vec2(x2-x1, y2-y1);
+        magnitude = vec2.GetMagnitude();
+        vec2.toUnit();
+    }
+};
 
 __inline
 void RenderTriangle2::drawLineX(FrameBuffer* pTarget, const Vertex& vertex1, const Vertex& vertex2)
 {
     //get distance between two points
-    const int& x1 = vertex1.position.x;
-    const int& y1 = vertex1.position.y;
-    const int& x2 = vertex2.position.x;
-    const int& y2 = vertex2.position.y;
+    int x1 = vertex1.position.x;
+    int y1 = vertex1.position.y;
+    int x2 = vertex2.position.x;
+    int y2 = vertex2.position.y;
     
+    #ifdef __CLIP_WIREFRAME_LINES__
+    if (x1 < windowRenderMinX && x2 < windowRenderMinX) //TODO : if cross screen
+        return;
+
+    if (x1 > windowRenderMaxX && x2 > windowRenderMaxX) //TODO : if cross screen
+        return;
+
+    if (y1 < windowRenderMinY && y2 < windowRenderMinY) //TODO : if cross screen
+        return;
+
+    if (y1 > windowRenderMaxY && y2 > windowRenderMaxY) //TODO : if cross screen
+        return;
+    #endif
+
     Vec2 vec2(x2-x1, y2-y1);
     //get distance between the 2 points
     float magnitude = vec2.GetMagnitude();
@@ -139,9 +212,64 @@ void RenderTriangle2::drawLineX(FrameBuffer* pTarget, const Vertex& vertex1, con
     {
         vec2.toUnit();
 
+        #ifdef __CLIP_WIREFRAME_LINES__
+        //clip left for x1
+        if (x1 < windowRenderMinX)
+        {
+            lines::clipHorizontal(x1, y1, x2, y2, vec2, magnitude, windowRenderMinX);
+        }
+
+        //clip left for x2
+        if (x2 < windowRenderMinX)
+        {
+            lines::clipHorizontalOtherPoint(x1, y1, x2, y2, vec2, magnitude, windowRenderMinX);
+        }
+
+        //clip right for x1
+        if (x1 > windowRenderMaxX)
+        {
+            lines::clipHorizontal(x1, y1, x2, y2, vec2, magnitude, windowRenderMaxX);
+        }
+
+        //clip right for x2
+        if (x2 > windowRenderMaxX)
+        {
+            lines::clipHorizontalOtherPoint(x1, y1, x2, y2, vec2, magnitude, windowRenderMaxX);
+        }
+
+        //clip up for y1
+        if (y1 < windowRenderMinY)
+        {
+            lines::clipVertical(x1, y1, x2, y2, vec2, magnitude, windowRenderMinY);
+        }
+
+        //clip up for y2
+        if (y2 < windowRenderMinY)
+        {
+            lines::clipVerticalOtherPoint(x1, y1, x2, y2, vec2, magnitude, windowRenderMinY);
+        }
+
+        //clip down for y1
+        if (y1 > windowRenderMaxX)
+        {
+            lines::clipVertical(x1, y1, x2, y2, vec2, magnitude, windowRenderMaxY);
+        }
+
+        //clip down for y2
+        if (y2 > windowRenderMaxX)
+        {
+            lines::clipVerticalOtherPoint(x1, y1, x2, y2, vec2, magnitude, windowRenderMaxY);
+        }
+
+        #endif
+
+        // to prevent "infinite" loop error
+        #ifndef __CLIP_WIREFRAME_LINES__
+        if (magnitude < 1000)
+        #endif
         for (float i = 0; i <= magnitude; ++i)
         {
-            float ratio = i / magnitude;
+            float ratio = i / magnitude; 
             Vec3 point(x1 + i * vec2.x, 
                        y1 + i * vec2.y, 
                        vertex1.position.z * ratio + vertex2.position.z * (1 - ratio));
@@ -391,9 +519,9 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
             if (total == 0)
                 return Color(0, 0, 0, 0);
                 
-            weight[0] = weight[0] / total;
-            weight[1] = weight[1] / total;
-            weight[2] = weight[2] / total;
+            weight[0] /= total;
+            weight[1] /= total;
+            weight[2] /= total;
         }
         #endif
 
@@ -422,6 +550,19 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         #ifdef __ADDITIONAL_SHADERS__
         Vec3 newLoc = weight * worldVertices;
         mat.additionalShaders(c, newLoc);
+        #endif
+
+
+        #ifdef __WIREFRAME_ON_TRIANGLES__
+
+        if (   weight[0] < wireframeTriangleSize
+            || weight[1] < wireframeTriangleSize
+            || weight[2] < wireframeTriangleSize)
+        {
+            c.r = 0.5f;
+            c.g = 0.f;
+            c.b = 0.5f; 
+        }
         #endif
 
         c.r *= intensity;
