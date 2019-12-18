@@ -29,11 +29,14 @@ void Events::lightsInit(std::vector<Light>& lights)
     lights.push_back(Light());
 }
 
-Mesh* loadMeshFromObj(RessourceManager& textureManager)
+Mesh* loadMeshFromObj(RessourceManager& textureManager, std::string objFile, std::string subDirectory = "/")
 {
     Mesh* meshQ = new Mesh;
 
-    std::string inputfile = "media/midna/midna.obj";
+    //std::string inputfile = "media/midna/midna.obj";
+    // std::string inputfile = "media/WaddleDeeLow-Poly/waddledee.obj";
+    // std::string inputfile = "media/SuperMarioGalaxyBoo/Boo.obj";
+    std::string inputfile = subDirectory + objFile;
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
@@ -41,7 +44,7 @@ Mesh* loadMeshFromObj(RessourceManager& textureManager)
     std::string warn;
     std::string err;
 
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str(), "media/midna/");
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str(), subDirectory.c_str());
 
     if (!warn.empty()) {
     std::cout << warn << std::endl;
@@ -300,7 +303,7 @@ void Events::entitiesInit(std::vector<Entity>& entities)
         {
             Entity sphere;
             //sphere.mesh = Mesh::CreateSphere(15, 15);
-            sphere.mesh = loadMeshFromObj(textureManager);
+            sphere.mesh = loadMeshFromObj(textureManager, "Boo.obj", "media/SuperMarioGalaxyBoo/");
             // float ii = 0;
             for (Vertex& vertex : sphere.mesh->vertices)
             {
@@ -308,7 +311,7 @@ void Events::entitiesInit(std::vector<Entity>& entities)
             }
             sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, -1.0, zDepth));
             sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/10.f, 1.f/10, 1.f/10));
-            sphere.mesh->pTexture = &textureManager.textures[0];
+            sphere.mesh->pTexture = &textureManager.textures[5];
             sphere.alpha = 1.f;
             entities.push_back(std::move(sphere));
         }
@@ -506,3 +509,4 @@ int Events::run()
 
     return EXIT_SUCCESS;
 }
+
