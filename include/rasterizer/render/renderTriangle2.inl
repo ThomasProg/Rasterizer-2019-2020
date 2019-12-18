@@ -45,12 +45,12 @@ __inline
 bool RenderTriangle2::isClipped(const Texture& pTarget, 
                                 std::vector<RenderTriangle2>& additionalTriangles)
 {
-    if (triangleVertices[0].position.z >= 0 
-        || triangleVertices[1].position.z >= 0 
-        || triangleVertices[2].position.z >= 0)
-    {
-        return true;
-    }
+    // if (triangleVertices[0].position.z >= 0 
+    //     || triangleVertices[1].position.z >= 0 
+    //     || triangleVertices[2].position.z >= 0)
+    // {
+    //     return true;
+    // }
     
     
     // RenderTriangle2 newTriangle;

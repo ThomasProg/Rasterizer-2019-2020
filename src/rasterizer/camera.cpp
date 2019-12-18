@@ -25,6 +25,13 @@ void Camera::actualize()
     transform = Mat4::CreateTranslationMatrix(cartesianLocation) * Mat4::CreateRotationMatrix(cartesianRotation);
 }
 
+template<class T>
+constexpr const T& clamp( const T& v, const T& lo, const T& hi )
+{
+    assert( !(hi < lo) );
+    return (v < lo) ? lo : (hi < v) ? hi : v;
+}
+
 void Camera::inputs(float deltaTime, GLFWwindow* window)
 {
     #ifdef __FIRST_PERSON__
@@ -73,7 +80,7 @@ void Camera::inputs(float deltaTime, GLFWwindow* window)
             deltaMouseX = -rotationSpeedOnKey;
 
         cartesianRotation.y += deltaMouseX * rotationSpeed * deltaTime;
-        cartesianRotation.x += deltaMouseY * rotationSpeed * deltaTime;   
+        cartesianRotation.x = clamp(cartesianRotation.x + deltaMouseY * rotationSpeed * deltaTime, - PI / 2, PI / 2);
     }
     else 
         bFirstInput = false;

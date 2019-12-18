@@ -299,22 +299,23 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     zDepth -= 20;
 
     {
-        for (unsigned int j = 0; j < 1; j++)
-        {
-            Entity sphere;
-            //sphere.mesh = Mesh::CreateSphere(15, 15);
-            sphere.mesh = loadMeshFromObj(textureManager, "Boo.obj", "media/SuperMarioGalaxyBoo/");
-            // float ii = 0;
-            for (Vertex& vertex : sphere.mesh->vertices)
-            {
-                vertex.color = Color(1, 1, 1);
-            }
-            sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, -1.0, zDepth));
-            sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/10.f, 1.f/10, 1.f/10));
-            sphere.mesh->pTexture = &textureManager.textures[5];
-            sphere.alpha = 1.f;
-            entities.push_back(std::move(sphere));
-        }
+        Entity sphere;
+        sphere.mesh = loadMeshFromObj(textureManager, "Boo.obj", "media/SuperMarioGalaxyBoo/");
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-5.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/50.f, 1.f/50, 1.f/50));
+        sphere.mesh->pTexture = &textureManager.textures[5];
+        sphere.alpha = 1.f;
+        entities.push_back(std::move(sphere));
+    }
+
+    {
+        Entity sphere;
+        sphere.mesh = loadMeshFromObj(textureManager, "waddledee.obj", "media/WaddleDeeLow-Poly/");
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(5.0, -2.0, zDepth));
+        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/50.f, 1.f/50, 1.f/50));
+        sphere.mesh->pTexture = &textureManager.textures[4];
+        sphere.alpha = 1.f;
+        entities.push_back(std::move(sphere));
     }
 }
 
@@ -442,9 +443,14 @@ int Events::run()
         scene.entities[1].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
 
         // set additional shaders
-        scene.entities[1].mat.additionalShaders = [&deltaMedium, &highestFPS, &lowestFPS](Color& color, Vec3& worldLocation)
+        scene.entities[1].mat.additionalShaders = [&time, &deltaMedium, &highestFPS, &lowestFPS](Color& color, Vec3& worldLocation)
         {
-            color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10);
+            // color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10);
+            // make the material twinkling
+            constexpr float minColorRatio = 0.5; 
+            color.r *= cos(time) + 1 + minColorRatio;
+            color.g *= cos(time) + 1 + minColorRatio;
+            color.b *= cos(time) + 1 + minColorRatio;
         };
 
         //GLFW
