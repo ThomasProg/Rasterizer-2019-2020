@@ -24,6 +24,8 @@
 
 #define __CLIP_WIREFRAME_LINES__
 
+#define __W_CLIPPING__
+
 #define __GLFW__
 
 constexpr float PI = 3.14159265359f;
@@ -56,16 +58,16 @@ constexpr float textureResolutionX = windowWidth  * antiAliasingX;
 constexpr float textureResolutionY = windowHeight * antiAliasingY;
 
 
-#define __ADD_OFFSET__
+// #define __ADD_OFFSET__
 
-#ifdef __ADD_OFFSET__
+// #ifdef __ADD_OFFSET__
 constexpr float offset = 50.f;
 
 constexpr float windowRenderMinX = offset * antiAliasingX;
 constexpr float windowRenderMinY = offset * antiAliasingY;
 constexpr float windowRenderMaxX = antiAliasingX * windowWidth  - offset * antiAliasingX;
 constexpr float windowRenderMaxY = antiAliasingY * windowHeight - offset * antiAliasingY;
-#endif
+// #endif
 
 // ERRORS : 
 // DO NOT EDIT

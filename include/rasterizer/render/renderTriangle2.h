@@ -42,10 +42,11 @@ public:
 
     __inline
     bool isClipped(const Texture& pTarget, 
-                   std::vector<RenderTriangle2>& additionalTriangles);
+                   std::vector<RenderTriangle2>& additionalTriangles, 
+                   std::array<Vec4, 3>& projectedTriangles);
 
     __inline
-    std::array<float, 3> projectVertices(const Mat4& projection);
+    std::array<float, 3> projectVertices(const Mat4& projection, std::array<Vec4, 3>& projectedVertices);
 
     __inline
     void setVerticesToScreenResolution(const Mat4& screenConversion);
@@ -69,7 +70,7 @@ public:
 
     void projectAndDraw(std::vector<Light>& lights, const Entity* entity,
                         FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& screenConversionMatrix, 
-                        Camera& camera, E_RasterizerMode mode);
+                        Camera& camera, E_RasterizerMode mode, std::array<float, 3>& w);
 };
 
 __inline

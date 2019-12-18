@@ -7,10 +7,8 @@
 
 void RenderTriangle2::projectAndDraw(std::vector<Light>& lights, const Entity* entity,
                                      FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& screenConversionMatrix, 
-                                     Camera& camera, E_RasterizerMode mode)
+                                     Camera& camera, E_RasterizerMode mode, std::array<float, 3>& w)
 {
-    std::array<float, 3> w = projectVertices(projectionMatrix);
-
     setVerticesToScreenResolution(screenConversionMatrix);
 
     //rendering.setDefaultColor();

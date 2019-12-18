@@ -140,18 +140,30 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
 
                 std::vector<RenderTriangle2> additionnalTriangles;
 
-                if (rendering.isClipped(pTarget->texture, additionnalTriangles) && additionnalTriangles.size() == 0)
+                std::array<Vec4, 3> projectedVertices;
+                std::array<float, 3> w = rendering.projectVertices(projectionMatrix, projectedVertices);
+
+                if (rendering.isClipped(pTarget->texture, additionnalTriangles, projectedVertices) 
+                    && additionnalTriangles.size() == 0)
                     continue;
+
+                rendering.triangleVertices[0].position = projectedVertices[0].getHomogenizedVec();
+                rendering.triangleVertices[1].position = projectedVertices[1].getHomogenizedVec();
+                rendering.triangleVertices[2].position = projectedVertices[2].getHomogenizedVec();
 
                 rendering.projectAndDraw(lights, entity, pTarget, 
                                          projectionMatrix, screenConversionMatrix,
-                                         camera, mode);
+                                         camera, mode, w);
                                          
                 for (RenderTriangle2& triangle : additionnalTriangles)
                 {
+                    triangle.triangleVertices[0].position = projectedVertices[0].getHomogenizedVec();
+                    triangle.triangleVertices[1].position = projectedVertices[1].getHomogenizedVec();
+                    triangle.triangleVertices[2].position = projectedVertices[2].getHomogenizedVec();
+
                     triangle.projectAndDraw(lights, entity, pTarget, 
                                             projectionMatrix, screenConversionMatrix,
-                                            camera, mode);
+                                            camera, mode, w);
                 }
             }
         }

@@ -63,8 +63,11 @@ void Vec4::Homogenize()
 __inline
 Vec3 Vec4::getHomogenizedVec() const
 {
-    assert(w != 0);
-    return Vec3(x / w, y / w, z / w);
+    // assert(w != 0);
+    if (w != 0)
+        return Vec3(x / w, y / w, z / w);
+    else 
+        return Vec3(0, 0, 0);
 }
 
 __inline

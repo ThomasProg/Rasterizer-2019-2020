@@ -41,10 +41,71 @@ void RenderTriangle2::setRelativeToCamera(const Mat4& transform)
     triangleVertices[2].position = transform * Vec4(triangleVertices[2].position, 1);
 }
 
+namespace triangles
+{
+    __inline
+    void clipHorizontal(float& x1, float& y1, const Vec2& vec2, float limit)
+    {
+        const float var = -x1 + limit;
+
+        x1 += var;
+        y1 += var * vec2.y / vec2.x;
+    }
+
+    __inline
+    void clipVertical(float& x1, float& y1, const Vec2& vec2, float limit)
+    {
+        const float var = -y1 + limit;
+
+        y1 += var;
+        x1 += var * vec2.x / vec2.y;
+    }
+};
+
 __inline
 bool RenderTriangle2::isClipped(const Texture& pTarget, 
-                                std::vector<RenderTriangle2>& additionalTriangles)
+                                std::vector<RenderTriangle2>& additionalTriangles,
+                                std::array<Vec4, 3>& projectedTriangles)
 {
+    // for each vertex
+    for (const Vec4& vertex : projectedTriangles)
+    {
+        if (vertex.w <= 0 || vertex.w <= 0 || vertex.w <= 0)
+            return true;
+
+        #ifdef __W_CLIPPING__
+        // for each coordinate (x, y)
+        for (unsigned int j = 0; j < 2; j++)
+        {
+            // w is mulitplied by 2 because of the CreateScreenConversionMatrix().
+            if (vertex.arr[j] > vertex.w*2 || vertex.arr[j] < - vertex.w*2)
+            {
+                // TODO : For each other vertex, call ClipHorizontal and ClipVertical 
+                //        and store the vertices into additionalTriangles.
+                //        This clipping should also be done for z.
+
+                // for (const Vec4& otherVertex : projectedTriangles)
+                // {
+                //     if (&vertex != &otherVertex)
+                //     {
+                //         triangles::clipHorizontal(vertex.x, vertex.y, 
+                //                                   Vec2(vertex.x - otherVertex.x, vertex.y - otherVertex.y), 
+                //                                   vertex.w*2);
+
+                //         triangles::clipVertical(vertex.x, vertex.y, 
+                //                                 Vec2(vertex.x - otherVertex.x, vertex.y - otherVertex.y), 
+                //                                 vertex.w*2);
+                //     }
+                // }
+                return true;
+            }
+            // else 
+            //     std::cout << vertex.arr[j] << '\n';
+        }
+        #endif
+    }
+
+    return false;
     // if (triangleVertices[0].position.z >= 0 
     //     || triangleVertices[1].position.z >= 0 
     //     || triangleVertices[2].position.z >= 0)
@@ -63,36 +124,49 @@ bool RenderTriangle2::isClipped(const Texture& pTarget,
     // }
     // additionalTriangles.emplace_back(newTriangle);
 
-    // clipHorizontal(triangleVertices[0].position.x, triangleVertices[0].position.y, 
-    //                triangleVertices[1].position.x, triangleVertices[1].position.y, 
-    //                 );
+    float& x1 = triangleVertices[0].position.x;
+    float& y1 = triangleVertices[0].position.y;
+
+    float& x2 = triangleVertices[1].position.x;
+    float& y2 = triangleVertices[1].position.y;
+
+    float& x3 = triangleVertices[2].position.x;
+    float& y3 = triangleVertices[2].position.y;
+
+    float limit = 1.0;
+
+    if (x1 > limit)
+        triangles::clipHorizontal(x1, y1, 
+                                Vec2(x2-x1, y2-y1), 
+                                limit);
 
     // if (triangleVertices[0].position.x < 0)
     //     std::cout << "ERROR : Out of box\n";
 
-    return triangleVertices[0].position.z >= 0 
-        || triangleVertices[1].position.z >= 0 
-        || triangleVertices[2].position.z >= 0;
+    // return triangleVertices[0].position.z >= 0 
+    //     || triangleVertices[1].position.z >= 0 
+    //     || triangleVertices[2].position.z >= 0;
     
     // TODO: add triangles with clipping
+    return false;
 }
 
 __inline
-std::array<float, 3> RenderTriangle2::projectVertices(const Mat4& projection)
+std::array<float, 3> RenderTriangle2::projectVertices(const Mat4& projection, std::array<Vec4, 3>& projectedVertices)
 {
     std::array<float, 3> w;
     //TODO: opti possible 
-    Vec4 projectedLoc = projection * triangleVertices[0].position;
-    w[0] = projectedLoc.w;
-    triangleVertices[0].position = projectedLoc.getHomogenizedVec();
+    projectedVertices[0] = projection * triangleVertices[0].position;
+    w[0] = projectedVertices[0].w;
+    // triangleVertices[0].position = projectedLoc.getHomogenizedVec();
 
-    projectedLoc = projection * triangleVertices[1].position;
-    w[1] = projectedLoc.w;
-    triangleVertices[1].position = projectedLoc.getHomogenizedVec();
+    projectedVertices[1] = projection * triangleVertices[1].position;
+    w[1] = projectedVertices[1].w;
+    // triangleVertices[1].position = projectedLoc.getHomogenizedVec();
 
-    projectedLoc = projection * triangleVertices[2].position;
-    w[2] = projectedLoc.w;
-    triangleVertices[2].position = projectedLoc.getHomogenizedVec();
+    projectedVertices[2] = projection * triangleVertices[2].position;
+    w[2] = projectedVertices[2].w;
+    // triangleVertices[2].position = projectedLoc.getHomogenizedVec();
 
     return w;
 }
