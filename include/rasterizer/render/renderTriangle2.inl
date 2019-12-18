@@ -32,15 +32,6 @@ bool RenderTriangle2::isBackFaceCulled(const Vec3& cameraLocation)
     return dotProduct(N, triangleVertices[0].position - cameraLocation) > 0;
 }
 
-__inline
-void RenderTriangle2::setRelativeToCamera(const Mat4& transform)
-{
-    //TODO : optimization : Vec3 -> Vec4 -> Vec3
-    triangleVertices[0].position = transform * Vec4(triangleVertices[0].position, 1);
-    triangleVertices[1].position = transform * Vec4(triangleVertices[1].position, 1);
-    triangleVertices[2].position = transform * Vec4(triangleVertices[2].position, 1);
-}
-
 namespace triangles
 {
     __inline
@@ -106,23 +97,6 @@ bool RenderTriangle2::isClipped(const Texture& pTarget,
     }
 
     return false;
-    // if (triangleVertices[0].position.z >= 0 
-    //     || triangleVertices[1].position.z >= 0 
-    //     || triangleVertices[2].position.z >= 0)
-    // {
-    //     return true;
-    // }
-    
-    
-    // RenderTriangle2 newTriangle;
-    // newTriangle.triangleVertices = triangleVertices;
-    // newTriangle.worldVertices = worldVertices;
-    // for (unsigned int i = 0; i < 3; i++)
-    // {
-    //     newTriangle.triangleVertices[i].position.y += 1;
-    //     newTriangle.worldVertices[i].y += 1;
-    // }
-    // additionalTriangles.emplace_back(newTriangle);
 
     float& x1 = triangleVertices[0].position.x;
     float& y1 = triangleVertices[0].position.y;
@@ -152,33 +126,11 @@ bool RenderTriangle2::isClipped(const Texture& pTarget,
 }
 
 __inline
-std::array<float, 3> RenderTriangle2::projectVertices(const Mat4& projection, std::array<Vec4, 3>& projectedVertices)
-{
-    std::array<float, 3> w;
-    //TODO: opti possible 
-    projectedVertices[0] = projection * triangleVertices[0].position;
-    w[0] = projectedVertices[0].w;
-    // triangleVertices[0].position = projectedLoc.getHomogenizedVec();
-
-    projectedVertices[1] = projection * triangleVertices[1].position;
-    w[1] = projectedVertices[1].w;
-    // triangleVertices[1].position = projectedLoc.getHomogenizedVec();
-
-    projectedVertices[2] = projection * triangleVertices[2].position;
-    w[2] = projectedVertices[2].w;
-    // triangleVertices[2].position = projectedLoc.getHomogenizedVec();
-
-    return w;
-}
-
-__inline
 void RenderTriangle2::setVerticesToScreenResolution(const Mat4& screenConversion)
 {
     triangleVertices[0].position = screenConversion * Vec4(triangleVertices[0].position, 1);
     triangleVertices[1].position = screenConversion * Vec4(triangleVertices[1].position, 1);
     triangleVertices[2].position = screenConversion * Vec4(triangleVertices[2].position, 1);
-    // if ((screenConversion * Vec4(v1.position, 1)).w != 1)
-    // std::cout << (screenConversion * Vec4(v1.position, 1)).w << '\n';
 }
 
 __inline

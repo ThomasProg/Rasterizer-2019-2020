@@ -117,6 +117,7 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
                     Camera& camera, E_RasterizerMode mode)
 {
     const Mat4 screenConversionMatrix = Mat4::CreateScreenConversionMatrix();
+    const Mat4 cameraAndProjectMatrix = projectionMatrix * inverseCameraMatrix;
     RenderTriangle2 rendering;
 
     for (const Entity* entity : entities)
@@ -136,12 +137,18 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
             if (!rendering.isBackFaceCulled(camera.cartesianLocation))
             #endif
             { 
-                rendering.setRelativeToCamera(inverseCameraMatrix);
+                //rendering.setRelativeToCamera(inverseCameraMatrix);
 
                 std::vector<RenderTriangle2> additionnalTriangles;
 
                 std::array<Vec4, 3> projectedVertices;
-                std::array<float, 3> w = rendering.projectVertices(projectionMatrix, projectedVertices);
+                std::array<float, 3> w;
+
+                for (unsigned int i = 0; i < projectedVertices.size(); i++)
+                {
+                    projectedVertices[i] = cameraAndProjectMatrix * rendering.triangleVertices[i].position;
+                    w[i] = projectedVertices[i].w;
+                }
 
                 if (rendering.isClipped(pTarget->texture, additionnalTriangles, projectedVertices) 
                     && additionnalTriangles.size() == 0)

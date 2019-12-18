@@ -16,12 +16,10 @@ class Texture;
 class Entity;
 class Camera;
 
-class RenderTriangle2
+struct RenderTriangle2
 {
-//private?
 public:
     std::array<Vertex, 3> triangleVertices;
-    // Vertex v1, v2, v3;
 
     std::array<Vec3, 3> worldVertices;
 
@@ -38,15 +36,9 @@ public:
     bool isBackFaceCulled(const Vec3& cameraLocation);
 
     __inline
-    void setRelativeToCamera(const Mat4& transform);
-
-    __inline
     bool isClipped(const Texture& pTarget, 
                    std::vector<RenderTriangle2>& additionalTriangles, 
                    std::array<Vec4, 3>& projectedTriangles);
-
-    __inline
-    std::array<float, 3> projectVertices(const Mat4& projection, std::array<Vec4, 3>& projectedVertices);
 
     __inline
     void setVerticesToScreenResolution(const Mat4& screenConversion);
