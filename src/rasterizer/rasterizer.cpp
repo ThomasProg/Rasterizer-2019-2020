@@ -116,16 +116,31 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
                     FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, 
                     Camera& camera, E_RasterizerMode mode)
 {
+    // We get the transform matrices.
     const Mat4 screenConversionMatrix = Mat4::CreateScreenConversionMatrix();
     const Mat4 cameraAndProjectMatrix = projectionMatrix * inverseCameraMatrix;
+
+
     RenderTriangle2 rendering;
 
+    // For each entity
     for (const Entity* entity : entities)
     {
+        // Get aliases for vertices and indices
         const std::vector<Vertex>& vertices = entity->mesh->worldVertices;
         const std::vector<unsigned int>& indices = entity->mesh->indices;
 
-        //#pragma omp parallel for private(rendering)
+        // For each triangle (each 3 indices), render it
+        // Note : Some data is being computed more than 1 time because of identic indices.
+        //        This function could be optimized by first :
+        //          - computed data for each vertex
+        //          - storing them into a buffer array
+        //          - use this data to render them on screen
+        //        However, it would mean the backface culling would happen next, 
+        //        because the backface culling is linked to the triangle,
+        //        and performance could be on the contrary lost.
+        //        We could also use the back face culled with precomputed normals,
+        //        but it would be not necessarily the true normal and thus be imprecise.
         for (unsigned int indicesIndex = 0; indicesIndex < indices.size(); indicesIndex += 3)
         {
             rendering.setupForTriangle(vertices[indices[indicesIndex]], 
@@ -137,10 +152,7 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
             if (!rendering.isBackFaceCulled(camera.cartesianLocation))
             #endif
             { 
-                //rendering.setRelativeToCamera(inverseCameraMatrix);
-
-                std::vector<RenderTriangle2> additionnalTriangles;
-
+                // Contains projected vertices in Vec4, necessary to clip them.
                 std::array<Vec4, 3> projectedVertices;
                 std::array<float, 3> w;
 
@@ -150,9 +162,14 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
                     w[i] = projectedVertices[i].w;
                 }
 
+                // Contains triangles added by clipping.
+                std::vector<RenderTriangle2> additionnalTriangles;
+
                 if (rendering.isClipped(pTarget->texture, additionnalTriangles, projectedVertices) 
                     && additionnalTriangles.size() == 0)
                     continue;
+
+                // Render each triangle
 
                 rendering.triangleVertices[0].position = projectedVertices[0].getHomogenizedVec();
                 rendering.triangleVertices[1].position = projectedVertices[1].getHomogenizedVec();
@@ -181,17 +198,22 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget,
                             const Mat4& projectionMatrix, const Mat4& inverseCameraMatrix, 
                             Camera& camera, E_RasterizerMode mode)
 {
+    // If the scene or the framebuffer is invalid, this function should not be called.
+    // It is a logic error.
     assert(pScene != nullptr && pTarget != nullptr);
 
-    //init render texture
+    // init render texture
     pTarget->ResetPixels();
 
+    // Get worldLocation for each vertex of each entity.
+    // If an entity has no vertices in its default array :
+    //     - if it has vertices in worldVertices, it will use them (performance gain)
+    //     - else, nothing is done
     for (const Entity& entity : pScene->entities)
     {
-        if (entity.mesh != nullptr)
+        if (entity.mesh != nullptr && entity.mesh->vertices.size() != 0)
         {
             entity.mesh->worldVertices.clear();
-
             entity.mesh->worldVertices.reserve(entity.mesh->vertices.size());
             for (const Vertex& vert : entity.mesh->vertices)
             {
@@ -202,11 +224,14 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget,
     }
 
     #ifdef __ENABLE_TRANSPARENCY__
-    // std::set<const Entity*, bool(*)(const Entity* lhs, const Entity* rhs)> sortedEntities (&compareEntitiesToDisplay);
+
+    // If transparency is enabled, opaque entities should be put first into the buffer.
+    // The reason is to be sure opaque entities will be rendered behind transparent ones.
 
     std::vector<const Entity*> opaqueEntities;
     std::vector<const Entity*> transparentEntities;
 
+    // We compute the entity "center" to get an idea of its global location.
     for (Entity& entity : pScene->entities)
     {
         entity.computeCenter();
@@ -214,21 +239,21 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget,
 
     for (const Entity& entity : pScene->entities)
     {
-        if (entity.alpha == 1)
-            opaqueEntities.emplace_back(&entity);
-        else 
-            transparentEntities.emplace_back(&entity);
+        if (entity.mesh != nullptr)
+        {
+            if (entity.alpha >= 1)
+                opaqueEntities.emplace_back(&entity);
+            else 
+                transparentEntities.emplace_back(&entity);
+        }
     }
 
+    // For transparent entities, we have to sort them by distance to player order.
+    // It is to not have bad calculs and to render both of them.
     std::sort(transparentEntities.begin(), transparentEntities.end(), 
         [&camera] (const Entity* a, const Entity* b)
         {
             // return true if center of a is closer
-            // sqrt is not used to calcul the distance because we don't need it to compare them
-            // const Vec3 dist1 = a->center - camera.cartesianLocation;
-            // const Vec3 dist2 = b->center - camera.cartesianLocation;
-
-            // float f1 = dist1.getLengthSquared(), f2 = dist2.getLengthSquared();
             return (a->center - camera.cartesianLocation).getLengthSquared() 
                     > (b->center - camera.cartesianLocation).getLengthSquared();
         }  
@@ -238,11 +263,14 @@ void Rasterizer::RenderScene(Scene* pScene, FrameBuffer* pTarget,
 
     renderEntities(transparentEntities, pScene->lights, pTarget, projectionMatrix, inverseCameraMatrix, camera, mode);
     #else
+    // Even if we don't have transparent entities, 
+    // we have to put them into an array to call the function without changing its signature
     std::vector<const Entity*> opaqueEntities;
     opaqueEntities.reserve(pScene->entities.size());
     for (const Entity& entity : pScene->entities)
     {
-        opaqueEntities.emplace_back(&entity);
+        if (entity.mesh != nullptr)
+            opaqueEntities.emplace_back(&entity);
     }   
     renderEntities(opaqueEntities, pScene->lights, pTarget, projectionMatrix, inverseCameraMatrix, camera, mode);
     #endif

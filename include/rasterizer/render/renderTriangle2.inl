@@ -314,6 +314,7 @@ void RenderTriangle2::drawLineX(FrameBuffer* pTarget, const Vertex& vertex1, con
 __inline 
 void RenderTriangle2::drawWireframe(FrameBuffer* pTarget)
 {
+    // Draw a line for each edge of the triangle.
     drawLineX(pTarget, triangleVertices[0], triangleVertices[1]);
     drawLineX(pTarget, triangleVertices[1], triangleVertices[2]);
     drawLineX(pTarget, triangleVertices[2], triangleVertices[0]);
@@ -447,24 +448,25 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
                                     const Vec3& cameraLocation, std::vector<Light>& lights, 
                                     Texture* pTexture, const Material& mat)
 {
-    // std::array<Vertex*, 3> triangleVertices;
-    // triangleVertices[0] = &v1;
-    // triangleVertices[1] = &v2;
-    // triangleVertices[2] = &v3;
 
     #ifdef __PERSPECTIVE_FIX__
     // TODO: assert?
+    // if ww == 0, it should have been clipped already
     if (ww[0] == 0 || ww[1] == 0 || ww[2] == 0)
         return;
 
     #endif
 
+    //getting aliases
     const Vec3& p1 = triangleVertices[0].position;
     const Vec3& p2 = triangleVertices[1].position;
     const Vec3& p3 = triangleVertices[2].position;
 
     //BECAREFUL
-    //clipping in rasterization
+    //clipping in rasterization 
+
+    // We get the AABB box of the triangle.
+    // We clamp it to not go outside of the screen. 
     #ifdef __ADD_OFFSET__
     unsigned int minX = std::min(std::max(windowRenderMinX, std::min(std::min(p1.x, p2.x), p3.x)), windowRenderMaxX);
     unsigned int maxX = std::min(std::max(windowRenderMinX, std::max(std::max(p1.x, p2.x), p3.x)), windowRenderMaxX);
@@ -477,9 +479,12 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
     unsigned int maxY = std::min(std::max(0.f, std::max(std::max(p1.y, p2.y), p3.y)), float(pTarget->height));
     #endif
 
+    // Moving uvs into arrays for future uses and better manipulation.
+    // v = 1-v to mirror them on the x axis, since they are upside down by default.
     std::array<float, 3> uP = {triangleVertices[0].u, triangleVertices[1].u, triangleVertices[2].u};
     std::array<float, 3> vP = {1-triangleVertices[0].v, 1-triangleVertices[1].v, 1-triangleVertices[2].v};
 
+    // Array containing the point weight relative to the triangle.
     std::array<float, 3> weight;
 
     std::function<Color(void)> getColor;
@@ -513,19 +518,6 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
     {
         Vec3 location3D = weight * worldVertices;
 
-        // // could be unrolled
-        // for (unsigned int i = 0; i < 3; i++)
-        // {
-        //     location3D.x += weight[i] * worldVertices[i].x;
-        //     location3D.y += weight[i] * worldVertices[i].y;
-        //     location3D.z += weight[i] * worldVertices[i].z;
-        // }
-
-        //compute z
-        // float z = (triangleVertices[0].position.z) * weight[0] 
-        //         + triangleVertices[1].position.z * weight[1] 
-        //         + triangleVertices[2].position.z * weight[2];
-
         Vec3 normal(0, 0, 0);
         // could be unrolled
         for (unsigned int i = 0; i < 3; i++)
@@ -549,7 +541,6 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         }
         #endif
 
-        //RasterizingVertex vert;
         Color c(0, 0, 0, 0);
         
         // lighting
@@ -634,16 +625,11 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
                         vP, 
                         c);
 
-        // float finalIntensity = intensity * weight;
-
-        //intensity[2] = 0.5f;
-
         float finalIntensity = 0.f;
         for (unsigned int i = 0; i < 3; ++i)
         {
             finalIntensity += intensity[i] * weight[i];
         }
-        //std::cout << intensity[2] << " / " << weight[2] << '\n';
 
         if (finalIntensity > 1)
             finalIntensity = 1;
@@ -690,18 +676,9 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         for (unsigned int x = minX; x <= maxX; x ++)
         {
     #endif
-            // tryToDrawPixel(x, y, 
-            //                 // p1, p2, p3, 
-            //                 triangleVertices,
-            //                 ww, uP, vP, cameraLocation, 
-            //                 worldVertices, pTarget, lights, pTexture, mat);
-
-            // bool isValid = getWeight(Vec2(x,y), triangleVertices[0].position, 
-            //                                     triangleVertices[1].position, 
-            //                                     triangleVertices[2].position, weight);
-
             #ifdef __MULTI_SAMPLING_LIGHT__
             bComputed = false;
+            //for each sample
             for (unsigned int yAliasing = 0; yAliasing < antiAliasingY; yAliasing ++)
             {
                 for (unsigned int xAliasing = 0; xAliasing < antiAliasingX; xAliasing ++)
@@ -710,6 +687,7 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
                               y + yAliasing - triangleVertices[2].position.y, 
                               weight, weightData);
 
+                    // If point is inside triangle
                     if (weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0)
                     {
                         const float depth = (triangleVertices[0].position.z) * weight[0] 
@@ -725,6 +703,7 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
 
             getWeight(x - triangleVertices[2].position.x, y - triangleVertices[2].position.y, weight, weightData);
 
+            // If point is inside triangle
             if (weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0)
             {
                 const float depth = (triangleVertices[0].position.z) * weight[0] 

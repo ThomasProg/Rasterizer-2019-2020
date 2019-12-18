@@ -9,10 +9,10 @@ void RenderTriangle2::projectAndDraw(std::vector<Light>& lights, const Entity* e
                                      FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& screenConversionMatrix, 
                                      Camera& camera, E_RasterizerMode mode, std::array<float, 3>& w)
 {
+    // Convert vertices coordinates to the user Viewport
     setVerticesToScreenResolution(screenConversionMatrix);
 
-    //rendering.setDefaultColor();
-
+    // Mix entity and vertex transparency together. 
     addTransparency(entity->alpha);
 
     switch (mode)
@@ -21,10 +21,6 @@ void RenderTriangle2::projectAndDraw(std::vector<Light>& lights, const Entity* e
         case E_RasterizerMode::E_TRIANGLES_AS_LINES:
             drawWireframe(pTarget);
             break;
-
-        // rendering.v1.color = Color(250,250,250);   
-        // rendering.v2.color = Color(250,100,250);   
-        // rendering.v3.color = Color(250,250,100);
 
         case E_RasterizerMode::E_TRIANGLES:
             drawTriangleX(pTarget, w, camera.cartesianLocation, lights, entity->mesh->pTexture, entity->mat);   

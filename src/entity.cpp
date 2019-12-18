@@ -6,12 +6,13 @@
 
 void Entity::computeCenter()
 {
-    assert(mesh != nullptr);
-
-    for (const Vertex& vertex : mesh->worldVertices)
+    if (mesh != nullptr)
     {
-        center += vertex.position;
-    }
+        for (const Vertex& vertex : mesh->worldVertices)
+        {
+            center += vertex.position;
+        }
 
-    center /= mesh->worldVertices.size();
+        center /= mesh->worldVertices.size();
+    }
 }

@@ -25,6 +25,7 @@ void FrameBuffer::SetPixel(unsigned int x, unsigned int y, float newDepth, const
     texture.SetPixelColor(x, y, c);
     #endif
 
+    // set depth for next elements culling
     depthBuffer.setDepth(x, y, newDepth);
 }
 
