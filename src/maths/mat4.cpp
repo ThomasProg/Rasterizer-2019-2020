@@ -358,30 +358,6 @@ Mat4 Mat4::CreateScreenConversionMatrix()
         0, 0, 1, -1,
         0, 0, 0, 1
     };
-
-    // Mat4 screen;
-
-    // screen.elements[0] = 2.f/5.f * windowWidth/2;
-    // screen.elements[1] = 0;
-    // screen.elements[2] = 0;
-    // screen.elements[3] = windowWidth/2;
-
-    // screen.elements[4] = 0;
-    // screen.elements[5] = 2.f/5.f * windowHeight/2;
-    // screen.elements[6] = 0;
-    // screen.elements[7] = windowHeight/2;
-    
-    // screen.elements[8] = 0;
-    // screen.elements[9] = 0;
-    // screen.elements[10] = 1;
-    // screen.elements[11] = -1;
-
-    // screen.elements[12] = 0;
-    // screen.elements[13] = 0;
-    // screen.elements[14] = 0;
-    // screen.elements[15] = 1;
-    
-    // return screen;
 }
 
 float Mat4::det_2(unsigned x,unsigned y,unsigned z,unsigned w) const
@@ -429,25 +405,25 @@ Mat4 Mat4::GetInverse() const
     Mat4 inverse;
     Mat4 AdjM = this->CoMatrix().Transpose();
 
-    inverse.elements[0] = AdjM.elements[0]/determinant();
-    inverse.elements[1] = AdjM.elements[1]/determinant();
-    inverse.elements[2] = AdjM.elements[2]/determinant();
-    inverse.elements[3] = AdjM.elements[3]/determinant();
+    inverse.elements[0]  = AdjM.elements[0]  / determinant();
+    inverse.elements[1]  = AdjM.elements[1]  / determinant();
+    inverse.elements[2]  = AdjM.elements[2]  / determinant();
+    inverse.elements[3]  = AdjM.elements[3]  / determinant();
 
-    inverse.elements[4] = AdjM.elements[4]/determinant();
-    inverse.elements[5] = AdjM.elements[5]/determinant();
-    inverse.elements[6] = AdjM.elements[6]/determinant();
-    inverse.elements[7] = AdjM.elements[7]/determinant();
+    inverse.elements[4]  = AdjM.elements[4]  / determinant();
+    inverse.elements[5]  = AdjM.elements[5]  / determinant();
+    inverse.elements[6]  = AdjM.elements[6]  / determinant();
+    inverse.elements[7]  = AdjM.elements[7]  / determinant();
     
-    inverse.elements[8] = AdjM.elements[8]/determinant();
-    inverse.elements[9] = AdjM.elements[9]/determinant();
-    inverse.elements[10] = AdjM.elements[10]/determinant();
-    inverse.elements[11] = AdjM.elements[11]/determinant();
+    inverse.elements[8]  = AdjM.elements[8]  / determinant();
+    inverse.elements[9]  = AdjM.elements[9]  / determinant();
+    inverse.elements[10] = AdjM.elements[10] / determinant();
+    inverse.elements[11] = AdjM.elements[11] / determinant();
 
-    inverse.elements[12] = AdjM.elements[12]/determinant();
-    inverse.elements[13] = AdjM.elements[13]/determinant();
-    inverse.elements[14] = AdjM.elements[14]/determinant();
-    inverse.elements[15] = AdjM.elements[15]/determinant();
+    inverse.elements[12] = AdjM.elements[12] / determinant();
+    inverse.elements[13] = AdjM.elements[13] / determinant();
+    inverse.elements[14] = AdjM.elements[14] / determinant();
+    inverse.elements[15] = AdjM.elements[15] / determinant();
 
     return inverse;
 }

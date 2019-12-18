@@ -24,7 +24,7 @@
 
 #define __CLIP_WIREFRAME_LINES__
 
-#define __W_CLIPPING__
+// #define __W_CLIPPING__
 
 #define __GLFW__
 
