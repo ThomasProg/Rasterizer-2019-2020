@@ -29,13 +29,11 @@ void Events::lightsInit(std::vector<Light>& lights)
     lights.push_back(Light());
 }
 
-Mesh* loadMeshFromObj(RessourceManager& textureManager, std::string objFile, std::string subDirectory = "/")
+// Don't forget the '/' at the end of the subDirectory name
+Mesh* loadMeshFromObj(std::string objFile, std::string subDirectory)
 {
     Mesh* meshQ = new Mesh;
 
-    //std::string inputfile = "media/midna/midna.obj";
-    // std::string inputfile = "media/WaddleDeeLow-Poly/waddledee.obj";
-    // std::string inputfile = "media/SuperMarioGalaxyBoo/Boo.obj";
     std::string inputfile = subDirectory + objFile;
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
@@ -75,46 +73,49 @@ Mesh* loadMeshFromObj(RessourceManager& textureManager, std::string objFile, std
     for (size_t s = 0; s < shapes.size(); s++) 
     {
         tinyobj::mesh_t& mesh = shapes[s].mesh;
-        tinyobj::material_t& material = materials[mesh.material_ids[0]];
-        // material.diffuse_texname;
-        // textureManager.textures.emplace_back(std::move(Texture("media/midna/midona_body.png")));
+        //tinyobj::material_t& material = materials[mesh.material_ids[0]];
+        // TODO : get material features
         for (unsigned int i = 0; i < attrib.vertices.size() / 3; i++)
         {
+            // Set position and default uvs / color / normals
             Vertex vert;
             vert.position = Vec3(attrib.vertices[3*i], attrib.vertices[3*i+1], attrib.vertices[3*i+2]);
-            // vert.normal   = Vec3(attrib.normals[i], attrib.normals[i+1], attrib.normals[i+2]);
             vert.normal = Vec3(0,0,1);
             vert.u = 0;
-            vert.v = 0.5;
+            vert.v = 1;
             vert.color = Color(1,1,1,1);
 
             meshQ->vertices.emplace_back(vert);
         }
 
-        for (unsigned int i = 0; i < shapes[s].mesh.indices.size(); i++)
+        for (unsigned int i = 0; i < mesh.indices.size(); i++)
         {
-            tinyobj::index_t idx = shapes[s].mesh.indices[i];
+            tinyobj::index_t idx = mesh.indices[i];
             meshQ->indices.emplace_back(idx.vertex_index);
 
+            // Loads normals if possible
             if (idx.normal_index >= 0)
             {
-                tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
-                tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
-                tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
+                const tinyobj::real_t nx = attrib.normals[3*idx.normal_index+0];
+                const tinyobj::real_t ny = attrib.normals[3*idx.normal_index+1];
+                const tinyobj::real_t nz = attrib.normals[3*idx.normal_index+2];
 
                 meshQ->vertices[idx.vertex_index].normal = Vec3(nx, ny, nz);
             }
 
-            tinyobj::real_t tx = attrib.texcoords[2*idx.texcoord_index+0];
-            tinyobj::real_t ty = attrib.texcoords[2*idx.texcoord_index+1];
+            // Loads uvs if possible
+            if (idx.texcoord_index >= 0)
+            {
+                const tinyobj::real_t tx = attrib.texcoords[2*idx.texcoord_index+0];
+                const tinyobj::real_t ty = attrib.texcoords[2*idx.texcoord_index+1];
 
-            meshQ->vertices[idx.vertex_index].u = tx;
-            meshQ->vertices[idx.vertex_index].v = ty;
+                meshQ->vertices[idx.vertex_index].u = tx;
+                meshQ->vertices[idx.vertex_index].v = ty;
+            }
         }
     }
     return meshQ;
 }
-
 
 // Spawns every entity of the scene
 void Events::entitiesInit(std::vector<Entity>& entities)
@@ -299,17 +300,17 @@ void Events::entitiesInit(std::vector<Entity>& entities)
 
     {
         Entity sphere;
-        sphere.mesh = loadMeshFromObj(textureManager, "Boo.obj", "media/SuperMarioGalaxyBoo/");
+        sphere.mesh = loadMeshFromObj("Boo.obj", "media/SuperMarioGalaxyBoo/");
         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-5.0, 0.0, zDepth));
         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/50.f, 1.f/50, 1.f/50));
         sphere.mesh->pTexture = &textureManager.textures[5];
-        sphere.alpha = 0.5f;
+        sphere.alpha = 1.0f;
         entities.push_back(std::move(sphere));
     }
 
     {
         Entity sphere;
-        sphere.mesh = loadMeshFromObj(textureManager, "waddledee.obj", "media/WaddleDeeLow-Poly/");
+        sphere.mesh = loadMeshFromObj("waddledee.obj", "media/WaddleDeeLow-Poly/");
         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(5.0, -2.0, zDepth));
         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/50.f, 1.f/50, 1.f/50));
         sphere.mesh->pTexture = &textureManager.textures[4];
@@ -385,17 +386,19 @@ int Events::run()
     FrameBuffer target(textureResolutionX, textureResolutionY);
 
     //============== setup fps and deltatime ==============//
+    float lastTime = 0.f;
+    #ifdef __FPS_COUNT__
     unsigned int nbFps = 0;
     float totalFps = 0.f;
     float frame = 0;
     float fps;
-    float lastTime = 0.f;
     constexpr long unsigned int nbDeltaTimeSamples = 10;
     std::array<float, nbDeltaTimeSamples> deltaTimes;
     unsigned int deltaTimeIndex = 0;
     float lowestFPS = 10000;
     float highestFPS = 0.f;
     float deltaMedium = 1;
+    #endif
 
     //============== start game loop ==============//
     #ifdef __GLFW__
@@ -412,6 +415,7 @@ int Events::run()
         //============== compute deltatime ==============//
         float time = glfwGetTime();
         float deltaTime = time - lastTime;
+        #ifdef __FPS_COUNT__
         deltaTimes[deltaTimeIndex] = deltaTime;
         deltaTimeIndex++;
         if (deltaTimeIndex >= nbDeltaTimeSamples)
@@ -433,8 +437,11 @@ int Events::run()
         totalFps += fps;
         std::cout << 1.f/(deltaTime) << std::endl;
         lastTime = time;
+        #endif
 
+        #ifdef __FPS_COUNT__
         frame += 1;
+        #endif
 
         //============== Add rotation to cube ==============//
 
@@ -442,20 +449,24 @@ int Events::run()
         scene.entities[1].transformation *= Mat4::CreateRotationMatrix(Vec3(0.01, 0.01, 0.01));
 
         // set additional shaders
-        scene.entities[1].mat.additionalShaders = [&time, &deltaMedium, &highestFPS, &lowestFPS](Color& color, Vec3& worldLocation)
+        scene.entities[1].mat.additionalShaders = [&time](Color& color, Vec3& worldLocation)
         {
+            // add green circles on xy plane
             color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10);
+
             // make the material twinkling
-            // constexpr float minColorRatio = 0.5; 
-            // color.r *= cos(time) + 1 + minColorRatio;
-            // color.g *= cos(time) + 1 + minColorRatio;
-            // color.b *= cos(time) + 1 + minColorRatio;
+            constexpr float minColorRatio = 0.5; 
+            color.r *= cos(time) + 1 + minColorRatio;
+            color.g *= cos(time) + 1 + minColorRatio;
+            color.b *= cos(time) + 1 + minColorRatio;
         };
 
         //GLFW
         #ifdef __GLFW__
 
         #ifdef __THIRD_PERSON__
+        // TODO : add spherical coordinates and TPS
+
         // if (glfwGetKey(window, GLFW_KEY_W))
         //     camera.spherialRadius -= camera.translationSpeed * deltaTime;
 

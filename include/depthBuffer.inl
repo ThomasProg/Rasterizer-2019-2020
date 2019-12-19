@@ -3,8 +3,8 @@
 __inline
 float DepthBuffer::getDepth(unsigned int x, unsigned int y) const
 {
-    //assert(0 <= x && x < width && 0 <= y && y < height);
-    if (0 <= x && x < width && 0 <= y && y < height)
+    // x >= 0 && y >= 0 since they are unsigned
+    if (x < width && y < height)
         return depth[x + y * width];   
     else 
         return -1;
@@ -13,6 +13,7 @@ float DepthBuffer::getDepth(unsigned int x, unsigned int y) const
 __inline
 void DepthBuffer::setDepth(unsigned int x, unsigned int y, float newDepth)
 {
-    if (0 <= x && x < width && 0 <= y && y < height)
+    // x >= 0 && y >= 0 since they are unsigned
+    if (x < width && y < height)
         depth[x + y * width] = newDepth;
 }

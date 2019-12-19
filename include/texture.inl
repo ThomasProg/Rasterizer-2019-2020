@@ -12,6 +12,7 @@ void Texture::SetPixelColor(unsigned int x, unsigned int y, const Color& c)
 __inline
 Color Texture::GetPixelColor(unsigned int x, unsigned int y) const
 {
-    assert(0 <= x && x < width && 0 <= y && y < height);
+    // x <= 0 && y <= 0 since they are unsigned
+    assert(x < width && y < height);
     return pixels[x + y * width];   
 }

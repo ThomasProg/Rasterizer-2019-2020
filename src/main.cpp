@@ -1,6 +1,6 @@
 #include "event.h"
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
     // run rasterizer example
     Events event;

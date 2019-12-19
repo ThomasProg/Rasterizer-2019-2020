@@ -6,7 +6,7 @@
 #include "mesh.h"
 
 void RenderTriangle2::projectAndDraw(std::vector<Light>& lights, const Entity* entity,
-                                     FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& screenConversionMatrix, 
+                                     FrameBuffer* pTarget, const Mat4& screenConversionMatrix, 
                                      Camera& camera, E_RasterizerMode mode, std::array<float, 3>& w)
 {
     // Convert vertices coordinates to the user Viewport

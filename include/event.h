@@ -52,5 +52,6 @@ public:
     int run();
 };
 
+Mesh* loadMeshFromObj(std::string objFile, std::string subDirectory = "/");
 
 #endif

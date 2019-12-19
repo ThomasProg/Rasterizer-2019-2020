@@ -3,8 +3,8 @@
 __inline
 void FrameBuffer::SetPixel(unsigned int x, unsigned int y, float newDepth, const Color& c)
 {
-    // assert(x >= 0 && x < width && y >= 0 && y < height);
-    if (!(x >= 0 && x < width && y >= 0 && y < height))
+    // x >= 0 && y >= 0 since they are unsigned
+    if (!(x < width && y < height))
         return;
 
     #ifdef __ENABLE_TRANSPARENCY__

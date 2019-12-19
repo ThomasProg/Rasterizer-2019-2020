@@ -1,6 +1,6 @@
 MAKEFLAGS+=--no-builtin-rules --no-builtin-variables
 
-CXXFLAGS=-O3 -Wall -MMD -Wno-unused-function
+CXXFLAGS=-O3 -W -Werror -Wall -MMD -Wno-unused-function
 CXXFLAGS+=-Iinclude -ItestMains -Iinclude/maths -Iinclude/rasterizer -Iinclude/rasterizer/render -Iinclude/glad
 CFLAGS=$(CXXFLAGS)
 CC=gcc

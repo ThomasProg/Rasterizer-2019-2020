@@ -10,7 +10,7 @@ private:
     
 public:
     bool isOn = false;
-    std::function<void(bool isOn)> onSwitch = [](bool isOn){};
+    std::function<void(bool isOn)> onSwitch = [](bool){};
     
     void input(bool b);
 };

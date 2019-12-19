@@ -1,6 +1,8 @@
 #ifndef _MACROS_H_
 #define _MACROS_H_
 
+// Prints FPS data
+#define __FPS_COUNT__
 
 // enables backface culling 
 // WARNING : works, but render weird things with transparency on

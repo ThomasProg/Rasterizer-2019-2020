@@ -50,16 +50,15 @@ unsigned int getNbMixedColors(const int x, const int y, const FrameBuffer& highR
     return nbMixedColors;
 }
 
-void Rasterizer::antiAliasingCompression(const FrameBuffer& highResolutionFB, Texture& finalTexture)
+void Rasterizer::antiAliasingCompression(const FrameBuffer&,// highResolutionFB, 
+                                        Texture& finalTexture)
 {  
-    const Texture& highResolutionTexture = highResolutionFB.texture;
     for (unsigned int y = 0; y < finalTexture.height; y++)
     {
         for (unsigned int x = 0; x < finalTexture.width; x++)
         {
             Color finalColor (0, 0, 0, 0);
 
-            // #ifdef __SUPER_SAMPLING__
             #if defined(__SUPER_SAMPLING__) || defined(__MULTI_SAMPLING_LIGHT__)
 
             //get pixel color
@@ -68,11 +67,11 @@ void Rasterizer::antiAliasingCompression(const FrameBuffer& highResolutionFB, Te
                 for (unsigned int j = 0; j < antiAliasingX; j++)
                 {       
                     unsigned int highResIndex = x * antiAliasingX + j + 
-                                                                (i + y * antiAliasingY) * highResolutionTexture.width;
+                                                                (i + y * antiAliasingY) * highResolutionFB.texture.width;
 
                     if (highResolutionFB.depthBuffer.depth[highResIndex] < depthMax)
                     {
-                        finalColor += highResolutionTexture.pixels[highResIndex] / (antiAliasingY * antiAliasingX);
+                        finalColor += highResolutionFB.texture.pixels[highResIndex] / (antiAliasingY * antiAliasingX);
                     }
                 }  
             }
@@ -148,7 +147,7 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
                 rendering.triangleVertices[2].position = projectedVertices[2].getHomogenizedVec();
 
                 rendering.projectAndDraw(lights, entity, pTarget, 
-                                         projectionMatrix, screenConversionMatrix,
+                                         screenConversionMatrix,
                                          camera, mode, w);
                                          
                 for (RenderTriangle2& triangle : additionnalTriangles)
@@ -158,7 +157,7 @@ void renderEntities(std::vector<const Entity*>& entities, std::vector<Light>& li
                     triangle.triangleVertices[2].position = projectedVertices[2].getHomogenizedVec();
 
                     triangle.projectAndDraw(lights, entity, pTarget, 
-                                            projectionMatrix, screenConversionMatrix,
+                                            screenConversionMatrix,
                                             camera, mode, w);
                 }
             }
