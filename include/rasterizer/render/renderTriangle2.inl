@@ -589,7 +589,10 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
                         vP, 
                         c);
 
+<<<<<<< HEAD
         // Interpolates finalIntensity
+=======
+>>>>>>> 8bf52768a8107cb847a58d3cac810625a4416227
         float finalIntensity = 0.f;
         for (unsigned int i = 0; i < 3; ++i)
         {
@@ -634,7 +637,11 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         {
     #endif
             #ifdef __MULTI_SAMPLING_LIGHT__
+<<<<<<< HEAD
             bComputed = false; // Tells light has to be computed again since it is a new pixel
+=======
+            bComputed = false;
+>>>>>>> 8bf52768a8107cb847a58d3cac810625a4416227
             //for each sample
             for (unsigned int yAliasing = 0; yAliasing < antiAliasingY; yAliasing ++)
             {

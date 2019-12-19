@@ -301,22 +301,22 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     {
         Entity sphere;
         sphere.mesh = loadMeshFromObj("Boo.obj", "media/SuperMarioGalaxyBoo/");
-        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-5.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, zDepth));
         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/50.f, 1.f/50, 1.f/50));
         sphere.mesh->pTexture = &textureManager.textures[5];
         sphere.alpha = 1.0f;
         entities.push_back(std::move(sphere));
     }
 
-    {
-        Entity sphere;
-        sphere.mesh = loadMeshFromObj("waddledee.obj", "media/WaddleDeeLow-Poly/");
-        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(5.0, -2.0, zDepth));
-        sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/50.f, 1.f/50, 1.f/50));
-        sphere.mesh->pTexture = &textureManager.textures[4];
-        sphere.alpha = 1.f;
-        entities.push_back(std::move(sphere));
-    }
+    // {
+    //     Entity sphere;
+    //     sphere.mesh = loadMeshFromObj("waddledee.obj", "media/WaddleDeeLow-Poly/");
+    //     sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(5.0, -2.0, zDepth));
+    //     sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/50.f, 1.f/50, 1.f/50));
+    //     sphere.mesh->pTexture = &textureManager.textures[4];
+    //     sphere.alpha = 1.f;
+    //     entities.push_back(std::move(sphere));
+    // }
 }
 
 void Events::sceneInit(Scene& scene)
