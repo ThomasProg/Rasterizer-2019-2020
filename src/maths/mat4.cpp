@@ -346,23 +346,22 @@ Mat4 Mat4::CoMatrix() const
     // det_2 used multipled times could be stored in tempX for performance gains 
 
     coM.elements[0] =  (elements[5] * temp1 + elements[9]*temp2 + elements[13]*temp3);
-    coM.elements[1] = -(elements[4] * temp1 + elements[8]*temp2 + elements[12]*temp3); //check  
+    coM.elements[1] = -(elements[4] * temp1 + elements[8]*temp2 + elements[12]*temp3); 
     coM.elements[2] =  (elements[4] * det_2(9,15,13,11) + elements[8]*det_2(13,7,5,15) + elements[12]*det_2(5,11,9,7));  
     coM.elements[3] = -(elements[4] * det_2(9,14,13,10) + elements[8]*det_2(13,6,5,14) + elements[12]*det_2(5,10,9,6));
 
-    temp2 = det_2(14,3,2,15);
-    temp3 = det_2(2,11,10,3);
+    float temp4 = det_2(14,3,2,15);
+    float temp5 = det_2(2,11,10,3);
 
-    coM.elements[4] = -(elements[1]*temp1 + elements[9]*temp2 + elements[13]*temp3);
-    coM.elements[5] = (elements[0]*temp1 + elements[8]*temp2 + elements[12]*temp3); //check
+    coM.elements[4] = -(elements[1] * temp1 + elements[9] * temp4 + elements[13] * temp5);
+    coM.elements[5] =  (elements[0] * temp1 + elements[8] * temp4 + elements[12] * temp5);
+    coM.elements[6] = -(elements[0] * det_2(9,15,13,11) + elements[8]*det_2(13,3,1,15) + elements[12] * det_2(1,11,9,3));
+    coM.elements[7] =  (elements[0] * det_2(9,14,13,10) + elements[8]*det_2(13,2,1,14) + elements[12] * det_2(1,10,9,2));
     
-    coM.elements[6] = -(elements[0]*det_2(9,15,13,11) + elements[8]*det_2(13,3,1,15) + elements[12]*det_2(1,11,9,3));
-    coM.elements[7] = (elements[0]*det_2(9,14,13,10) + elements[8]*det_2(13,2,1,14) + elements[12]*det_2(1,10,9,2));
-    
-    coM.elements[8] = (elements[1]*det_2(6,15,14,7) + elements[5]*det_2(14,3,2,15) + elements[13]*det_2(2,7,6,3));
-    coM.elements[9] = -(elements[0]*det_2(6,15,14,7) + elements[4]*det_2(14,3,2,15) + elements[12]*det_2(2,7,6,3));
-    coM.elements[10] = (elements[0]*det_2(5,15,13,7) + elements[4]*det_2(13,3,1,15) + elements[12]*det_2(1,7,5,3));
-    coM.elements[11] = -(elements[0]*det_2(5,14,13,6) + elements[4]*det_2(13,2,1,14) + elements[12]*det_2(1,6,5,2));
+    coM.elements[8]  =  (elements[1] * det_2(6,15,14,7) + elements[5] * det_2(14,3,2,15) + elements[13] * det_2(2,7,6,3));
+    coM.elements[9]  = -(elements[0] * det_2(6,15,14,7) + elements[4] * det_2(14,3,2,15) + elements[12] * det_2(2,7,6,3));
+    coM.elements[10] =  (elements[0] * det_2(5,15,13,7) + elements[4] * det_2(13,3,1,15) + elements[12] * det_2(1,7,5,3));
+    coM.elements[11] = -(elements[0] * det_2(5,14,13,6) + elements[4] * det_2(13,2,1,14) + elements[12] * det_2(1,6,5,2));
 
     coM.elements[12] = -(elements[1]*det_2(6,11,10,7) + elements[5]*det_2(10,3,2,11) + elements[9]*det_2(2,7,6,3));
     coM.elements[13] = (elements[0]*det_2(6,11,10,7) + elements[4]*det_2(10,3,2,11) + elements[8]*det_2(2,7,6,3));
@@ -372,6 +371,22 @@ Mat4 Mat4::CoMatrix() const
 
     return coM;
 }
+// is equivalent to
+// {
+//     Matrix m(nbLines, nbColumns);
+
+//     for (unsigned int y = 0; y < nbLines; y++)
+//     {
+//         for (unsigned int x = 0; x < nbColumns; x++)
+//         {
+//             m.matrix[x + y * nbColumns] = getCofactor(x, y);
+//         }
+//     }
+
+//     return m;
+// }
+
+
 
 Mat4 Mat4::GetInverse() const
 {

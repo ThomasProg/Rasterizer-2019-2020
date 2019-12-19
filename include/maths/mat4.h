@@ -28,6 +28,8 @@ public:
     float* operator[](unsigned int id);
     const float* operator[](unsigned int id) const;
 
+    // The following functions has been designed for only Mat4 matrices.
+    // It gives a performance gains.
     float determinant() const;
     float det_2(unsigned x,unsigned y,unsigned z,unsigned w) const ;
     // returns comatrix of a Mat4 matrix 
