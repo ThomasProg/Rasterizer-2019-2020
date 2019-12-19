@@ -9,6 +9,19 @@
 - Perspective
 - .obj loadable
 
+- Color interpolation if no texture
+- Z Buffer
+- Phong
+- Blinn Phong
+- Cube and Sphere meshes
+- Customizable lights (ambient, diffuse, and specular components)
+- Perspective and orthogonal projections
+- Texturing with bilinear filtering or nearest-neighbor interpolation
+- Wireframe mode
+- Back face culling, alpha blending
+- First Person Camera 
+- Anti aliasing (supersampling and multisampling)
+
 ## Known issues : 
  - When a big triangle is inside you, even though there is a large surface of it forward, it will be culled if one vertex goes behind.
 
