@@ -13,7 +13,6 @@ public:
     Mesh* mesh = nullptr;
     Mat4 transformation;
 
-    //bugs if alpha < 0.3
     float alpha = 1.0f; //entity transparency, [0;1]
     Material mat;
 

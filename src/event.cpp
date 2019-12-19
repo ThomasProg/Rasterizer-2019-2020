@@ -58,6 +58,7 @@ Mesh* loadMeshFromObj(RessourceManager& textureManager, std::string objFile, std
     exit(1);
     }
 
+    // TODO : Get multiple materials
     // for (tinyobj::material_t mat : materials)
     // {
     //     textureManager.addFromFile(mat.diffuse_texname.c_str());
@@ -114,6 +115,8 @@ Mesh* loadMeshFromObj(RessourceManager& textureManager, std::string objFile, std
     return meshQ;
 }
 
+
+// Spawns every entity of the scene
 void Events::entitiesInit(std::vector<Entity>& entities)
 {
     float zDepth = -5;
@@ -178,11 +181,9 @@ void Events::entitiesInit(std::vector<Entity>& entities)
         {
             Entity sphere;
             sphere.mesh = Mesh::CreateCube();
-            // float ii = 0;
             for (Vertex& vertex : sphere.mesh->vertices)
             {
                 vertex.color = Color(1, 1, 1);
-                //ii += 255.f / 20*20;
             }
             sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-2.0-j*3, 0.0, zDepth));
             sphere.transformation *= Mat4::CreateRotationMatrix(Vec3(j, j, j));
@@ -213,11 +214,9 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     {
         Entity sphere;
         sphere.mesh = Mesh::CreateCube();
-        // float ii = 0;
         for (Vertex& vertex : sphere.mesh->vertices)
         {
             vertex.color = Color(1, 1, 1);
-            //ii += 255.f / 20*20;
         }
         sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(-7.0, 0.0, zDepth));
         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.5, 1.5, 1.5));

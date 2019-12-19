@@ -30,6 +30,7 @@ public:
 
     float determinant() const;
     float det_2(unsigned x,unsigned y,unsigned z,unsigned w) const ;
+    // returns comatrix of a Mat4 matrix 
     Mat4 CoMatrix() const;  
     Mat4 Transpose() const;
 

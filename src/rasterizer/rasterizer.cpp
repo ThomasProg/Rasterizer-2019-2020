@@ -57,35 +57,7 @@ void Rasterizer::antiAliasingCompression(const FrameBuffer& highResolutionFB, Te
     {
         for (unsigned int x = 0; x < finalTexture.width; x++)
         {
-            //unsigned int id = x * antiAliasingX + y * (target.width) * antiAliasingY;
             Color finalColor (0, 0, 0, 0);
-
-            // #ifdef __MULTI_SAMPLING_TRIANGLES__
-            // unsigned int firstElemID = x * antiAliasingX + 
-            //                         (y * antiAliasingY) * highResolutionFB.texture.width;
-
-            // float curDepth = highResolutionFB.depthBuffer.depth[firstElemID];
-            
-            // unsigned int nbMixedColors = getNbMixedColors(x, y, highResolutionFB, curDepth);
-
-            // if (nbMixedColors == 0)
-            //     continue;
-            
-            // //get pixel color
-            // for (unsigned int i = 0; i < antiAliasingY; i++)
-            // {
-            //     for (unsigned int j = 0; j < antiAliasingX; j++)
-            //     {       
-            //         unsigned int highResIndex = x * antiAliasingX + j + 
-            //                                    (i + y * antiAliasingY) * highResolutionTexture.width;
-            //         if (highResolutionFB.depthBuffer.depth[highResIndex] < depthMax
-            //             && highResolutionFB.depthBuffer.depth[highResIndex] <= curDepth)
-            //         {
-            //             finalColor += highResolutionTexture.pixels[highResIndex] / nbMixedColors;
-            //         }
-            //     }  
-            // }
-            // #endif
 
             // #ifdef __SUPER_SAMPLING__
             #if defined(__SUPER_SAMPLING__) || defined(__MULTI_SAMPLING_LIGHT__)

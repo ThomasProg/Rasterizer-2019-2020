@@ -5,10 +5,10 @@ struct SDL_Texture;
 
 #include "color.h"
 
-class Texture
+struct Texture
 {
 public:
-    unsigned int width = 0, height = 0; //TODO : since can't const, make accessor
+    unsigned int width = 0, height = 0; //TODO : since can't const, make accessor ?
 public:
     Color* pixels = nullptr;
 
@@ -27,8 +27,6 @@ public:
     Color GetPixelColor(unsigned int x, unsigned int y) const;
 
     void FillBlack();
-
-    // void ToTexture(SDL_Texture* sdlTexture) const;
 
     void setDegradee();
 };

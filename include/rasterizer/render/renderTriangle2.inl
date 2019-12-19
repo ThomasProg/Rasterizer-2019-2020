@@ -623,22 +623,13 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
     };
     #endif
 
-    #ifdef __MULTI_SAMPLING_TRIANGLES__
-    // every pixel respecting (x % 2 == 0 && y % 2 == 0)) 
-    // construct the base texture.
-    minX -= minX % 2;
-    minY -= minY % 2;
-    maxX -= maxX % 2;
-    maxY -= maxY % 2;
-    #endif
-
     const weightPrecomputedData weightData (p2.y - p3.y, 
                                             p1.y - p3.y,
                                             p3.x - p2.x,
                                             p1.x - p3.x);
 
     //TODO : set WeightVar outside of the loops
-    #if defined(__MULTI_SAMPLING_TRIANGLES__) || defined(__MULTI_SAMPLING_LIGHT__)
+    #if defined(__MULTI_SAMPLING_LIGHT__)
     for (unsigned int y = minY; y <= maxY; y += antiAliasingY)
     {
         for (unsigned int x = minX; x <= maxX; x += antiAliasingX)

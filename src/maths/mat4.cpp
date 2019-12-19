@@ -80,15 +80,6 @@ Mat4 Mat4::operator=(const Mat4& matrix)
 
 Vec4 Mat4::operator*(const Vec4& vect) const
 {
-    // Vec4 resultVect(0,0,0,0);
-    // for (unsigned int i = 0; i < nbLines; i++)
-    // {
-    //     for (unsigned int j = 0; j < nbColumns; j++)
-    //         resultVect[i] += elements[(i*nbColumns)+j]*vect[j];  
-        
-    // }
-    // return resultVect;
-
     Vec4 resultVect(0,0,0,0);
     for (unsigned int i = 0; i < nbLines; i++)
     {
@@ -306,26 +297,6 @@ Mat4 Mat4::CreateOrthogonalProjectionMatrix()
 {
     Mat4 ortho;
 
-    // ortho.elements[0] = windowWidth/2;
-    // ortho.elements[1] = 0;
-    // ortho.elements[2] = 0;
-    // ortho.elements[3] = windowWidth/2;
-
-    // ortho.elements[4] = 0;
-    // ortho.elements[5] = windowHeight/2;
-    // ortho.elements[6] = 0;
-    // ortho.elements[7] = windowHeight/2;
-    
-    // ortho.elements[8] = 0;
-    // ortho.elements[9] = 0;
-    // ortho.elements[10] = 1;
-    // ortho.elements[11] = 0;
-
-    // ortho.elements[12] = 0;
-    // ortho.elements[13] = 0;
-    // ortho.elements[14] = 0;
-    // ortho.elements[15] = 1;
-
     ortho.elements[0] = 1;
     ortho.elements[1] = 0;
     ortho.elements[2] = 0;
@@ -360,9 +331,9 @@ Mat4 Mat4::CreateScreenConversionMatrix()
     };
 }
 
-float Mat4::det_2(unsigned x,unsigned y,unsigned z,unsigned w) const
+float Mat4::det_2(unsigned x, unsigned y, unsigned z, unsigned w) const
 {
-    return (elements[x]*elements[y] - elements[z] *elements[w]);
+    return (elements[x] * elements[y] - elements[z] * elements[w]);
 }
 
 Mat4 Mat4::CoMatrix() const
@@ -372,10 +343,12 @@ Mat4 Mat4::CoMatrix() const
     float temp2 = det_2(14,7,6,15);
     float temp3 = det_2(6,11,10,7);
 
-    coM.elements[0] = (elements[5]*temp1 + elements[9]*temp2 + elements[13]*temp3);
-    coM.elements[1] = -(elements[4]*temp1 + elements[8]*temp2 + elements[12]*temp3); //check  
-    coM.elements[2] = (elements[4]*det_2(9,15,13,11) + elements[8]*det_2(13,7,5,15) + elements[12]*det_2(5,11,9,7));  
-    coM.elements[3] = -(elements[4]*det_2(9,14,13,10) + elements[8]*det_2(13,6,5,14) + elements[12]*det_2(5,10,9,6));
+    // det_2 used multipled times could be stored in tempX for performance gains 
+
+    coM.elements[0] =  (elements[5] * temp1 + elements[9]*temp2 + elements[13]*temp3);
+    coM.elements[1] = -(elements[4] * temp1 + elements[8]*temp2 + elements[12]*temp3); //check  
+    coM.elements[2] =  (elements[4] * det_2(9,15,13,11) + elements[8]*det_2(13,7,5,15) + elements[12]*det_2(5,11,9,7));  
+    coM.elements[3] = -(elements[4] * det_2(9,14,13,10) + elements[8]*det_2(13,6,5,14) + elements[12]*det_2(5,10,9,6));
 
     temp2 = det_2(14,3,2,15);
     temp3 = det_2(2,11,10,3);
