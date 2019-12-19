@@ -50,7 +50,7 @@ unsigned int getNbMixedColors(const int x, const int y, const FrameBuffer& highR
     return nbMixedColors;
 }
 
-void Rasterizer::antiAliasingCompression(const FrameBuffer&,// highResolutionFB, 
+void Rasterizer::antiAliasingCompression(const FrameBuffer& highResolutionFB, 
                                         Texture& finalTexture)
 {  
     for (unsigned int y = 0; y < finalTexture.height; y++)
