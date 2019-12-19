@@ -9,10 +9,10 @@ void RenderTriangle2::projectAndDraw(std::vector<Light>& lights, const Entity* e
                                      FrameBuffer* pTarget, const Mat4& projectionMatrix, const Mat4& screenConversionMatrix, 
                                      Camera& camera, E_RasterizerMode mode, std::array<float, 3>& w)
 {
+    // Convert vertices coordinates to the user Viewport
     setVerticesToScreenResolution(screenConversionMatrix);
 
-    //rendering.setDefaultColor();
-
+    // Mix entity and vertex transparency together. 
     addTransparency(entity->alpha);
 
     switch (mode)
@@ -22,10 +22,6 @@ void RenderTriangle2::projectAndDraw(std::vector<Light>& lights, const Entity* e
             drawWireframe(pTarget);
             break;
 
-        // rendering.v1.color = Color(250,250,250);   
-        // rendering.v2.color = Color(250,100,250);   
-        // rendering.v3.color = Color(250,250,100);
-
         case E_RasterizerMode::E_TRIANGLES:
             drawTriangleX(pTarget, w, camera.cartesianLocation, lights, entity->mesh->pTexture, entity->mat);   
             break; 
@@ -33,4 +29,18 @@ void RenderTriangle2::projectAndDraw(std::vector<Light>& lights, const Entity* e
         default:
             break;
     }
+}
+
+bool tryToDrawPixel(unsigned int x, unsigned int y, float depth, 
+                           FrameBuffer* pTarget, std::function<Color(void)>& getColor)
+{   
+    //BECAREFUL
+    float currentDepth = pTarget->depthBuffer.getDepth(x, y);
+
+    if (currentDepth <= depth)
+        return false;
+
+    pTarget->SetPixel(x, y, depth, getColor());
+
+    return true;
 }

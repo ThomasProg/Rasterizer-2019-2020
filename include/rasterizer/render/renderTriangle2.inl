@@ -32,15 +32,6 @@ bool RenderTriangle2::isBackFaceCulled(const Vec3& cameraLocation)
     return dotProduct(N, triangleVertices[0].position - cameraLocation) > 0;
 }
 
-__inline
-void RenderTriangle2::setRelativeToCamera(const Mat4& transform)
-{
-    //TODO : optimization : Vec3 -> Vec4 -> Vec3
-    triangleVertices[0].position = transform * Vec4(triangleVertices[0].position, 1);
-    triangleVertices[1].position = transform * Vec4(triangleVertices[1].position, 1);
-    triangleVertices[2].position = transform * Vec4(triangleVertices[2].position, 1);
-}
-
 namespace triangles
 {
     __inline
@@ -106,23 +97,6 @@ bool RenderTriangle2::isClipped(const Texture& pTarget,
     }
 
     return false;
-    // if (triangleVertices[0].position.z >= 0 
-    //     || triangleVertices[1].position.z >= 0 
-    //     || triangleVertices[2].position.z >= 0)
-    // {
-    //     return true;
-    // }
-    
-    
-    // RenderTriangle2 newTriangle;
-    // newTriangle.triangleVertices = triangleVertices;
-    // newTriangle.worldVertices = worldVertices;
-    // for (unsigned int i = 0; i < 3; i++)
-    // {
-    //     newTriangle.triangleVertices[i].position.y += 1;
-    //     newTriangle.worldVertices[i].y += 1;
-    // }
-    // additionalTriangles.emplace_back(newTriangle);
 
     float& x1 = triangleVertices[0].position.x;
     float& y1 = triangleVertices[0].position.y;
@@ -152,33 +126,11 @@ bool RenderTriangle2::isClipped(const Texture& pTarget,
 }
 
 __inline
-std::array<float, 3> RenderTriangle2::projectVertices(const Mat4& projection, std::array<Vec4, 3>& projectedVertices)
-{
-    std::array<float, 3> w;
-    //TODO: opti possible 
-    projectedVertices[0] = projection * triangleVertices[0].position;
-    w[0] = projectedVertices[0].w;
-    // triangleVertices[0].position = projectedLoc.getHomogenizedVec();
-
-    projectedVertices[1] = projection * triangleVertices[1].position;
-    w[1] = projectedVertices[1].w;
-    // triangleVertices[1].position = projectedLoc.getHomogenizedVec();
-
-    projectedVertices[2] = projection * triangleVertices[2].position;
-    w[2] = projectedVertices[2].w;
-    // triangleVertices[2].position = projectedLoc.getHomogenizedVec();
-
-    return w;
-}
-
-__inline
 void RenderTriangle2::setVerticesToScreenResolution(const Mat4& screenConversion)
 {
     triangleVertices[0].position = screenConversion * Vec4(triangleVertices[0].position, 1);
     triangleVertices[1].position = screenConversion * Vec4(triangleVertices[1].position, 1);
     triangleVertices[2].position = screenConversion * Vec4(triangleVertices[2].position, 1);
-    // if ((screenConversion * Vec4(v1.position, 1)).w != 1)
-    // std::cout << (screenConversion * Vec4(v1.position, 1)).w << '\n';
 }
 
 __inline
@@ -187,14 +139,6 @@ void RenderTriangle2::addTransparency(const float transparency)
     triangleVertices[0].color.a *= transparency;
     triangleVertices[1].color.a *= transparency;
     triangleVertices[2].color.a *= transparency;
-}
-
-__inline
-void RenderTriangle2::setDefaultColor()
-{
-    triangleVertices[0].color = Color(1, 0, 0);
-    triangleVertices[1].color = Color(0, 1, 0);
-    triangleVertices[2].color = Color(0, 0, 1);
 }
 
 namespace lines
@@ -362,25 +306,11 @@ void RenderTriangle2::drawLineX(FrameBuffer* pTarget, const Vertex& vertex1, con
 __inline 
 void RenderTriangle2::drawWireframe(FrameBuffer* pTarget)
 {
+    // Draw a line for each edge of the triangle.
     drawLineX(pTarget, triangleVertices[0], triangleVertices[1]);
     drawLineX(pTarget, triangleVertices[1], triangleVertices[2]);
     drawLineX(pTarget, triangleVertices[2], triangleVertices[0]);
 }
-
-struct weightPrecomputedData
-{
-    inline
-    weightPrecomputedData(const float p2p3y, const float p1p3y, const float p3p2x, const float p1p3x) 
-        : p2p3y(p2p3y), p1p3y(p1p3y), p3p2x(p3p2x), p1p3x(p1p3x), det(p2p3y * p1p3x + p3p2x * p1p3y)
-        {}
-
-    float p2p3y; // p2.y - p3.y
-    float p1p3y; // p3.y - p1.y
-    float p3p2x; // p3.x - p2.x
-    float p1p3x; // p1.x - p3.x
-
-    float det;
-};
 
 inline
 void getWeight(const Vec2& p, const Vec3& p1, const Vec3& p2, const Vec3& p3, 
@@ -411,22 +341,9 @@ void getWeight(const float pxp3x, const float pyp3y,
     weight[2] = 1 - weight[1] - weight[0];
 }
 
-static bool tryToDrawPixel(unsigned int x, unsigned int y, float depth, 
-                           FrameBuffer* pTarget, std::function<Color(void)>& getColor)
-{   
-    //BECAREFUL
-    float currentDepth = pTarget->depthBuffer.getDepth(x, y);
-
-    if (currentDepth <= depth)
-        return false;
-
-    pTarget->SetPixel(x, y, depth, getColor());
-
-    return true;
-}
-
 // BECAREFUL
 // loop could be unrolled without this function
+// This function can interpolate arrays
 template<typename T, typename U, long unsigned int N>
 U operator*(const std::array<T, N>& lhs, const std::array<U, N>& rhs)
 {
@@ -449,13 +366,8 @@ void getTextureColor(Texture const * const pTexture,
     if (pTexture != nullptr && pTexture->pixels != nullptr)
     {
         // could be unrolled
-        // for (unsigned int i = 0; i < 3; i++)
-        // {
-        //     u += weight[i] * uP[i];
-        //     v += weight[i] * vP[i];
-        // }
         float u = weight * uP;
-        float v = weight * vP;
+        float v = weight * vP; 
 
         // make uv range from 0 to 1    
         u = fmod(u, 1);
@@ -495,24 +407,26 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
                                     const Vec3& cameraLocation, std::vector<Light>& lights, 
                                     Texture* pTexture, const Material& mat)
 {
-    // std::array<Vertex*, 3> triangleVertices;
-    // triangleVertices[0] = &v1;
-    // triangleVertices[1] = &v2;
-    // triangleVertices[2] = &v3;
 
+    // should not happen, but we guard it 
     #ifdef __PERSPECTIVE_FIX__
     // TODO: assert?
+    // if ww == 0, it should have been clipped already
     if (ww[0] == 0 || ww[1] == 0 || ww[2] == 0)
         return;
 
     #endif
 
+    //getting aliases
     const Vec3& p1 = triangleVertices[0].position;
     const Vec3& p2 = triangleVertices[1].position;
     const Vec3& p3 = triangleVertices[2].position;
 
     //BECAREFUL
-    //clipping in rasterization
+    //clipping in rasterization 
+
+    // We get the AABB box of the triangle.
+    // We clamp it to not go outside of the screen. 
     #ifdef __ADD_OFFSET__
     unsigned int minX = std::min(std::max(windowRenderMinX, std::min(std::min(p1.x, p2.x), p3.x)), windowRenderMaxX);
     unsigned int maxX = std::min(std::max(windowRenderMinX, std::max(std::max(p1.x, p2.x), p3.x)), windowRenderMaxX);
@@ -525,13 +439,19 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
     unsigned int maxY = std::min(std::max(0.f, std::max(std::max(p1.y, p2.y), p3.y)), float(pTarget->height));
     #endif
 
+    // Moving uvs into arrays for future uses and better manipulation.
+    // v = 1-v to mirror them on the x axis, since they are upside down by default.
     std::array<float, 3> uP = {triangleVertices[0].u, triangleVertices[1].u, triangleVertices[2].u};
     std::array<float, 3> vP = {1-triangleVertices[0].v, 1-triangleVertices[1].v, 1-triangleVertices[2].v};
 
+    // Array containing the point weight relative to the triangle.
     std::array<float, 3> weight;
 
     std::function<Color(void)> getColor;
 
+    // For Multi Sampling,
+    // getLight() is called only one time for multiple pixels.
+    // that is why we have a boolean checking if it is a new sample or a new pixel.
     #ifdef __MULTI_SAMPLING_LIGHT__
     bool bComputed = false;
     float currentLuminosity = 0.f;
@@ -555,26 +475,16 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
     };
     #endif
 
+    // Some parts of Phong and Blinn Phong should be put in a function together.
+
     #ifdef __BLINN_PHONG_LIGHTING__
-    // using blinn phong
+    // get Color, relative to normals, and texture
     getColor = [&](void)
     {
         Vec3 location3D = weight * worldVertices;
 
-        // // could be unrolled
-        // for (unsigned int i = 0; i < 3; i++)
-        // {
-        //     location3D.x += weight[i] * worldVertices[i].x;
-        //     location3D.y += weight[i] * worldVertices[i].y;
-        //     location3D.z += weight[i] * worldVertices[i].z;
-        // }
-
-        //compute z
-        // float z = (triangleVertices[0].position.z) * weight[0] 
-        //         + triangleVertices[1].position.z * weight[1] 
-        //         + triangleVertices[2].position.z * weight[2];
-
         Vec3 normal(0, 0, 0);
+        // computes normal
         // could be unrolled
         for (unsigned int i = 0; i < 3; i++)
         {
@@ -597,7 +507,6 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         }
         #endif
 
-        //RasterizingVertex vert;
         Color c(0, 0, 0, 0);
         
         // lighting
@@ -619,6 +528,8 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
                         vP, 
                         c);
 
+        // Texture we can set on top of other textures, 
+        // with absolute coordinates.
         #ifdef __ADDITIONAL_SHADERS__
         Vec3 newLoc = weight * worldVertices;
         mat.additionalShaders(c, newLoc);
@@ -637,6 +548,7 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         }
         #endif
 
+        // add intensity
         c.r *= intensity;
         c.g *= intensity;
         c.b *= intensity;
@@ -648,12 +560,14 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
 
     #if defined(__PHONG_LIGHTING__)
 
+    // Get light intensity for the 3 vertices of the triangle
     std::array<float, 3> intensity;
     for (unsigned int i = 0; i < 3; ++i)
     {
         intensity[i] = getPixelLight(worldVertices[i], triangleVertices[i].normal, lights, cameraLocation, mat);
     }
 
+    // Set getColor function
     // using phong
     getColor = [&](void)
     {
@@ -682,16 +596,12 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
                         vP, 
                         c);
 
-        // float finalIntensity = intensity * weight;
-
-        //intensity[2] = 0.5f;
-
+        // Interpolates finalIntensity
         float finalIntensity = 0.f;
         for (unsigned int i = 0; i < 3; ++i)
         {
             finalIntensity += intensity[i] * weight[i];
         }
-        //std::cout << intensity[2] << " / " << weight[2] << '\n';
 
         if (finalIntensity > 1)
             finalIntensity = 1;
@@ -704,6 +614,7 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         mat.additionalShaders(c, newLoc);
         #endif
 
+        // Add Intensity
         c.r *= finalIntensity;
         c.g *= finalIntensity;
         c.b *= finalIntensity;
@@ -738,28 +649,22 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
         for (unsigned int x = minX; x <= maxX; x ++)
         {
     #endif
-            // tryToDrawPixel(x, y, 
-            //                 // p1, p2, p3, 
-            //                 triangleVertices,
-            //                 ww, uP, vP, cameraLocation, 
-            //                 worldVertices, pTarget, lights, pTexture, mat);
-
-            // bool isValid = getWeight(Vec2(x,y), triangleVertices[0].position, 
-            //                                     triangleVertices[1].position, 
-            //                                     triangleVertices[2].position, weight);
-
             #ifdef __MULTI_SAMPLING_LIGHT__
-            bComputed = false;
+            bComputed = false; // Tells light has to be computed again since it is a new pixel
+            //for each sample
             for (unsigned int yAliasing = 0; yAliasing < antiAliasingY; yAliasing ++)
             {
                 for (unsigned int xAliasing = 0; xAliasing < antiAliasingX; xAliasing ++)
                 {
+                    // draw pixel
                     getWeight(x + xAliasing - triangleVertices[2].position.x, 
                               y + yAliasing - triangleVertices[2].position.y, 
                               weight, weightData);
 
+                    // If point is inside triangle
                     if (weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0)
                     {
+                        // Interpolates depth
                         const float depth = (triangleVertices[0].position.z) * weight[0] 
                                         + (triangleVertices[1].position.z) * weight[1] 
                                         + (triangleVertices[2].position.z) * weight[2];
@@ -773,8 +678,10 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
 
             getWeight(x - triangleVertices[2].position.x, y - triangleVertices[2].position.y, weight, weightData);
 
+            // If point is inside triangle
             if (weight[0] >= 0 && weight[1] >= 0 && weight[2] >= 0)
             {
+                // Interpolates depth
                 const float depth = (triangleVertices[0].position.z) * weight[0] 
                                   + (triangleVertices[1].position.z) * weight[1] 
                                   + (triangleVertices[2].position.z) * weight[2];

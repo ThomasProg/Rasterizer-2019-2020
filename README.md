@@ -19,6 +19,8 @@ because of negative uvs.
 - Boo transparence not very good : we can still see its insides ; which is voluntary for the moment. 
 To fix it, we have to apply the depth buffer for the same entity. However, there would be too much function parameters, and it would go outside of the project scope.
 
+- Boo texture doesn't have normals in its obj : default normals set to (0,0,1) for every vertex.
+
 - Low frame rate when a lot of pixels are drawn on screen.
 
 - Different interpolations not available on the same run; to fix that, we could replace macros if variables and pass them throughout the code, but it is not necessary for now.
