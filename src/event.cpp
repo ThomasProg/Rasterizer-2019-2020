@@ -301,7 +301,7 @@ void Events::entitiesInit(std::vector<Entity>& entities)
     {
         Entity sphere;
         sphere.mesh = loadMeshFromObj("Boo.obj", "media/SuperMarioGalaxyBoo/");
-        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.0, 0.0, zDepth));
+        sphere.transformation *= Mat4::CreateTranslationMatrix(Vec3(0.1, 0.0, zDepth));
         sphere.transformation *= Mat4::CreateScaleMatrix(Vec3(1.f/50.f, 1.f/50, 1.f/50));
         sphere.mesh->pTexture = &textureManager.textures[5];
         sphere.alpha = 1.0f;

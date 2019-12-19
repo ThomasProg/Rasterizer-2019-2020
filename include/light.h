@@ -10,8 +10,6 @@ struct Light
     float ambientComponent  = 0.2f;
     float diffuseComponent  = 0.7f;
     float specularComponent = 0.5f;
-
-    //Light(Vec3 loc, float ambient = 0.5f, float diffuse = 0.5f, float specular = 0.5f);
 };
 
 #endif
