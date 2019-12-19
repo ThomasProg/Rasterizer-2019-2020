@@ -451,14 +451,9 @@ int Events::run()
         // set additional shaders
         scene.entities[1].mat.additionalShaders = [&time](Color& color, Vec3& worldLocation)
         {
-            // add green circles on xy plane
-            color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10);
-
-            // make the material twinkling
-            constexpr float minColorRatio = 0.5; 
-            color.r *= cos(time) + 1 + minColorRatio;
-            color.g *= cos(time) + 1 + minColorRatio;
-            color.b *= cos(time) + 1 + minColorRatio;
+            constexpr float minColorRatio = 0.0; 
+            // add green circles on xy plane which are twinkling
+            color.g = cos(worldLocation.x * 10) * sin(worldLocation.y * 10) * (cos(time) + 1 + minColorRatio);
         };
 
         //GLFW

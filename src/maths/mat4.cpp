@@ -355,18 +355,18 @@ Mat4 Mat4::CoMatrix() const
 
     coM.elements[4] = -(elements[1] * temp1 + elements[9] * temp4 + elements[13] * temp5);
     coM.elements[5] =  (elements[0] * temp1 + elements[8] * temp4 + elements[12] * temp5);
-    coM.elements[6] = -(elements[0] * det_2(9,15,13,11) + elements[8]*det_2(13,3,1,15) + elements[12] * det_2(1,11,9,3));
-    coM.elements[7] =  (elements[0] * det_2(9,14,13,10) + elements[8]*det_2(13,2,1,14) + elements[12] * det_2(1,10,9,2));
+    coM.elements[6] = -(elements[0] * det_2(9,15,13,11) + elements[8] * det_2(13,3,1,15) + elements[12] * det_2(1,11,9,3));
+    coM.elements[7] =  (elements[0] * det_2(9,14,13,10) + elements[8] * det_2(13,2,1,14) + elements[12] * det_2(1,10,9,2));
     
     coM.elements[8]  =  (elements[1] * det_2(6,15,14,7) + elements[5] * det_2(14,3,2,15) + elements[13] * det_2(2,7,6,3));
     coM.elements[9]  = -(elements[0] * det_2(6,15,14,7) + elements[4] * det_2(14,3,2,15) + elements[12] * det_2(2,7,6,3));
     coM.elements[10] =  (elements[0] * det_2(5,15,13,7) + elements[4] * det_2(13,3,1,15) + elements[12] * det_2(1,7,5,3));
     coM.elements[11] = -(elements[0] * det_2(5,14,13,6) + elements[4] * det_2(13,2,1,14) + elements[12] * det_2(1,6,5,2));
 
-    coM.elements[12] = -(elements[1]*det_2(6,11,10,7) + elements[5]*det_2(10,3,2,11) + elements[9]*det_2(2,7,6,3));
-    coM.elements[13] = (elements[0]*det_2(6,11,10,7) + elements[4]*det_2(10,3,2,11) + elements[8]*det_2(2,7,6,3));
-    coM.elements[14] = -(elements[0]*det_2(5,11,9,7) + elements[4]*det_2(9,3,1,11) + elements[8]*det_2(1,7,5,3));
-    coM.elements[15] = (elements[0]*det_2(5,10,9,6) + elements[4]*det_2(9,2,1,10) + elements[8]*det_2(1,6,5,2));
+    coM.elements[12] = -(elements[1] * det_2(6,11,10,7) + elements[5] *det_2(10,3,2,11) + elements[9] * det_2(2,7,6,3));
+    coM.elements[13] =  (elements[0] * det_2(6,11,10,7) + elements[4] *det_2(10,3,2,11) + elements[8] * det_2(2,7,6,3));
+    coM.elements[14] = -(elements[0] * det_2(5,11,9,7)  + elements[4]* det_2(9,3,1,11)  + elements[8] * det_2(1,7,5,3));
+    coM.elements[15] =  (elements[0] * det_2(5,10,9,6)  + elements[4]* det_2(9,2,1,10)  + elements[8] * det_2(1,6,5,2));
 
 
     return coM;
