@@ -435,7 +435,7 @@ int Events::run()
         fps = 1.f/(deltaTime);
         nbFps++;
         totalFps += fps;
-        std::cout << 1.f/(deltaTime) << std::endl;
+        // std::cout << 1.f/(deltaTime) << std::endl;
         lastTime = time;
         #endif
 

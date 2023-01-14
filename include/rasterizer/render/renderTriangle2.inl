@@ -440,7 +440,7 @@ void RenderTriangle2::drawTriangleX(FrameBuffer* pTarget, std::array<float, 3>& 
     // Array containing the point weight relative to the triangle.
     std::array<float, 3> weight;
 
-    std::function<Color(void)> getColor;
+    static std::function<Color(void)> getColor;
 
     // For Multi Sampling,
     // getLight() is called only one time for multiple pixels.
